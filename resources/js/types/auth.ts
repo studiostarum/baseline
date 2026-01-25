@@ -11,6 +11,7 @@ export type User = {
 
 export type Auth = {
     user: User;
+    can_access_admin: boolean;
 };
 
 export type TwoFactorConfigContent = {
