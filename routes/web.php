@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -9,6 +10,9 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
+
+Route::post('stripe/webhook', WebhookController::class)
+    ->name('cashier.webhook');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');

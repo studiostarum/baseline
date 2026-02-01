@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\BillingController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
@@ -28,4 +29,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
+
+    Route::get('settings/billing', [BillingController::class, 'show'])
+        ->name('billing.show');
+
+    Route::post('settings/billing/portal', [BillingController::class, 'portal'])
+        ->name('billing.portal');
+
+    Route::post('settings/billing/checkout', [BillingController::class, 'checkout'])
+        ->name('billing.checkout');
 });
