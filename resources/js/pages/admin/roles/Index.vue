@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
 import ConfirmDialog from '@/components/admin/ConfirmDialog.vue';
 import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 type Role = {
     id: number;
@@ -31,16 +31,16 @@ type Props = {
 
 defineProps<Props>();
 
-const breadcrumbs = [
+const breadcrumbs = computed(() => [
     { title: 'Admin', href: '/admin' },
     { title: 'Roles' },
-];
+]);
 
-const columns: Column<Role>[] = [
+const columns = computed<Column<Role>[]>(() => [
     { key: 'name', label: 'Name', sortable: true },
     { key: 'permissions_count', label: 'Permissions' },
     { key: 'created_at', label: 'Created', sortable: true },
-];
+]);
 
 const deleteDialog = ref(false);
 const roleToDelete = ref<Role | null>(null);
@@ -87,7 +87,9 @@ function formatDate(dateString: string): string {
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">Roles</h1>
-                    <p class="text-muted-foreground">Manage user roles and permissions.</p>
+                    <p class="text-muted-foreground">
+                        Manage user roles and permissions.
+                    </p>
                 </div>
                 <Button as-child>
                     <Link href="/admin/roles/create">
@@ -106,8 +108,13 @@ function formatDate(dateString: string): string {
             >
                 <template #cell-name="{ item }">
                     <div class="flex items-center gap-2">
-                        <span class="font-medium">{{ (item as Role).name }}</span>
-                        <Badge v-if="(item as Role).name === 'super-admin'" variant="default">
+                        <span class="font-medium">{{
+                            (item as Role).name
+                        }}</span>
+                        <Badge
+                            v-if="(item as Role).name === 'super-admin'"
+                            variant="default"
+                        >
                             System
                         </Badge>
                     </div>
@@ -115,7 +122,12 @@ function formatDate(dateString: string): string {
 
                 <template #cell-permissions_count="{ value }">
                     <Badge variant="secondary">
-                        {{ value }} permission{{ (value as number) !== 1 ? 's' : '' }}
+                        {{ value }}
+                        {{
+                            (value as number) === 1
+                                ? 'permission'
+                                : 'permissions'
+                        }}
                     </Badge>
                 </template>
 
@@ -126,7 +138,9 @@ function formatDate(dateString: string): string {
                 <template #actions="{ item }">
                     <div class="flex items-center justify-end gap-2">
                         <Button variant="ghost" size="icon" as-child>
-                            <Link :href="`/admin/roles/${(item as Role).id}/edit`">
+                            <Link
+                                :href="`/admin/roles/${(item as Role).id}/edit`"
+                            >
                                 <Pencil class="h-4 w-4" />
                             </Link>
                         </Button>

@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 type Role = {
     id: number;
@@ -19,11 +26,11 @@ type Props = {
 
 defineProps<Props>();
 
-const breadcrumbs = [
+const breadcrumbs = computed(() => [
     { title: 'Admin', href: '/admin' },
     { title: 'Users', href: '/admin/users' },
     { title: 'Create' },
-];
+]);
 
 const form = useForm({
     name: '',
@@ -61,7 +68,9 @@ function toggleRole(roleName: string): void {
                 <Card>
                     <CardHeader>
                         <CardTitle>User Information</CardTitle>
-                        <CardDescription>Enter the user's details.</CardDescription>
+                        <CardDescription
+                            >Enter the user's details.</CardDescription
+                        >
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="space-y-2">
@@ -77,12 +86,12 @@ function toggleRole(roleName: string): void {
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="email">Email</Label>
+                            <Label for="email">Email address</Label>
                             <Input
                                 id="email"
                                 v-model="form.email"
                                 type="email"
-                                placeholder="john@example.com"
+                                placeholder="email@example.com"
                                 required
                             />
                             <InputError :message="form.errors.email" />
@@ -100,7 +109,9 @@ function toggleRole(roleName: string): void {
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="password_confirmation">Confirm Password</Label>
+                            <Label for="password_confirmation"
+                                >Confirm password</Label
+                            >
                             <Input
                                 id="password_confirmation"
                                 v-model="form.password_confirmation"
@@ -114,7 +125,9 @@ function toggleRole(roleName: string): void {
                 <Card>
                     <CardHeader>
                         <CardTitle>Roles</CardTitle>
-                        <CardDescription>Assign roles to this user.</CardDescription>
+                        <CardDescription
+                            >Select permissions for this role.</CardDescription
+                        >
                     </CardHeader>
                     <CardContent>
                         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -128,11 +141,17 @@ function toggleRole(roleName: string): void {
                                     :checked="form.roles.includes(role.name)"
                                     @update:checked="toggleRole(role.name)"
                                 />
-                                <Label :for="`role-${role.id}`" class="cursor-pointer">
+                                <Label
+                                    :for="`role-${role.id}`"
+                                    class="cursor-pointer"
+                                >
                                     {{ role.name }}
                                 </Label>
                             </div>
-                            <p v-if="roles.length === 0" class="text-muted-foreground text-sm">
+                            <p
+                                v-if="roles.length === 0"
+                                class="text-sm text-muted-foreground"
+                            >
                                 No roles available. Create some roles first.
                             </p>
                         </div>

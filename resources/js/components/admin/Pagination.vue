@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/vue3';
 import { ChevronsLeft, ChevronsRight } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
 
 type PaginationLink = {
     url: string | null;
@@ -25,12 +25,7 @@ defineProps<Props>();
             Showing {{ from }} to {{ to }} of {{ total }} results
         </div>
         <div class="flex items-center space-x-2">
-            <Button
-                v-if="links[0]?.url"
-                variant="outline"
-                size="icon"
-                as-child
-            >
+            <Button v-if="links[0]?.url" variant="outline" size="icon" as-child>
                 <Link :href="links[0].url" preserve-scroll>
                     <ChevronsLeft class="h-4 w-4" />
                 </Link>
@@ -47,10 +42,20 @@ defineProps<Props>();
                     as-child
                 >
                     <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-                    <Link :href="link.url" preserve-scroll v-html="link.label" />
+                    <Link
+                        :href="link.url"
+                        preserve-scroll
+                        v-html="link.label"
+                    />
                 </Button>
                 <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-                <Button v-else variant="outline" size="icon" disabled v-html="link.label" />
+                <Button
+                    v-else
+                    variant="outline"
+                    size="icon"
+                    disabled
+                    v-html="link.label"
+                />
             </template>
 
             <Button

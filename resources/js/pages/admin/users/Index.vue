@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
 import ConfirmDialog from '@/components/admin/ConfirmDialog.vue';
 import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 type Role = {
     id: number;
@@ -37,17 +37,17 @@ type Props = {
 
 defineProps<Props>();
 
-const breadcrumbs = [
+const breadcrumbs = computed(() => [
     { title: 'Admin', href: '/admin' },
     { title: 'Users' },
-];
+]);
 
-const columns: Column<User>[] = [
+const columns = computed<Column<User>[]>(() => [
     { key: 'name', label: 'Name', sortable: true },
     { key: 'email', label: 'Email', sortable: true },
     { key: 'roles', label: 'Roles' },
     { key: 'created_at', label: 'Created', sortable: true },
-];
+]);
 
 const deleteDialog = ref(false);
 const userToDelete = ref<User | null>(null);
@@ -122,7 +122,7 @@ function formatDate(dateString: string): string {
                         </Badge>
                         <span
                             v-if="(item as User).roles.length === 0"
-                            class="text-muted-foreground text-sm"
+                            class="text-sm text-muted-foreground"
                         >
                             No roles
                         </span>
@@ -136,7 +136,9 @@ function formatDate(dateString: string): string {
                 <template #actions="{ item }">
                     <div class="flex items-center justify-end gap-2">
                         <Button variant="ghost" size="icon" as-child>
-                            <Link :href="`/admin/users/${(item as User).id}/edit`">
+                            <Link
+                                :href="`/admin/users/${(item as User).id}/edit`"
+                            >
                                 <Pencil class="h-4 w-4" />
                             </Link>
                         </Button>

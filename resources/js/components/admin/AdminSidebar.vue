@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { ArrowLeft, LayoutDashboard, Settings, Shield, Users } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -18,12 +16,27 @@ import {
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { dashboard } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
+import { index as billingIndex } from '@/routes/admin/billing';
 import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as usersIndex } from '@/routes/admin/users';
 import { type NavItem } from '@/types';
+import { Link } from '@inertiajs/vue3';
+import {
+    ArrowLeft,
+    CreditCard,
+    LayoutDashboard,
+    Settings,
+    Shield,
+    Users,
+} from 'lucide-vue-next';
+import { isRef, type Ref } from 'vue';
 
 const { isCurrentUrl } = useCurrentUrl();
+
+const getTitle = (title: string | Ref<string>): string => {
+    return isRef(title) ? title.value : title;
+};
 
 const adminNavItems: NavItem[] = [
     {
@@ -40,6 +53,11 @@ const adminNavItems: NavItem[] = [
         title: 'Roles',
         href: rolesIndex.url(),
         icon: Shield,
+    },
+    {
+        title: 'Billing',
+        href: billingIndex.url(),
+        icon: CreditCard,
     },
     {
         title: 'Settings',
@@ -75,15 +93,18 @@ const footerNavItems: NavItem[] = [
             <SidebarGroup class="px-2 py-0">
                 <SidebarGroupLabel>Admin</SidebarGroupLabel>
                 <SidebarMenu>
-                    <SidebarMenuItem v-for="item in adminNavItems" :key="item.title">
+                    <SidebarMenuItem
+                        v-for="item in adminNavItems"
+                        :key="item.href"
+                    >
                         <SidebarMenuButton
                             as-child
                             :is-active="isCurrentUrl(item.href)"
-                            :tooltip="item.title"
+                            :tooltip="getTitle(item.title)"
                         >
                             <Link :href="item.href">
                                 <component :is="item.icon" />
-                                <span>{{ item.title }}</span>
+                                <span>{{ getTitle(item.title) }}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

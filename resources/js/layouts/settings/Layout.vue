@@ -1,36 +1,58 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
+import { show as showBilling } from '@/routes/billing';
 import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem } from '@/types';
+import { Link } from '@inertiajs/vue3';
+import {
+    CreditCard,
+    KeyRound,
+    Palette,
+    ShieldCheck,
+    User,
+} from 'lucide-vue-next';
+import { isRef, type Ref } from 'vue';
 
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
         href: editProfile(),
+        icon: User,
     },
     {
         title: 'Password',
         href: editPassword(),
+        icon: KeyRound,
     },
     {
         title: 'Two-Factor Auth',
         href: show(),
+        icon: ShieldCheck,
     },
     {
         title: 'Appearance',
         href: editAppearance(),
+        icon: Palette,
+    },
+    {
+        title: 'Billing',
+        href: showBilling(),
+        icon: CreditCard,
     },
 ];
 
 const { isCurrentUrl } = useCurrentUrl();
+
+const getTitle = (title: string | Ref<string>): string => {
+    return isRef(title) ? title.value : title;
+};
 </script>
 
 <template>
@@ -57,8 +79,12 @@ const { isCurrentUrl } = useCurrentUrl();
                         as-child
                     >
                         <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
+                            <component
+                                v-if="item.icon"
+                                :is="item.icon"
+                                class="h-4 w-4"
+                            />
+                            {{ getTitle(item.title) }}
                         </Link>
                     </Button>
                 </nav>
@@ -66,11 +92,9 @@ const { isCurrentUrl } = useCurrentUrl();
 
             <Separator class="my-6 lg:hidden" />
 
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
-                    <slot />
-                </section>
-            </div>
+            <section class="flex-1 space-y-12">
+                <slot />
+            </section>
         </div>
     </div>
 </template>
