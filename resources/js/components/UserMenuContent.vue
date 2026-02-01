@@ -6,11 +6,12 @@ import {
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import UserInfo from '@/components/UserInfo.vue';
-import { logout } from '@/routes';
+import { useTranslations } from '@/composables/useTranslations';
+import { home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings } from 'lucide-vue-next';
+import { Globe, LogOut, Settings } from 'lucide-vue-next';
 
 type Props = {
     user: User;
@@ -21,6 +22,8 @@ const handleLogout = () => {
 };
 
 defineProps<Props>();
+
+const { t } = useTranslations();
 </script>
 
 <template>
@@ -34,7 +37,13 @@ defineProps<Props>();
         <DropdownMenuItem :as-child="true">
             <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
                 <Settings class="mr-2 h-4 w-4" />
-                Settings
+                {{ t('navigation.settings') }}
+            </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem :as-child="true">
+            <Link class="block w-full cursor-pointer" :href="home()" prefetch>
+                <Globe class="mr-2 h-4 w-4" />
+                {{ t('navigation.website') }}
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
@@ -48,7 +57,7 @@ defineProps<Props>();
             data-test="logout-button"
         >
             <LogOut class="mr-2 h-4 w-4" />
-            Log out
+            {{ t('navigation.log_out') }}
         </Link>
     </DropdownMenuItem>
 </template>

@@ -9,6 +9,9 @@ export type AppPageProps<
 > = T & {
     name: string;
     auth: Auth;
+    locale: string;
+    locales: Record<string, string>;
+    translations: Record<string, string>;
     sidebarOpen: boolean;
     [key: string]: unknown;
 };

@@ -5,6 +5,14 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, config('locales.available', []), true)) {
+        session(['locale' => $locale]);
+    }
+
+    return redirect()->back();
+})->name('locale.switch')->where('locale', 'en|nl');
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canRegister' => Features::enabled(Features::registration()),

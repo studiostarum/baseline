@@ -27,6 +27,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem } from '@/types';
@@ -79,6 +80,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const isLoading = ref(false);
+const { t } = useTranslations();
 
 const errorMessage = computed(() => {
     return props.error || page.props.flash?.error || null;
@@ -86,7 +88,7 @@ const errorMessage = computed(() => {
 
 const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     {
-        title: 'Billing',
+        title: t('settings.billing.title'),
         href: '/settings/billing',
     },
 ]);
@@ -168,9 +170,9 @@ function formatShortDate(dateString: string): string {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Billing" />
+        <Head :title="t('settings.billing.title')" />
 
-        <h1 class="sr-only">Billing</h1>
+        <h1 class="sr-only">{{ t('settings.billing.title') }}</h1>
 
         <SettingsLayout>
             <form
@@ -201,8 +203,8 @@ function formatShortDate(dateString: string): string {
             <div class="space-y-6">
                 <Heading
                     variant="small"
-                    title="Billing"
-                    description="Manage your subscription and payment methods."
+                    :title="t('settings.billing.title')"
+                    :description="t('settings.billing.description')"
                 />
 
                 <!-- Error Alert -->

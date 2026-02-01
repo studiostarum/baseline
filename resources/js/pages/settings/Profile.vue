@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';
@@ -34,10 +35,11 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { t } = useTranslations();
 
 const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     {
-        title: 'Profile settings',
+        title: t('settings.profile.title'),
         href: edit().url,
     },
 ]);
@@ -66,16 +68,16 @@ function handleUnlink(provider: string): void {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Profile settings" />
+        <Head :title="t('settings.profile.title')" />
 
-        <h1 class="sr-only">Profile settings</h1>
+        <h1 class="sr-only">{{ t('settings.profile.title') }}</h1>
 
         <SettingsLayout>
             <div class="space-y-6">
                 <Heading
                     variant="small"
-                    title="Profile"
-                    description="Manage your profile and account settings."
+                    :title="t('navigation.profile')"
+                    :description="t('settings.description')"
                 />
 
                 <div
@@ -98,10 +100,10 @@ function handleUnlink(provider: string): void {
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <User class="h-5 w-5" />
-                            Profile information
+                            {{ t('settings.profile.heading') }}
                         </CardTitle>
                         <CardDescription>
-                            Update your name and email address.
+                            {{ t('settings.profile.description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -111,7 +113,7 @@ function handleUnlink(provider: string): void {
                             v-slot="{ errors, processing, recentlySuccessful }"
                         >
                             <div class="grid gap-2">
-                                <Label for="name">Name</Label>
+                                <Label for="name">{{ t('fields.name') }}</Label>
                                 <Input
                                     id="name"
                                     class="mt-1 block w-full"
@@ -119,7 +121,7 @@ function handleUnlink(provider: string): void {
                                     :default-value="user.name"
                                     required
                                     autocomplete="name"
-                                    placeholder="Full name"
+                                    :placeholder="t('fields.full_name')"
                                 />
                                 <InputError
                                     class="mt-2"
@@ -128,7 +130,7 @@ function handleUnlink(provider: string): void {
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="email">Email address</Label>
+                                <Label for="email">{{ t('fields.email') }}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -137,7 +139,7 @@ function handleUnlink(provider: string): void {
                                     :default-value="user.email"
                                     required
                                     autocomplete="username"
-                                    placeholder="Email address"
+                                    :placeholder="t('fields.email_placeholder')"
                                 />
                                 <InputError
                                     class="mt-2"
@@ -151,14 +153,13 @@ function handleUnlink(provider: string): void {
                                 "
                             >
                                 <p class="-mt-4 text-sm text-muted-foreground">
-                                    Your email address is unverified.
+                                    {{ t('settings.profile.email_unverified') }}
                                     <Link
                                         :href="send()"
                                         as="button"
                                         class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                     >
-                                        Click here to resend the verification
-                                        email.
+                                        {{ t('settings.profile.resend_verification') }}
                                     </Link>
                                 </p>
 
@@ -166,8 +167,7 @@ function handleUnlink(provider: string): void {
                                     v-if="status === 'verification-link-sent'"
                                     class="mt-2 text-sm font-medium text-green-600"
                                 >
-                                    A new verification link has been sent to
-                                    your email address.
+                                    {{ t('settings.profile.verification_sent') }}
                                 </div>
                             </div>
 
@@ -176,7 +176,7 @@ function handleUnlink(provider: string): void {
                                     :disabled="processing"
                                     data-test="update-profile-button"
                                 >
-                                    Save
+                                    {{ t('common.save') }}
                                 </Button>
 
                                 <Transition
@@ -189,7 +189,7 @@ function handleUnlink(provider: string): void {
                                         v-show="recentlySuccessful"
                                         class="text-sm text-neutral-600"
                                     >
-                                        Saved.
+                                        {{ t('common.saved') }}
                                     </p>
                                 </Transition>
                             </div>
@@ -202,10 +202,10 @@ function handleUnlink(provider: string): void {
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <Link2 class="h-5 w-5" />
-                            Connected Accounts
+                            {{ t('settings.profile.social_heading') }}
                         </CardTitle>
                         <CardDescription>
-                            Manage your social account connections.
+                            {{ t('settings.profile.social_description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -238,7 +238,7 @@ function handleUnlink(provider: string): void {
                                             <p
                                                 class="text-sm text-muted-foreground"
                                             >
-                                                Connected
+                                                {{ t('settings.profile.connected') }}
                                                 {{
                                                     new Date(
                                                         account.created_at,
@@ -253,7 +253,7 @@ function handleUnlink(provider: string): void {
                                         size="sm"
                                         @click="handleUnlink(account.provider)"
                                     >
-                                        Unlink
+                                        {{ t('settings.profile.unlink') }}
                                     </Button>
                                 </div>
                             </template>
@@ -280,7 +280,7 @@ function handleUnlink(provider: string): void {
                                         <p
                                             class="text-sm text-muted-foreground"
                                         >
-                                            Not connected
+                                            {{ t('settings.profile.not_connected') }}
                                         </p>
                                     </div>
                                 </div>

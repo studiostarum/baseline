@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import { dashboard, login, register } from '@/routes';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -24,6 +25,7 @@ withDefaults(
             class="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl"
         >
             <nav class="flex items-center justify-end gap-4">
+                <LanguageDropdown />
                 <Link
                     v-if="$page.props.auth.user"
                     :href="dashboard()"

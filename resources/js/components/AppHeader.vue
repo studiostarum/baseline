@@ -28,6 +28,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
@@ -236,6 +237,8 @@ const rightNavItems: NavItem[] = [
                                 </TooltipProvider>
                             </template>
                         </div>
+
+                        <LanguageDropdown />
                     </div>
 
                     <DropdownMenu>

@@ -3,6 +3,7 @@ import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useTranslations } from '@/composables/useTranslations';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { show as showBilling } from '@/routes/billing';
@@ -18,35 +19,38 @@ import {
     ShieldCheck,
     User,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { isRef, type Ref } from 'vue';
 
-const sidebarNavItems: NavItem[] = [
+const { t } = useTranslations();
+
+const sidebarNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Profile',
+        title: t('navigation.profile'),
         href: editProfile(),
         icon: User,
     },
     {
-        title: 'Password',
+        title: t('navigation.password'),
         href: editPassword(),
         icon: KeyRound,
     },
     {
-        title: 'Two-Factor Auth',
+        title: t('navigation.two_factor'),
         href: show(),
         icon: ShieldCheck,
     },
     {
-        title: 'Appearance',
+        title: t('navigation.appearance'),
         href: editAppearance(),
         icon: Palette,
     },
     {
-        title: 'Billing',
+        title: t('navigation.billing'),
         href: showBilling(),
         icon: CreditCard,
     },
-];
+]);
 
 const { isCurrentUrl } = useCurrentUrl();
 
@@ -58,15 +62,15 @@ const getTitle = (title: string | Ref<string>): string => {
 <template>
     <div class="px-4 py-6">
         <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
+            :title="t('settings.title')"
+            :description="t('settings.description')"
         />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
+                    :aria-label="t('settings.title')"
                 >
                     <Button
                         v-for="item in sidebarNavItems"

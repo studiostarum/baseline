@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
+import LanguageTabs from '@/components/LanguageTabs.vue';
 import Heading from '@/components/Heading.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import {
     Card,
     CardContent,
@@ -13,12 +15,14 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/appearance';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { Palette } from 'lucide-vue-next';
+import { Languages, Palette } from 'lucide-vue-next';
 import { computed } from 'vue';
+
+const { t } = useTranslations();
 
 const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     {
-        title: 'Appearance settings',
+        title: t('settings.appearance.title'),
         href: edit().url,
     },
 ]);
@@ -26,31 +30,45 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Appearance settings" />
+        <Head :title="t('settings.appearance.title')" />
 
-        <h1 class="sr-only">Appearance settings</h1>
+        <h1 class="sr-only">{{ t('settings.appearance.title') }}</h1>
 
         <SettingsLayout>
             <div class="space-y-6">
                 <Heading
                     variant="small"
-                    title="Appearance"
-                    description="Customize your visual preferences."
+                    :title="t('navigation.appearance')"
+                    :description="t('settings.appearance.description_short')"
                 />
 
                 <Card>
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <Palette class="h-5 w-5" />
-                            Theme
+                            {{ t('settings.appearance.theme') }}
                         </CardTitle>
                         <CardDescription>
-                            Choose your preferred color scheme for the
-                            interface.
+                            {{ t('settings.appearance.theme_description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <AppearanceTabs />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <Languages class="h-5 w-5" />
+                            {{ t('settings.appearance.language') }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{ t('settings.appearance.language_description') }}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <LanguageTabs />
                     </CardContent>
                 </Card>
             </div>

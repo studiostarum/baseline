@@ -45,6 +45,18 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
                 'can_access_admin' => $user?->hasAnyRole(['super-admin', 'admin']) ?? false,
             ],
+            'locale' => app()->getLocale(),
+            'locales' => collect(config('locales.available', []))
+                ->mapWithKeys(fn (string $code) => [$code => config("locales.labels.{$code}", $code)])
+                ->all(),
+            'translations' => (function () {
+                $path = lang_path(app()->getLocale().'.json');
+                if (file_exists($path)) {
+                    return json_decode(file_get_contents($path), true) ?? [];
+                }
+
+                return [];
+            })(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import { home } from '@/routes';
 import { Link, usePage } from '@inertiajs/vue3';
 
@@ -28,7 +29,10 @@ defineProps<{
                 {{ name }}
             </Link>
         </div>
-        <div class="lg:p-8">
+        <div class="relative lg:p-8">
+            <div class="absolute right-4 top-4">
+                <LanguageDropdown />
+            </div>
             <div
                 class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]"
             >

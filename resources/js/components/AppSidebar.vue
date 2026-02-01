@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -11,6 +12,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useTranslations } from '@/composables/useTranslations';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -20,22 +22,23 @@ import AppLogo from './AppLogo.vue';
 
 const page = usePage();
 const canAccessAdmin = computed(() => page.props.auth.can_access_admin);
+const { t } = useTranslations();
 
-const mainNavItems: NavItem[] = [
+const mainNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Dashboard',
+        title: t('navigation.dashboard'),
         href: dashboard(),
         icon: LayoutGrid,
     },
-];
+]);
 
-const adminNavItems: NavItem[] = [
+const adminNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Admin',
+        title: t('navigation.admin'),
         href: '/admin',
         icon: Shield,
     },
-];
+]);
 </script>
 
 <template>
@@ -58,6 +61,7 @@ const adminNavItems: NavItem[] = [
 
         <SidebarFooter>
             <NavFooter v-if="canAccessAdmin" :items="adminNavItems" />
+            <LanguageDropdown variant="sidebar" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

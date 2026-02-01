@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
+import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -14,6 +15,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useTranslations } from '@/composables/useTranslations';
 import { dashboard } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as billingIndex } from '@/routes/admin/billing';
@@ -30,49 +32,51 @@ import {
     Shield,
     Users,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { isRef, type Ref } from 'vue';
 
 const { isCurrentUrl } = useCurrentUrl();
+const { t } = useTranslations();
 
 const getTitle = (title: string | Ref<string>): string => {
     return isRef(title) ? title.value : title;
 };
 
-const adminNavItems: NavItem[] = [
+const adminNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Dashboard',
+        title: t('admin.navigation.dashboard'),
         href: adminDashboard.url(),
         icon: LayoutDashboard,
     },
     {
-        title: 'Users',
+        title: t('admin.navigation.users'),
         href: usersIndex.url(),
         icon: Users,
     },
     {
-        title: 'Roles',
+        title: t('admin.navigation.roles'),
         href: rolesIndex.url(),
         icon: Shield,
     },
     {
-        title: 'Billing',
+        title: t('admin.navigation.billing'),
         href: billingIndex.url(),
         icon: CreditCard,
     },
     {
-        title: 'Settings',
+        title: t('admin.navigation.settings'),
         href: settingsIndex.url(),
         icon: Settings,
     },
-];
+]);
 
-const footerNavItems: NavItem[] = [
+const footerNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Back to App',
+        title: t('admin.navigation.back_to_app'),
         href: dashboard.url(),
         icon: ArrowLeft,
     },
-];
+]);
 </script>
 
 <template>
@@ -91,7 +95,7 @@ const footerNavItems: NavItem[] = [
 
         <SidebarContent>
             <SidebarGroup class="px-2 py-0">
-                <SidebarGroupLabel>Admin</SidebarGroupLabel>
+                <SidebarGroupLabel>{{ t('navigation.admin') }}</SidebarGroupLabel>
                 <SidebarMenu>
                     <SidebarMenuItem
                         v-for="item in adminNavItems"
@@ -114,6 +118,7 @@ const footerNavItems: NavItem[] = [
 
         <SidebarFooter>
             <NavFooter :items="footerNavItems" />
+            <LanguageDropdown variant="sidebar" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

@@ -7,6 +7,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useTranslations } from '@/composables/useTranslations';
 import { toUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
@@ -17,6 +18,7 @@ defineProps<{
 }>();
 
 const { isCurrentUrl } = useCurrentUrl();
+const { t } = useTranslations();
 
 const getTitle = (title: string | Ref<string>): string => {
     return isRef(title) ? title.value : title;
@@ -25,7 +27,7 @@ const getTitle = (title: string | Ref<string>): string => {
 
 <template>
     <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
+        <SidebarGroupLabel>{{ t('navigation.platform') }}</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="toUrl(item.href)">
                 <SidebarMenuButton

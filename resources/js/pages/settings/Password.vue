@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import Heading from '@/components/Heading.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,9 +21,11 @@ import { Form, Head } from '@inertiajs/vue3';
 import { KeyRound } from 'lucide-vue-next';
 import { computed } from 'vue';
 
+const { t } = useTranslations();
+
 const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     {
-        title: 'Password settings',
+        title: t('settings.password.title'),
         href: edit().url,
     },
 ]);
@@ -30,27 +33,26 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Password settings" />
+        <Head :title="t('settings.password.title')" />
 
-        <h1 class="sr-only">Password settings</h1>
+        <h1 class="sr-only">{{ t('settings.password.title') }}</h1>
 
         <SettingsLayout>
             <div class="space-y-6">
                 <Heading
                     variant="small"
-                    title="Password"
-                    description="Manage your account password."
+                    :title="t('navigation.password')"
+                    :description="t('settings.password.description_short')"
                 />
 
                 <Card>
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <KeyRound class="h-5 w-5" />
-                            Update password
+                            {{ t('settings.password.heading') }}
                         </CardTitle>
                         <CardDescription>
-                            Ensure your account is using a long, random password
-                            to stay secure.
+                            {{ t('settings.password.description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -70,7 +72,7 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                         >
                             <div class="grid gap-2">
                                 <Label for="current_password"
-                                    >Current password</Label
+                                    >{{ t('fields.current_password') }}</Label
                                 >
                                 <Input
                                     id="current_password"
@@ -78,7 +80,7 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                                     type="password"
                                     class="mt-1 block w-full"
                                     autocomplete="current-password"
-                                    placeholder="Current password"
+                                    :placeholder="t('fields.current_password_placeholder')"
                                 />
                                 <InputError
                                     :message="errors.current_password"
@@ -86,21 +88,21 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="password">New password</Label>
+                                <Label for="password">{{ t('fields.new_password') }}</Label>
                                 <Input
                                     id="password"
                                     name="password"
                                     type="password"
                                     class="mt-1 block w-full"
                                     autocomplete="new-password"
-                                    placeholder="New password"
+                                    :placeholder="t('fields.new_password_placeholder')"
                                 />
                                 <InputError :message="errors.password" />
                             </div>
 
                             <div class="grid gap-2">
                                 <Label for="password_confirmation"
-                                    >Confirm password</Label
+                                    >{{ t('fields.confirm_password') }}</Label
                                 >
                                 <Input
                                     id="password_confirmation"
@@ -108,7 +110,7 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                                     type="password"
                                     class="mt-1 block w-full"
                                     autocomplete="new-password"
-                                    placeholder="Confirm password"
+                                    :placeholder="t('fields.confirm_password_placeholder')"
                                 />
                                 <InputError
                                     :message="errors.password_confirmation"
@@ -120,7 +122,7 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                                     :disabled="processing"
                                     data-test="update-password-button"
                                 >
-                                    Save password
+                                    {{ t('settings.password.save_button') }}
                                 </Button>
 
                                 <Transition
@@ -133,7 +135,7 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                                         v-show="recentlySuccessful"
                                         class="text-sm text-neutral-600"
                                     >
-                                        Saved.
+                                        {{ t('common.saved') }}
                                     </p>
                                 </Transition>
                             </div>
