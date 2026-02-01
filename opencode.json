@@ -6,8 +6,8 @@
             "enabled": true,
             "command": [
                 "wsl.exe",
-                "/home/studiostarum/.config/herd-lite/bin/php",
-                "/home/studiostarum/projects/personal/baseline/baseline/artisan",
+                "/usr/bin/php8.4",
+                "/home/tom/projects/studiostarum/baseline/artisan",
                 "boost:mcp"
             ]
         }

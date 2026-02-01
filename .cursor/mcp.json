@@ -1,3 +1,12 @@
 {
-  "mcpServers": {}
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "wsl.exe",
+            "args": [
+                "/usr/bin/php8.4",
+                "/home/tom/projects/studiostarum/baseline/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
 }
