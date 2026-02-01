@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/DeleteUser.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import SocialLoginButton from '@/components/SocialLoginButton.vue';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -12,119 +19,283 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem } from '@/types';
+import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Link2, User } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 type Props = {
     mustVerifyEmail: boolean;
     status?: string;
+    error?: string;
+    socialAccounts?: Array<{
+        provider: string;
+        created_at: string;
+    }>;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
-const breadcrumbItems: BreadcrumbItem[] = [
+const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     {
         title: 'Profile settings',
         href: edit().url,
     },
-];
+]);
 
 const page = usePage();
 const user = page.props.auth.user;
+
+const linkedProviders = computed(() => {
+    return props.socialAccounts?.map((account) => account.provider) || [];
+});
+
+const availableProviders = ['google'];
+
+const unlinkedProviders = computed(() => {
+    const linked = linkedProviders.value;
+    const unlinked = availableProviders.filter(
+        (provider) => !linked.includes(provider),
+    );
+    return unlinked;
+});
+
+function handleUnlink(provider: string): void {
+    router.visit(`/settings/profile/social/${provider}/unlink`);
+}
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
         <Head title="Profile settings" />
 
-        <h1 class="sr-only">Profile Settings</h1>
+        <h1 class="sr-only">Profile settings</h1>
 
         <SettingsLayout>
-            <div class="flex flex-col space-y-6">
+            <div class="space-y-6">
                 <Heading
                     variant="small"
-                    title="Profile information"
-                    description="Update your name and email address"
+                    title="Profile"
+                    description="Manage your profile and account settings."
                 />
 
-                <Form
-                    v-bind="ProfileController.update.form()"
-                    class="space-y-6"
-                    v-slot="{ errors, processing, recentlySuccessful }"
+                <div
+                    v-if="props.error"
+                    class="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+                    role="alert"
                 >
-                    <div class="grid gap-2">
-                        <Label for="name">Name</Label>
-                        <Input
-                            id="name"
-                            class="mt-1 block w-full"
-                            name="name"
-                            :default-value="user.name"
-                            required
-                            autocomplete="name"
-                            placeholder="Full name"
-                        />
-                        <InputError class="mt-2" :message="errors.name" />
-                    </div>
+                    {{ props.error }}
+                </div>
+                <div
+                    v-if="props.status"
+                    class="rounded-lg border border-green-500/50 bg-green-500/10 px-4 py-3 text-sm text-green-700 dark:text-green-400"
+                    role="status"
+                >
+                    {{ props.status }}
+                </div>
 
-                    <div class="grid gap-2">
-                        <Label for="email">Email address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            class="mt-1 block w-full"
-                            name="email"
-                            :default-value="user.email"
-                            required
-                            autocomplete="username"
-                            placeholder="Email address"
-                        />
-                        <InputError class="mt-2" :message="errors.email" />
-                    </div>
-
-                    <div v-if="mustVerifyEmail && !user.email_verified_at">
-                        <p class="-mt-4 text-sm text-muted-foreground">
-                            Your email address is unverified.
-                            <Link
-                                :href="send()"
-                                as="button"
-                                class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                            >
-                                Click here to resend the verification email.
-                            </Link>
-                        </p>
-
-                        <div
-                            v-if="status === 'verification-link-sent'"
-                            class="mt-2 text-sm font-medium text-green-600"
+                <!-- Profile Information Card -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <User class="h-5 w-5" />
+                            Profile information
+                        </CardTitle>
+                        <CardDescription>
+                            Update your name and email address.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Form
+                            v-bind="ProfileController.update.form()"
+                            class="space-y-6"
+                            v-slot="{ errors, processing, recentlySuccessful }"
                         >
-                            A new verification link has been sent to your email
-                            address.
+                            <div class="grid gap-2">
+                                <Label for="name">Name</Label>
+                                <Input
+                                    id="name"
+                                    class="mt-1 block w-full"
+                                    name="name"
+                                    :default-value="user.name"
+                                    required
+                                    autocomplete="name"
+                                    placeholder="Full name"
+                                />
+                                <InputError
+                                    class="mt-2"
+                                    :message="errors.name"
+                                />
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label for="email">Email address</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    class="mt-1 block w-full"
+                                    name="email"
+                                    :default-value="user.email"
+                                    required
+                                    autocomplete="username"
+                                    placeholder="Email address"
+                                />
+                                <InputError
+                                    class="mt-2"
+                                    :message="errors.email"
+                                />
+                            </div>
+
+                            <div
+                                v-if="
+                                    mustVerifyEmail && !user.email_verified_at
+                                "
+                            >
+                                <p class="-mt-4 text-sm text-muted-foreground">
+                                    Your email address is unverified.
+                                    <Link
+                                        :href="send()"
+                                        as="button"
+                                        class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                    >
+                                        Click here to resend the verification
+                                        email.
+                                    </Link>
+                                </p>
+
+                                <div
+                                    v-if="status === 'verification-link-sent'"
+                                    class="mt-2 text-sm font-medium text-green-600"
+                                >
+                                    A new verification link has been sent to
+                                    your email address.
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <Button
+                                    :disabled="processing"
+                                    data-test="update-profile-button"
+                                >
+                                    Save
+                                </Button>
+
+                                <Transition
+                                    enter-active-class="transition ease-in-out"
+                                    enter-from-class="opacity-0"
+                                    leave-active-class="transition ease-in-out"
+                                    leave-to-class="opacity-0"
+                                >
+                                    <p
+                                        v-show="recentlySuccessful"
+                                        class="text-sm text-neutral-600"
+                                    >
+                                        Saved.
+                                    </p>
+                                </Transition>
+                            </div>
+                        </Form>
+                    </CardContent>
+                </Card>
+
+                <!-- Connected Accounts Card -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <Link2 class="h-5 w-5" />
+                            Connected Accounts
+                        </CardTitle>
+                        <CardDescription>
+                            Manage your social account connections.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="space-y-4">
+                            <template
+                                v-if="
+                                    props.socialAccounts &&
+                                    props.socialAccounts.length > 0
+                                "
+                            >
+                                <div
+                                    v-for="account in props.socialAccounts"
+                                    :key="account.provider"
+                                    class="flex items-center justify-between rounded-lg border p-4"
+                                >
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="flex size-10 items-center justify-center rounded-full bg-muted"
+                                        >
+                                            <span
+                                                class="text-sm font-medium uppercase"
+                                            >
+                                                {{ account.provider.charAt(0) }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium capitalize">
+                                                {{ account.provider }}
+                                            </p>
+                                            <p
+                                                class="text-sm text-muted-foreground"
+                                            >
+                                                Connected
+                                                {{
+                                                    new Date(
+                                                        account.created_at,
+                                                    ).toLocaleDateString()
+                                                }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        @click="handleUnlink(account.provider)"
+                                    >
+                                        Unlink
+                                    </Button>
+                                </div>
+                            </template>
+
+                            <div
+                                v-for="provider in unlinkedProviders"
+                                :key="provider"
+                                class="flex items-center justify-between rounded-lg border p-4"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="flex size-10 items-center justify-center rounded-full bg-muted"
+                                    >
+                                        <span
+                                            class="text-sm font-medium uppercase"
+                                        >
+                                            {{ provider.charAt(0) }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium capitalize">
+                                            {{ provider }}
+                                        </p>
+                                        <p
+                                            class="text-sm text-muted-foreground"
+                                        >
+                                            Not connected
+                                        </p>
+                                    </div>
+                                </div>
+                                <SocialLoginButton
+                                    provider="google"
+                                    intent="link"
+                                    size="sm"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </CardContent>
+                </Card>
 
-                    <div class="flex items-center gap-4">
-                        <Button
-                            :disabled="processing"
-                            data-test="update-profile-button"
-                            >Save</Button
-                        >
-
-                        <Transition
-                            enter-active-class="transition ease-in-out"
-                            enter-from-class="opacity-0"
-                            leave-active-class="transition ease-in-out"
-                            leave-to-class="opacity-0"
-                        >
-                            <p
-                                v-show="recentlySuccessful"
-                                class="text-sm text-neutral-600"
-                            >
-                                Saved.
-                            </p>
-                        </Transition>
-                    </div>
-                </Form>
+                <DeleteUser />
             </div>
-
-            <DeleteUser />
         </SettingsLayout>
     </AppLayout>
 </template>

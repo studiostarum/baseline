@@ -52,4 +52,28 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    /**
+     * Get the social accounts for the user.
+     */
+    public function socialAccounts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    /**
+     * Check if user has a social account for the given provider.
+     */
+    public function hasSocialAccount(string $provider): bool
+    {
+        return $this->socialAccounts()->forProvider($provider)->exists();
+    }
+
+    /**
+     * Get the social account for the given provider.
+     */
+    public function getSocialAccount(string $provider): ?SocialAccount
+    {
+        return $this->socialAccounts()->forProvider($provider)->first();
+    }
 }

@@ -1,22 +1,34 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
+import SocialLoginButton from '@/components/SocialLoginButton.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+import { Form, Head, router, usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 defineProps<{
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
 }>();
+
+const page = usePage();
+
+onMounted(() => {
+    // Check if user is now authenticated (from OAuth popup)
+    if (page.props.auth?.user) {
+        router.visit('/dashboard');
+    }
+});
 </script>
 
 <template>
@@ -97,6 +109,19 @@ defineProps<{
                     Log in
                 </Button>
             </div>
+
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <Separator />
+                </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                    <span class="bg-background px-2 text-muted-foreground">
+                        Or continue with
+                    </span>
+                </div>
+            </div>
+
+            <SocialLoginButton provider="google" class="w-full" />
 
             <div
                 class="text-center text-sm text-muted-foreground"

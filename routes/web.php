@@ -18,4 +18,10 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('auth/{provider}', [App\Http\Controllers\SocialAuthController::class, 'redirect'])
+    ->name('social.redirect');
+
+Route::get('auth/{provider}/callback', [App\Http\Controllers\SocialAuthController::class, 'callback'])
+    ->name('social.callback');
+
 require __DIR__.'/settings.php';

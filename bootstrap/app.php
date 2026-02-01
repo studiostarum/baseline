@@ -36,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => AdminMiddleware::class,
+            'ensure.user.has.password' => \App\Http\Middleware\EnsureUserHasPassword::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
