@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -61,7 +60,6 @@ const adminNavItems = computed<NavItem[]>(() => [
 
         <SidebarFooter>
             <NavFooter v-if="canAccessAdmin" :items="adminNavItems" />
-            <LanguageDropdown variant="sidebar" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

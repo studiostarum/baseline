@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
-import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -18,7 +17,7 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useTranslations } from '@/composables/useTranslations';
 import { dashboard } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
-import { index as billingIndex } from '@/routes/admin/billing';
+import { index as billingIndex, users as billingUsers } from '@/routes/admin/billing';
 import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as usersIndex } from '@/routes/admin/users';
@@ -42,12 +41,20 @@ const getTitle = (title: string | Ref<string>): string => {
     return isRef(title) ? title.value : title;
 };
 
-const adminNavItems = computed<NavItem[]>(() => [
+const overviewNavItems = computed<NavItem[]>(() => [
     {
         title: t('admin.navigation.dashboard'),
         href: adminDashboard.url(),
         icon: LayoutDashboard,
     },
+    {
+        title: t('admin.navigation.settings'),
+        href: settingsIndex.url(),
+        icon: Settings,
+    },
+]);
+
+const userManagementNavItems = computed<NavItem[]>(() => [
     {
         title: t('admin.navigation.users'),
         href: usersIndex.url(),
@@ -58,15 +65,18 @@ const adminNavItems = computed<NavItem[]>(() => [
         href: rolesIndex.url(),
         icon: Shield,
     },
+]);
+
+const billingNavItems = computed<NavItem[]>(() => [
     {
         title: t('admin.navigation.billing'),
         href: billingIndex.url(),
         icon: CreditCard,
     },
     {
-        title: t('admin.navigation.settings'),
-        href: settingsIndex.url(),
-        icon: Settings,
+        title: t('admin.navigation.billing_users'),
+        href: billingUsers.url(),
+        icon: Users,
     },
 ]);
 
@@ -95,10 +105,50 @@ const footerNavItems = computed<NavItem[]>(() => [
 
         <SidebarContent>
             <SidebarGroup class="px-2 py-0">
-                <SidebarGroupLabel>{{ t('navigation.admin') }}</SidebarGroupLabel>
+                <SidebarGroupLabel>{{ t('admin.sidebar.overview') }}</SidebarGroupLabel>
                 <SidebarMenu>
                     <SidebarMenuItem
-                        v-for="item in adminNavItems"
+                        v-for="item in overviewNavItems"
+                        :key="item.href"
+                    >
+                        <SidebarMenuButton
+                            as-child
+                            :is-active="isCurrentUrl(item.href)"
+                            :tooltip="getTitle(item.title)"
+                        >
+                            <Link :href="item.href">
+                                <component :is="item.icon" />
+                                <span>{{ getTitle(item.title) }}</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarGroup>
+            <SidebarGroup class="px-2 py-0">
+                <SidebarGroupLabel>{{ t('admin.sidebar.user_management') }}</SidebarGroupLabel>
+                <SidebarMenu>
+                    <SidebarMenuItem
+                        v-for="item in userManagementNavItems"
+                        :key="item.href"
+                    >
+                        <SidebarMenuButton
+                            as-child
+                            :is-active="isCurrentUrl(item.href)"
+                            :tooltip="getTitle(item.title)"
+                        >
+                            <Link :href="item.href">
+                                <component :is="item.icon" />
+                                <span>{{ getTitle(item.title) }}</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarGroup>
+            <SidebarGroup class="px-2 py-0">
+                <SidebarGroupLabel>{{ t('admin.sidebar.billing') }}</SidebarGroupLabel>
+                <SidebarMenu>
+                    <SidebarMenuItem
+                        v-for="item in billingNavItems"
                         :key="item.href"
                     >
                         <SidebarMenuButton
@@ -118,7 +168,6 @@ const footerNavItems = computed<NavItem[]>(() => [
 
         <SidebarFooter>
             <NavFooter :items="footerNavItems" />
-            <LanguageDropdown variant="sidebar" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

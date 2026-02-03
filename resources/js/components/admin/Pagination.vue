@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 import { Link } from '@inertiajs/vue3';
 import { ChevronsLeft, ChevronsRight } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 type PaginationLink = {
     url: string | null;
@@ -16,13 +18,21 @@ type Props = {
     total: number;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const { t } = useTranslations();
+
+const showingText = computed(() =>
+    t('pagination.showing')
+        .replace('{from}', String(props.from))
+        .replace('{to}', String(props.to))
+        .replace('{total}', String(props.total)),
+);
 </script>
 
 <template>
     <div class="flex items-center justify-between px-2">
         <div class="text-sm text-muted-foreground">
-            Showing {{ from }} to {{ to }} of {{ total }} results
+            {{ showingText }}
         </div>
         <div class="flex items-center space-x-2">
             <Button v-if="links[0]?.url" variant="outline" size="icon" as-child>

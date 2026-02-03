@@ -15,6 +15,8 @@ class RoleController extends Controller
 {
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', Role::class);
+
         $query = Role::query()->withCount('permissions');
 
         if ($request->filled('search')) {
@@ -41,6 +43,8 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request): RedirectResponse
     {
+        $this->authorize('create', Role::class);
+
         $role = Role::create(['name' => $request->validated('name')]);
 
         if ($request->validated('permissions')) {
@@ -53,8 +57,14 @@ class RoleController extends Controller
 
     public function edit(Role $role): Response
     {
+        $role->load('permissions');
+
         return Inertia::render('admin/roles/Edit', [
-            'role' => $role->load('permissions'),
+            'role' => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'permissions' => $role->permissions->map(fn ($p) => ['id' => $p->id, 'name' => $p->name])->values()->all(),
+            ],
             'permissions' => Permission::all(['id', 'name']),
         ]);
     }
@@ -73,6 +83,8 @@ class RoleController extends Controller
 
     public function destroy(Role $role): RedirectResponse
     {
+        $this->authorize('delete', $role);
+
         if ($role->name === 'super-admin') {
             return redirect()->route('admin.roles.index')
                 ->with('error', 'Cannot delete the super-admin role.');

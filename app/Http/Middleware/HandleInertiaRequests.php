@@ -43,7 +43,10 @@ class HandleInertiaRequests extends Middleware
             'csrf_token' => csrf_token(),
             'auth' => [
                 'user' => $user,
-                'can_access_admin' => $user?->hasAnyRole(['super-admin', 'admin']) ?? false,
+                'can_access_admin' => $this->safeHasAnyRole($user, ['super-admin', 'admin', 'moderator']),
+                'can_manage_users' => $this->safeHasPermissionTo($user, 'manage-users'),
+                'can_manage_roles' => $this->safeHasPermissionTo($user, 'manage-roles'),
+                'can_manage_settings' => $this->safeHasPermissionTo($user, 'manage-settings'),
             ],
             'locale' => app()->getLocale(),
             'locales' => collect(config('locales.available', []))
@@ -59,5 +62,37 @@ class HandleInertiaRequests extends Middleware
             })(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * Check if the user has any of the given roles without throwing when roles are not seeded.
+     */
+    protected function safeHasAnyRole(?object $user, array $roles): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        try {
+            return $user->hasAnyRole($roles);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if the user has the given permission without throwing when permissions are not seeded.
+     */
+    protected function safeHasPermissionTo(?object $user, string $permission): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        try {
+            return $user->hasPermissionTo($permission);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }

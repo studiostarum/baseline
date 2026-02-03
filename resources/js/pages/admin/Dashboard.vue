@@ -9,10 +9,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
+import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { Key, Shield, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
+
+const { t } = useTranslations();
 
 type RecentUser = {
     id: number;
@@ -35,8 +38,8 @@ defineProps<Props>();
 const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Dashboard' },
+    { title: t('admin.breadcrumb'), href: '/admin' },
+    { title: t('admin.navigation.dashboard') },
 ]);
 
 function formatDate(dateString: string): string {
@@ -49,36 +52,36 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head title="Admin Dashboard" />
+    <Head :title="t('admin.title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">
-                    Admin Dashboard
+                    {{ t('admin.title') }}
                 </h1>
                 <p class="text-muted-foreground">
-                    Overview of your application.
+                    {{ t('admin.description') }}
                 </p>
             </div>
 
             <div class="grid gap-4 md:grid-cols-3">
                 <StatCard
-                    title="Total Users"
+                    :title="t('admin.stats.total_users')"
                     :value="stats.users"
-                    description="Registered users"
+                    :description="t('admin.stats.users_description')"
                     :icon="Users"
                 />
                 <StatCard
-                    title="Roles"
+                    :title="t('admin.stats.roles')"
                     :value="stats.roles"
-                    description="User roles defined"
+                    :description="t('admin.stats.roles_description')"
                     :icon="Shield"
                 />
                 <StatCard
-                    title="Permissions"
+                    :title="t('admin.stats.permissions')"
                     :value="stats.permissions"
-                    description="Available permissions"
+                    :description="t('admin.stats.permissions_description')"
                     :icon="Key"
                 />
             </div>
@@ -86,10 +89,10 @@ function formatDate(dateString: string): string {
             <div class="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Users</CardTitle>
-                        <CardDescription
-                            >Latest registered users</CardDescription
-                        >
+                        <CardTitle>{{ t('admin.recent_users.title') }}</CardTitle>
+                        <CardDescription>
+                            {{ t('admin.recent_users.description') }}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-4">
@@ -119,7 +122,7 @@ function formatDate(dateString: string): string {
                                 v-if="recentUsers.length === 0"
                                 class="text-center text-muted-foreground"
                             >
-                                No users yet.
+                                {{ t('admin.recent_users.empty') }}
                             </div>
                         </div>
                     </CardContent>
@@ -127,8 +130,10 @@ function formatDate(dateString: string): string {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Quick Actions</CardTitle>
-                        <CardDescription>Common admin tasks</CardDescription>
+                        <CardTitle>{{ t('admin.quick_actions.title') }}</CardTitle>
+                        <CardDescription>
+                            {{ t('admin.quick_actions.description') }}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div class="grid gap-2">
@@ -137,21 +142,21 @@ function formatDate(dateString: string): string {
                                 class="flex items-center gap-2 rounded-lg border p-3 transition-colors hover:bg-muted/50"
                             >
                                 <Users class="h-4 w-4" />
-                                <span>Create new user</span>
+                                <span>{{ t('admin.quick_actions.create_user') }}</span>
                             </Link>
                             <Link
                                 href="/admin/roles/create"
                                 class="flex items-center gap-2 rounded-lg border p-3 transition-colors hover:bg-muted/50"
                             >
                                 <Shield class="h-4 w-4" />
-                                <span>Create new role</span>
+                                <span>{{ t('admin.quick_actions.create_role') }}</span>
                             </Link>
                             <Link
                                 href="/admin/settings"
                                 class="flex items-center gap-2 rounded-lg border p-3 transition-colors hover:bg-muted/50"
                             >
                                 <Key class="h-4 w-4" />
-                                <span>Manage settings</span>
+                                <span>{{ t('admin.quick_actions.manage_settings') }}</span>
                             </Link>
                         </div>
                     </CardContent>

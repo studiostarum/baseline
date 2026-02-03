@@ -10,8 +10,8 @@ import { useTranslations } from '@/composables/useTranslations';
 import { home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
-import { Link, router } from '@inertiajs/vue3';
-import { Globe, LogOut, Settings } from 'lucide-vue-next';
+import { Link, usePage, router } from '@inertiajs/vue3';
+import { Globe, Languages, LogOut, Settings } from 'lucide-vue-next';
 
 type Props = {
     user: User;
@@ -24,6 +24,19 @@ const handleLogout = () => {
 defineProps<Props>();
 
 const { t } = useTranslations();
+
+const page = usePage();
+const locale = page.props.locale ?? 'en';
+const locales = (page.props.locales ?? {
+    en: 'English',
+    nl: 'Nederlands',
+}) as Record<string, string>;
+
+const switchLocale = (code: string) => {
+    if (code !== locale) {
+        window.location.href = `/locale/${code}`;
+    }
+};
 </script>
 
 <template>
@@ -45,6 +58,18 @@ const { t } = useTranslations();
                 <Globe class="mr-2 h-4 w-4" />
                 {{ t('navigation.website') }}
             </Link>
+        </DropdownMenuItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuGroup>
+        <DropdownMenuItem
+            v-for="(localeLabel, code) in locales"
+            :key="code"
+            :class="{ 'bg-accent': locale === code }"
+            @select="switchLocale(code)"
+        >
+            <Languages class="mr-2 h-4 w-4" />
+            {{ localeLabel }}
         </DropdownMenuItem>
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
