@@ -26,6 +26,15 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('forbidden', function () {
+    $response = Inertia::render('errors/Forbidden', [
+        'message' => null,
+    ])->toResponse(request());
+    $response->setStatusCode(403);
+
+    return $response;
+})->name('forbidden');
+
 Route::get('auth/{provider}', [App\Http\Controllers\SocialAuthController::class, 'redirect'])
     ->name('social.redirect');
 
