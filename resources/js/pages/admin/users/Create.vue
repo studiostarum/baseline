@@ -8,20 +8,14 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 
 const { t } = useTranslations();
 const { roleDisplayName } = useRoleDisplayName();
@@ -65,25 +59,19 @@ const sortedRoles = computed(() => {
     );
 });
 
-const selectedRole = ref(form.roles[0] ?? 'user');
+function isRoleChecked(roleName: string): boolean {
+    return form.roles.includes(roleName);
+}
 
-watch(
-    () => form.roles,
-    (roles) => {
-        const next = roles[0] ?? 'user';
-        if (selectedRole.value !== next) {
-            selectedRole.value = next;
+function setRoleChecked(roleName: string, checked: boolean): void {
+    if (checked) {
+        if (!form.roles.includes(roleName)) {
+            form.roles = [...form.roles, roleName];
         }
-    },
-    { deep: true },
-);
-
-watch(selectedRole, (value) => {
-    const next = value ? [value] : ['user'];
-    if (JSON.stringify(form.roles) !== JSON.stringify(next)) {
-        form.roles = next;
+    } else {
+        form.roles = form.roles.filter((name) => name !== roleName);
     }
-});
+}
 </script>
 
 <template>
@@ -167,27 +155,29 @@ watch(selectedRole, (value) => {
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-2">
-                            <Label for="roles">{{ t('admin.users.role') }}</Label>
-                            <Select
-                                v-model="selectedRole"
-                                :disabled="sortedRoles.length === 0"
-                                @click.prevent
-                            >
-                                <SelectTrigger id="roles" class="w-full">
-                                    <SelectValue
-                                        :placeholder="t('admin.users.select_role')"
+                            <Label>{{ t('admin.users.roles') }}</Label>
+                            <div class="flex flex-col gap-3">
+                                <div
+                                    v-for="role in sortedRoles"
+                                    :key="role.id"
+                                    class="flex items-center space-x-2"
+                                >
+                                    <Checkbox
+                                        :id="`role-${role.id}`"
+                                        :model-value="isRoleChecked(role.name)"
+                                        @update:model-value="
+                                            (val: boolean) =>
+                                                setRoleChecked(role.name, val)
+                                        "
                                     />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem
-                                        v-for="role in sortedRoles"
-                                        :key="role.id"
-                                        :value="role.name"
+                                    <Label
+                                        :for="`role-${role.id}`"
+                                        class="cursor-pointer"
                                     >
                                         {{ roleDisplayName(role.name) }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                                    </Label>
+                                </div>
+                            </div>
                             <p
                                 v-if="sortedRoles.length === 0"
                                 class="text-sm text-muted-foreground"

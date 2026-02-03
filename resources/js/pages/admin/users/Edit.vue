@@ -15,7 +15,7 @@ import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const { t } = useTranslations();
 const canManageUsers = computed(() => usePage().props.auth.can_manage_users);
@@ -27,7 +27,7 @@ type Role = {
 };
 
 type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
     roles: Role[];
