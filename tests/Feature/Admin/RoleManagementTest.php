@@ -65,7 +65,26 @@ test('admin can view edit role form', function () {
     $response->assertInertia(fn ($page) => $page
         ->component('admin/roles/Edit')
         ->has('role')
+        ->has('role.permissions')
         ->has('permissions')
+    );
+});
+
+test('edit role form includes role permissions for pre-selecting checkboxes', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $role = Role::findByName('admin');
+
+    $response = $this->actingAs($admin)->get("/admin/roles/{$role->id}/edit");
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/roles/Edit')
+        ->where('role.id', $role->id)
+        ->where('role.name', 'admin')
+        ->has('role.permissions', 4)
+        ->where('role.permissions.0.name', 'view-admin-dashboard')
     );
 });
 
@@ -111,8 +130,7 @@ test('admin cannot delete super-admin role', function () {
 
     $response = $this->actingAs($admin)->delete("/admin/roles/{$superAdminRole->id}");
 
-    $response->assertRedirect('/admin/roles');
-
+    $response->assertForbidden();
     $this->assertDatabaseHas('roles', [
         'name' => 'super-admin',
     ]);

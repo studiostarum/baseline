@@ -27,6 +27,8 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
+        Role::firstOrCreate(['name' => 'user']);
+
         $superAdmin = Role::firstOrCreate(['name' => 'super-admin']);
 
         $admin = Role::firstOrCreate(['name' => 'admin']);
@@ -38,8 +40,6 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $moderator = Role::firstOrCreate(['name' => 'moderator']);
-        $moderator->syncPermissions([
-            'view-admin-dashboard',
-        ]);
+        $moderator->syncPermissions([]);
     }
 }

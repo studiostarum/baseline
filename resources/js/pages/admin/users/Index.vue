@@ -4,10 +4,16 @@ import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
+import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+
+const { t } = useTranslations();
+const canManageUsers = computed(() => usePage().props.auth.can_manage_users);
+const { roleDisplayName } = useRoleDisplayName();
 
 type Role = {
     id: number;
@@ -19,6 +25,7 @@ type User = {
     name: string;
     email: string;
     created_at: string;
+    updated_at: string;
     roles: Role[];
 };
 
@@ -38,15 +45,16 @@ type Props = {
 defineProps<Props>();
 
 const breadcrumbs = computed(() => [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Users' },
+    { title: t('admin.breadcrumb'), href: '/admin' },
+    { title: t('admin.navigation.users') },
 ]);
 
 const columns = computed<Column<User>[]>(() => [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'email', label: 'Email', sortable: true },
-    { key: 'roles', label: 'Roles' },
-    { key: 'created_at', label: 'Created', sortable: true },
+    { key: 'name', label: t('admin.table.name'), sortable: true },
+    { key: 'email', label: t('admin.table.email'), sortable: true },
+    { key: 'roles', label: t('admin.table.roles') },
+    { key: 'created_at', label: t('admin.table.created'), sortable: true },
+    { key: 'updated_at', label: t('admin.table.updated'), sortable: true },
 ]);
 
 const deleteDialog = ref(false);
@@ -84,22 +92,30 @@ function formatDate(dateString: string): string {
         year: 'numeric',
     });
 }
+
 </script>
 
 <template>
-    <Head title="Users" />
+    <Head :title="t('admin.users.title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">Users</h1>
-                    <p class="text-muted-foreground">Manage user accounts.</p>
+                    <h1 class="text-2xl font-bold tracking-tight">
+                        {{ t('admin.users.title') }}
+                    </h1>
+                    <p class="text-muted-foreground">
+                        {{ t('admin.users.description') }}
+                    </p>
                 </div>
-                <Button as-child>
+                <Button
+                    v-if="canManageUsers"
+                    as-child
+                >
                     <Link href="/admin/users/create">
                         <Plus class="mr-2 h-4 w-4" />
-                        Add User
+                        {{ t('admin.users.add_user') }}
                     </Link>
                 </Button>
             </div>
@@ -109,7 +125,7 @@ function formatDate(dateString: string): string {
                 :data="users.data"
                 :filters="filters"
                 route-name="/admin/users"
-                search-placeholder="Search users..."
+                :search-placeholder="t('admin.users.search_placeholder')"
             >
                 <template #cell-roles="{ item }">
                     <div class="flex flex-wrap gap-1">
@@ -118,13 +134,13 @@ function formatDate(dateString: string): string {
                             :key="role.id"
                             variant="secondary"
                         >
-                            {{ role.name }}
+                            {{ roleDisplayName(role.name) }}
                         </Badge>
                         <span
                             v-if="(item as User).roles.length === 0"
                             class="text-sm text-muted-foreground"
                         >
-                            No roles
+                            {{ t('admin.users.no_roles') }}
                         </span>
                     </div>
                 </template>
@@ -133,7 +149,14 @@ function formatDate(dateString: string): string {
                     {{ formatDate(value as string) }}
                 </template>
 
-                <template #actions="{ item }">
+                <template #cell-updated_at="{ value }">
+                    {{ formatDate(value as string) }}
+                </template>
+
+                <template
+                    v-if="canManageUsers"
+                    #actions="{ item }"
+                >
                     <div class="flex items-center justify-end gap-2">
                         <Button variant="ghost" size="icon" as-child>
                             <Link
@@ -165,9 +188,16 @@ function formatDate(dateString: string): string {
 
     <ConfirmDialog
         v-model:open="deleteDialog"
-        title="Delete User"
-        :description="`Are you sure you want to delete ${userToDelete?.name}? This action cannot be undone.`"
-        confirm-label="Delete"
+        :title="t('admin.users.delete_title')"
+        :description="
+            userToDelete
+                ? t('admin.users.delete_confirm').replace(
+                      '{name}',
+                      userToDelete.name,
+                  )
+                : ''
+        "
+        :confirm-label="t('common.delete')"
         :loading="isDeleting"
         @confirm="confirmDelete"
     />

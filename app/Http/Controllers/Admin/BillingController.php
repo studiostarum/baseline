@@ -7,15 +7,22 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Cashier\Cashier;
 use Laravel\Cashier\Subscription;
 
 class BillingController extends Controller
 {
+    private const BILLING_PERMISSIONS = ['manage-users', 'manage-roles', 'manage-settings'];
+
     /**
      * Display the billing dashboard.
      */
     public function index(): Response
     {
+        if (! request()->user()->hasAnyPermission(self::BILLING_PERMISSIONS)) {
+            abort(403, __('errors.unauthorized'));
+        }
+
         $activeSubscriptions = Subscription::query()
             ->where('stripe_status', 'active')
             ->count();
@@ -63,6 +70,11 @@ class BillingController extends Controller
      */
     public function users(Request $request): Response
     {
+        $requestUser = $request->user();
+        if (! $requestUser->hasRole('moderator') && ! $requestUser->hasAnyPermission(self::BILLING_PERMISSIONS)) {
+            abort(403, __('errors.unauthorized'));
+        }
+
         $query = User::query()->with('subscriptions');
 
         if ($request->filled('search')) {
@@ -117,16 +129,36 @@ class BillingController extends Controller
      */
     public function show(User $user): Response
     {
-        $subscriptions = $user->subscriptions->map(fn (Subscription $subscription) => [
-            'id' => $subscription->id,
-            'type' => $subscription->type,
-            'status' => $subscription->stripe_status,
-            'onTrial' => $subscription->onTrial(),
-            'trialEndsAt' => $subscription->trial_ends_at?->toIso8601String(),
-            'endsAt' => $subscription->ends_at?->toIso8601String(),
-            'onGracePeriod' => $subscription->onGracePeriod(),
-            'createdAt' => $subscription->created_at->toIso8601String(),
-        ]);
+        $requestUser = request()->user();
+        if (! $requestUser->hasRole('moderator') && ! $requestUser->hasAnyPermission(self::BILLING_PERMISSIONS)) {
+            abort(403, __('errors.unauthorized'));
+        }
+
+        $subscriptions = $user->subscriptions->map(function (Subscription $subscription) {
+            $priceId = $subscription->stripe_price ?? $subscription->items->first()?->stripe_price;
+            $typeDisplayName = $priceId ? $this->resolvePriceProductName($priceId) : null;
+
+            $renewsAt = null;
+            try {
+                $periodEnd = $subscription->currentPeriodEnd();
+                $renewsAt = $periodEnd?->toIso8601String();
+            } catch (\Throwable) {
+                // Stripe API may be unavailable
+            }
+
+            return [
+                'id' => $subscription->id,
+                'type' => $subscription->type,
+                'typeDisplayName' => $typeDisplayName ?? $subscription->type,
+                'status' => $subscription->stripe_status,
+                'onTrial' => $subscription->onTrial(),
+                'trialEndsAt' => $subscription->trial_ends_at?->toIso8601String(),
+                'renewsAt' => $renewsAt,
+                'endsAt' => $subscription->ends_at?->toIso8601String(),
+                'onGracePeriod' => $subscription->onGracePeriod(),
+                'createdAt' => $subscription->created_at->toIso8601String(),
+            ];
+        });
 
         $invoices = [];
         if ($user->hasStripeId()) {
@@ -145,15 +177,20 @@ class BillingController extends Controller
         }
 
         $paymentMethod = null;
-        if ($user->hasDefaultPaymentMethod()) {
+        if ($user->hasStripeId()) {
             try {
                 $defaultPaymentMethod = $user->defaultPaymentMethod();
-                $paymentMethod = [
-                    'brand' => $defaultPaymentMethod->card->brand ?? null,
-                    'last4' => $defaultPaymentMethod->card->last4 ?? null,
-                    'expMonth' => $defaultPaymentMethod->card->exp_month ?? null,
-                    'expYear' => $defaultPaymentMethod->card->exp_year ?? null,
-                ];
+                if (! $defaultPaymentMethod) {
+                    $defaultPaymentMethod = $user->paymentMethods()->first();
+                }
+                if ($defaultPaymentMethod && $defaultPaymentMethod->card) {
+                    $paymentMethod = [
+                        'brand' => $defaultPaymentMethod->card->brand ?? null,
+                        'last4' => $defaultPaymentMethod->card->last4 ?? null,
+                        'expMonth' => $defaultPaymentMethod->card->exp_month ?? null,
+                        'expYear' => $defaultPaymentMethod->card->exp_year ?? null,
+                    ];
+                }
             } catch (\Exception $e) {
                 $paymentMethod = null;
             }
@@ -171,5 +208,28 @@ class BillingController extends Controller
             'invoices' => $invoices,
             'paymentMethod' => $paymentMethod,
         ]);
+    }
+
+    /**
+     * Resolve Stripe price ID to the product name from Stripe.
+     *
+     * @return string|null Product name, or null on failure
+     */
+    private function resolvePriceProductName(string $priceId): ?string
+    {
+        try {
+            $price = Cashier::stripe()->prices->retrieve($priceId, [
+                'expand' => ['product'],
+            ]);
+
+            $product = $price->product;
+            if (is_object($product) && isset($product->name)) {
+                return $product->name;
+            }
+
+            return null;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', DashboardController::class)->name('dashboard');
 
 Route::resource('users', UserController::class);
+Route::delete('users/{user}/two-factor', [UserController::class, 'disableTwoFactor'])->name('users.two-factor.destroy');
 Route::resource('roles', RoleController::class);
 
 Route::get('settings', [SettingController::class, 'index'])->name('settings.index');

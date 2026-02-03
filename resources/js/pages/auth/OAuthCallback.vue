@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTranslations } from '@/composables/useTranslations';
 import { router } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 
@@ -9,6 +10,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { t } = useTranslations();
 
 onMounted(() => {
     // Check if we're in a popup window
@@ -26,7 +28,7 @@ onMounted(() => {
             window.opener.postMessage(
                 {
                     type: 'oauth-error',
-                    error: props.error || 'Authentication failed',
+                    error: props.error || t('auth.oauth.auth_failed'),
                     provider: props.provider,
                 },
                 window.location.origin,
@@ -53,7 +55,7 @@ onMounted(() => {
         } else {
             router.visit('/login', {
                 data: {
-                    error: props.error || 'Authentication failed',
+                    error: props.error || t('auth.oauth.auth_failed'),
                 },
             });
         }
@@ -83,10 +85,10 @@ onMounted(() => {
                     </svg>
                 </div>
                 <h2 class="text-lg font-semibold">
-                    Account connected successfully!
+                    {{ t('auth.oauth.account_connected_success') }}
                 </h2>
                 <p class="text-muted-foreground">
-                    This window will close automatically.
+                    {{ t('auth.oauth.window_will_close') }}
                 </p>
             </div>
             <div v-else class="space-y-4">
@@ -107,9 +109,19 @@ onMounted(() => {
                         />
                     </svg>
                 </div>
-                <h2 class="text-lg font-semibold">Connection failed</h2>
+                <h2 class="text-lg font-semibold">
+                    {{
+                        provider
+                            ? t('auth.oauth.unable_to_authenticate', {
+                                  provider:
+                                      provider.charAt(0).toUpperCase() +
+                                      provider.slice(1),
+                              })
+                            : t('auth.oauth.connection_failed')
+                    }}
+                </h2>
                 <p class="text-muted-foreground">
-                    {{ error || 'An error occurred during authentication.' }}
+                    {{ error || t('auth.oauth.auth_error_fallback') }}
                 </p>
             </div>
         </div>

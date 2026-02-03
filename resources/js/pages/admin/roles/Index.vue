@@ -4,10 +4,16 @@ import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
+import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+
+const { t } = useTranslations();
+const canManageRoles = computed(() => usePage().props.auth.can_manage_roles);
+const { roleDisplayName } = useRoleDisplayName();
 
 type Role = {
     id: number;
@@ -32,14 +38,14 @@ type Props = {
 defineProps<Props>();
 
 const breadcrumbs = computed(() => [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Roles' },
+    { title: t('admin.breadcrumb'), href: '/admin' },
+    { title: t('admin.navigation.roles') },
 ]);
 
 const columns = computed<Column<Role>[]>(() => [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'permissions_count', label: 'Permissions' },
-    { key: 'created_at', label: 'Created', sortable: true },
+    { key: 'name', label: t('admin.table.name'), sortable: true },
+    { key: 'permissions_count', label: t('admin.table.permissions') },
+    { key: 'created_at', label: t('admin.table.created'), sortable: true },
 ]);
 
 const deleteDialog = ref(false);
@@ -77,24 +83,30 @@ function formatDate(dateString: string): string {
         year: 'numeric',
     });
 }
+
 </script>
 
 <template>
-    <Head title="Roles" />
+    <Head :title="t('admin.roles.title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">Roles</h1>
+                    <h1 class="text-2xl font-bold tracking-tight">
+                        {{ t('admin.roles.title') }}
+                    </h1>
                     <p class="text-muted-foreground">
-                        Manage user roles and permissions.
+                        {{ t('admin.roles.description') }}
                     </p>
                 </div>
-                <Button as-child>
+                <Button
+                    v-if="canManageRoles"
+                    as-child
+                >
                     <Link href="/admin/roles/create">
                         <Plus class="mr-2 h-4 w-4" />
-                        Add Role
+                        {{ t('admin.roles.add_role') }}
                     </Link>
                 </Button>
             </div>
@@ -104,30 +116,35 @@ function formatDate(dateString: string): string {
                 :data="roles.data"
                 :filters="filters"
                 route-name="/admin/roles"
-                search-placeholder="Search roles..."
+                :search-placeholder="t('admin.roles.search_placeholder')"
             >
                 <template #cell-name="{ item }">
                     <div class="flex items-center gap-2">
                         <span class="font-medium">{{
-                            (item as Role).name
+                            roleDisplayName((item as Role).name)
                         }}</span>
                         <Badge
                             v-if="(item as Role).name === 'super-admin'"
                             variant="default"
                         >
-                            System
+                            {{ t('admin.roles.system_badge') }}
                         </Badge>
                     </div>
                 </template>
 
-                <template #cell-permissions_count="{ value }">
+                <template #cell-permissions_count="{ item, value }">
                     <Badge variant="secondary">
-                        {{ value }}
-                        {{
-                            (value as number) === 1
-                                ? 'permission'
-                                : 'permissions'
-                        }}
+                        <template v-if="(item as Role).name === 'super-admin'">
+                            {{ t('admin.roles.all_permissions') }}
+                        </template>
+                        <template v-else>
+                            {{ value }}
+                            {{
+                                (value as number) === 1
+                                    ? t('admin.roles.permission_singular')
+                                    : t('admin.roles.permission_plural')
+                            }}
+                        </template>
                     </Badge>
                 </template>
 
@@ -135,7 +152,10 @@ function formatDate(dateString: string): string {
                     {{ formatDate(value as string) }}
                 </template>
 
-                <template #actions="{ item }">
+                <template
+                    v-if="canManageRoles"
+                    #actions="{ item }"
+                >
                     <div class="flex items-center justify-end gap-2">
                         <Button variant="ghost" size="icon" as-child>
                             <Link
@@ -168,9 +188,16 @@ function formatDate(dateString: string): string {
 
     <ConfirmDialog
         v-model:open="deleteDialog"
-        title="Delete Role"
-        :description="`Are you sure you want to delete the '${roleToDelete?.name}' role? This action cannot be undone.`"
-        confirm-label="Delete"
+        :title="t('admin.roles.delete_title')"
+        :description="
+            roleToDelete
+                ? t('admin.roles.delete_confirm').replace(
+                      '{name}',
+                      roleDisplayName(roleToDelete.name),
+                  )
+                : ''
+        "
+        :confirm-label="t('common.delete')"
         :loading="isDeleting"
         @confirm="confirmDelete"
     />

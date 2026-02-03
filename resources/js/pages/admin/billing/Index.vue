@@ -10,6 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
+import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { CreditCard, TrendingUp, Users, XCircle } from 'lucide-vue-next';
@@ -39,12 +40,26 @@ type Props = {
 
 defineProps<Props>();
 
+const { t } = useTranslations();
 const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Billing' },
+    { title: t('admin.breadcrumb'), href: '/admin' },
+    { title: t('admin.navigation.billing') },
 ]);
+
+const statusKeyMap: Record<string, string> = {
+    active: 'admin.billing.status_active',
+    trialing: 'admin.billing.status_trialing',
+    canceled: 'admin.billing.status_canceled',
+    past_due: 'admin.billing.status_past_due',
+    unpaid: 'admin.billing.status_unpaid',
+};
+
+function getTranslatedStatus(status: string): string {
+    const key = statusKeyMap[status];
+    return key ? t(key) : status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+}
 
 function getStatusVariant(
     status: string,
@@ -77,40 +92,42 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head title="Billing Dashboard" />
+    <Head :title="t('admin.billing.head_title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Billing</h1>
+                <h1 class="text-2xl font-bold tracking-tight">
+                    {{ t('admin.billing.title') }}
+                </h1>
                 <p class="text-muted-foreground">
-                    Overview of subscriptions and payments.
+                    {{ t('admin.billing.description') }}
                 </p>
             </div>
 
             <div class="grid gap-4 md:grid-cols-4">
                 <StatCard
-                    title="Active Subscriptions"
+                    :title="t('admin.billing.stats.active')"
                     :value="stats.active"
-                    description="Currently active"
+                    :description="t('admin.billing.stats.active_description')"
                     :icon="TrendingUp"
                 />
                 <StatCard
-                    title="Trialing"
+                    :title="t('admin.billing.stats.trialing')"
                     :value="stats.trialing"
-                    description="In trial period"
+                    :description="t('admin.billing.stats.trialing_description')"
                     :icon="CreditCard"
                 />
                 <StatCard
-                    title="Canceled"
+                    :title="t('admin.billing.stats.canceled')"
                     :value="stats.canceled"
-                    description="Canceled subscriptions"
+                    :description="t('admin.billing.stats.canceled_description')"
                     :icon="XCircle"
                 />
                 <StatCard
-                    title="Total"
+                    :title="t('admin.billing.stats.total')"
                     :value="stats.total"
-                    description="All subscriptions"
+                    :description="t('admin.billing.stats.total_description')"
                     :icon="Users"
                 />
             </div>
@@ -118,9 +135,15 @@ function formatDate(dateString: string): string {
             <div class="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Subscriptions</CardTitle>
+                        <CardTitle>{{
+                            t('admin.billing.recent_subscriptions')
+                        }}</CardTitle>
                         <CardDescription>
-                            Latest subscription activity.
+                            {{
+                                t(
+                                    'admin.billing.recent_subscriptions_description',
+                                )
+                            }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -151,7 +174,7 @@ function formatDate(dateString: string): string {
                                         v-else
                                         class="text-sm leading-none font-medium text-muted-foreground"
                                     >
-                                        Unknown user
+                                        {{ t('admin.billing.unknown_user') }}
                                     </p>
                                     <p
                                         v-if="subscription.user"
@@ -165,7 +188,9 @@ function formatDate(dateString: string): string {
                                         getStatusVariant(subscription.status)
                                     "
                                 >
-                                    {{ formatStatus(subscription.status) }}
+                                    {{
+                                        getTranslatedStatus(subscription.status)
+                                    }}
                                 </Badge>
                                 <div class="text-sm text-muted-foreground">
                                     {{ formatDate(subscription.createdAt) }}
@@ -175,7 +200,7 @@ function formatDate(dateString: string): string {
                                 v-if="recentSubscriptions.length === 0"
                                 class="text-center text-muted-foreground"
                             >
-                                No subscriptions yet.
+                                {{ t('admin.billing.no_subscriptions') }}
                             </div>
                         </div>
                     </CardContent>
@@ -183,9 +208,11 @@ function formatDate(dateString: string): string {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Quick Actions</CardTitle>
+                        <CardTitle>{{
+                            t('admin.billing.quick_actions')
+                        }}</CardTitle>
                         <CardDescription>
-                            Common billing management tasks.
+                            {{ t('admin.billing.quick_actions_description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -195,7 +222,9 @@ function formatDate(dateString: string): string {
                                 class="flex items-center gap-2 rounded-lg border p-3 transition-colors hover:bg-muted/50"
                             >
                                 <Users class="h-4 w-4" />
-                                <span>View All Subscribers</span>
+                                <span>{{
+                                    t('admin.billing.view_all_subscribers')
+                                }}</span>
                             </Link>
                         </div>
                     </CardContent>

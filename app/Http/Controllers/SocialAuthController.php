@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Permission\Models\Role;
 
 class SocialAuthController extends Controller
 {
@@ -34,7 +35,7 @@ class SocialAuthController extends Controller
             } else {
                 // If no session but linking is requested, redirect to login
                 return redirect()->route('login')
-                    ->with('error', 'You must be logged in to link a social account.');
+                    ->with('error', __('auth.oauth.must_be_logged_in_to_link'));
             }
         }
 
@@ -117,13 +118,13 @@ class SocialAuthController extends Controller
                     if ($isPopup) {
                         return Inertia::render('auth/OAuthCallback', [
                             'success' => false,
-                            'error' => 'Session expired. Please log in again to link your account.',
+                            'error' => __('auth.oauth.session_expired_link'),
                             'provider' => $provider,
                         ]);
                     }
 
                     return redirect()->route('login')
-                        ->with('error', 'Session expired. Please log in again to link your account.');
+                        ->with('error', __('auth.oauth.session_expired_link'));
                 }
 
                 $result = $this->handleAccountLinking($user, $provider, $socialUser, $isPopup);
@@ -148,16 +149,18 @@ class SocialAuthController extends Controller
                 $isPopup = $decoded['popup'] ?? false;
             }
 
+            $errorMessage = __('auth.oauth.unable_to_authenticate', ['provider' => ucfirst($provider)]);
+
             if ($isPopup) {
                 return Inertia::render('auth/OAuthCallback', [
                     'success' => false,
-                    'error' => 'Unable to authenticate with '.ucfirst($provider).'. Please try again.',
+                    'error' => $errorMessage,
                     'provider' => $provider,
                 ]);
             }
 
             return redirect()->route('login')
-                ->with('error', 'Unable to authenticate with '.ucfirst($provider).'. Please try again.');
+                ->with('error', $errorMessage);
         }
     }
 
@@ -391,7 +394,7 @@ class SocialAuthController extends Controller
             }
 
             return redirect()->route('profile.edit')
-                ->with('status', ucfirst($provider).' account linked successfully.');
+                ->with('status', __('auth.oauth.account_linked_success', ['provider' => ucfirst($provider)]));
         });
     }
 
@@ -407,12 +410,18 @@ class SocialAuthController extends Controller
             throw new \Exception('Email is required but not provided by '.ucfirst($provider));
         }
 
-        return User::create([
+        $user = User::create([
             'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'User',
             'email' => $email,
             'email_verified_at' => now(),
             'password' => null,
         ]);
+
+        $user->assignRole(Role::firstOrCreate(
+            ['name' => 'user', 'guard_name' => config('auth.defaults.guard')]
+        ));
+
+        return $user;
     }
 
     /**

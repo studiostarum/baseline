@@ -13,6 +13,11 @@ class SettingController extends Controller
 {
     public function index(): Response
     {
+        $user = request()->user();
+        if (! $user->hasRole('moderator') && ! $user->hasPermissionTo('manage-settings')) {
+            abort(403, __('errors.unauthorized'));
+        }
+
         $settings = Setting::all()->pluck('value', 'key')->toArray();
 
         return Inertia::render('admin/Settings', [
@@ -22,6 +27,10 @@ class SettingController extends Controller
 
     public function update(SettingRequest $request): RedirectResponse
     {
+        if (! $request->user()->hasPermissionTo('manage-settings')) {
+            abort(403, __('errors.unauthorized'));
+        }
+
         foreach ($request->validated('settings') as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],

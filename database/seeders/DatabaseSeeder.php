@@ -22,6 +22,16 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin->assignRole('super-admin');
 
+        $studioAdmin = User::firstOrCreate(
+            ['email' => 'studio.starum@gmail.com'],
+            [
+                'name' => 'Studio Starum',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $studioAdmin->assignRole('admin');
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',

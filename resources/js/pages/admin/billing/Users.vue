@@ -3,7 +3,9 @@ import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { index as billingIndex, show as billingShow } from '@/routes/admin/billing';
 import { Head, Link } from '@inertiajs/vue3';
 import { Eye } from 'lucide-vue-next';
 import { computed } from 'vue';
@@ -37,18 +39,20 @@ type Props = {
 
 defineProps<Props>();
 
+const { t } = useTranslations();
+
 const breadcrumbs = computed(() => [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Billing', href: '/admin/billing' },
-    { title: 'Users' },
+    { title: t('admin.breadcrumb'), href: '/admin' },
+    { title: t('admin.navigation.billing'), href: billingIndex.url() },
+    { title: t('admin.billing.users.title') },
 ]);
 
-const columns: Column<User>[] = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'email', label: 'Email', sortable: true },
-    { key: 'subscription', label: 'Subscription' },
-    { key: 'createdAt', label: 'Joined', sortable: true },
-];
+const columns = computed<Column<User>[]>(() => [
+    { key: 'name', label: t('admin.billing.users.column_name'), sortable: true },
+    { key: 'email', label: t('admin.billing.users.column_email'), sortable: true },
+    { key: 'subscription', label: t('admin.billing.users.column_subscription') },
+    { key: 'createdAt', label: t('admin.billing.users.column_joined'), sortable: true },
+]);
 
 function getStatusVariant(
     status: string,
@@ -67,12 +71,21 @@ function getStatusVariant(
     }
 }
 
+const statusKeyMap: Record<string, string> = {
+    active: 'admin.billing.status_active',
+    trialing: 'admin.billing.status_trialing',
+    canceled: 'admin.billing.status_canceled',
+    past_due: 'admin.billing.status_past_due',
+    unpaid: 'admin.billing.status_unpaid',
+};
+
 function formatStatus(status: string): string {
-    return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    const key = statusKeyMap[status];
+    return key ? t(key) : status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -81,17 +94,17 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head title="Billing Users" />
+    <Head :title="t('admin.billing.users.head_title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">
-                        Billing Users
+                        {{ t('admin.billing.users.title') }}
                     </h1>
                     <p class="text-muted-foreground">
-                        View and manage user subscriptions.
+                        {{ t('admin.billing.users.description') }}
                     </p>
                 </div>
             </div>
@@ -101,7 +114,7 @@ function formatDate(dateString: string): string {
                 :data="users.data"
                 :filters="filters"
                 route-name="/admin/billing/users"
-                search-placeholder="Search users..."
+                :search-placeholder="t('admin.billing.users.search_placeholder')"
             >
                 <template #cell-subscription="{ item }">
                     <div class="flex items-center gap-2">
@@ -123,19 +136,19 @@ function formatDate(dateString: string): string {
                             v-if="(item as User).subscription?.onTrial"
                             class="text-xs text-muted-foreground"
                         >
-                            (Trial)
+                            ({{ t('admin.billing.users.trial') }})
                         </span>
                         <span
                             v-if="(item as User).subscription?.onGracePeriod"
                             class="text-xs text-muted-foreground"
                         >
-                            (Grace Period)
+                            ({{ t('admin.billing.users.grace_period') }})
                         </span>
                         <span
                             v-if="!(item as User).subscription"
                             class="text-sm text-muted-foreground"
                         >
-                            No subscription
+                            {{ t('admin.billing.users.no_subscription') }}
                         </span>
                     </div>
                 </template>
@@ -147,9 +160,7 @@ function formatDate(dateString: string): string {
                 <template #actions="{ item }">
                     <div class="flex items-center justify-end gap-2">
                         <Button variant="ghost" size="icon" as-child>
-                            <Link
-                                :href="`/admin/billing/users/${(item as User).id}`"
-                            >
+                            <Link :href="billingShow.url((item as User).id)">
                                 <Eye class="h-4 w-4" />
                             </Link>
                         </Button>

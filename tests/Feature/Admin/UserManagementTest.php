@@ -70,8 +70,25 @@ test('admin can view edit user form', function () {
     $response->assertInertia(fn ($page) => $page
         ->component('admin/users/Edit')
         ->has('user')
+        ->where('user.two_factor_enabled', false)
         ->has('roles')
     );
+});
+
+test('admin can disable two-factor authentication for a user', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $user = User::factory()->withTwoFactor()->create();
+
+    expect($user->hasEnabledTwoFactorAuthentication())->toBeTrue();
+
+    $response = $this->actingAs($admin)->delete("/admin/users/{$user->id}/two-factor");
+
+    $response->assertRedirect("/admin/users/{$user->id}/edit");
+
+    $user->refresh();
+    expect($user->hasEnabledTwoFactorAuthentication())->toBeFalse();
 });
 
 test('admin can update a user', function () {
@@ -115,8 +132,7 @@ test('admin cannot delete themselves', function () {
 
     $response = $this->actingAs($admin)->delete("/admin/users/{$admin->id}");
 
-    $response->assertRedirect('/admin/users');
-
+    $response->assertForbidden();
     $this->assertDatabaseHas('users', [
         'id' => $admin->id,
     ]);

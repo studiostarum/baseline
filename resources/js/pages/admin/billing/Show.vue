@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CardBrandIcon from '@/components/CardBrandIcon.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useInitials } from '@/composables/useInitials';
+import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import { users as billingUsers } from '@/routes/admin/billing';
 import { Head, Link } from '@inertiajs/vue3';
 import {
     ArrowLeft,
@@ -32,9 +35,11 @@ import { computed } from 'vue';
 type Subscription = {
     id: number;
     type: string;
+    typeDisplayName?: string;
     status: string;
     onTrial: boolean;
     trialEndsAt: string | null;
+    renewsAt: string | null;
     endsAt: string | null;
     onGracePeriod: boolean;
     createdAt: string;
@@ -73,14 +78,26 @@ type Props = {
 
 defineProps<Props>();
 
+const { t } = useTranslations();
 const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Billing', href: '/admin/billing' },
-    { title: 'Users', href: '/admin/billing/users' },
-    { title: 'User Details' },
+    { title: t('admin.breadcrumb'), href: '/admin' },
+    { title: t('admin.navigation.billing'), href: '/admin/billing' },
+    { title: t('admin.billing.users.title'), href: billingUsers.url() },
+    { title: t('admin.billing.show.breadcrumb_details') },
 ]);
+
+const statusKeyMap: Record<string, string> = {
+    active: 'admin.billing.status_active',
+    trialing: 'admin.billing.status_trialing',
+    canceled: 'admin.billing.status_canceled',
+    past_due: 'admin.billing.status_past_due',
+    unpaid: 'admin.billing.status_unpaid',
+    paid: 'admin.billing.status_paid',
+    open: 'admin.billing.status_open',
+    void: 'admin.billing.status_void',
+};
 
 function getStatusVariant(
     status: string,
@@ -103,11 +120,12 @@ function getStatusVariant(
 }
 
 function formatStatus(status: string): string {
-    return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    const key = statusKeyMap[status];
+    return key ? t(key) : status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -116,13 +134,13 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="`Billing - ${user.name}`" />
+    <Head :title="t('admin.billing.show.head_title').replace(':name', user.name)" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center gap-4">
                 <Button variant="ghost" size="icon" as-child>
-                    <Link href="/admin/billing/users">
+                    <Link :href="billingUsers.url()">
                         <ArrowLeft class="h-4 w-4" />
                     </Link>
                 </Button>
@@ -147,22 +165,22 @@ function formatDate(dateString: string): string {
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <UserIcon class="h-5 w-5" />
-                            User Information
+                            {{ t('admin.billing.show.user_information') }}
                         </CardTitle>
                     </CardHeader>
                     <CardContent class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-muted-foreground">User ID</span>
+                            <span class="text-muted-foreground">{{ t('admin.billing.show.user_id') }}</span>
                             <span class="font-mono">{{ user.id }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-muted-foreground">Stripe ID</span>
+                            <span class="text-muted-foreground">{{ t('admin.billing.show.stripe_id') }}</span>
                             <span class="font-mono text-sm">{{
-                                user.stripeId || 'Not connected'
+                                user.stripeId || t('admin.billing.show.not_connected')
                             }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-muted-foreground">Joined</span>
+                            <span class="text-muted-foreground">{{ t('admin.billing.show.joined') }}</span>
                             <span>{{ formatDate(user.createdAt) }}</span>
                         </div>
                     </CardContent>
@@ -173,7 +191,7 @@ function formatDate(dateString: string): string {
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <CreditCard class="h-5 w-5" />
-                            Payment Method
+                            {{ t('admin.billing.show.payment_method') }}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -184,23 +202,25 @@ function formatDate(dateString: string): string {
                             <div
                                 class="flex h-12 w-16 items-center justify-center rounded bg-muted"
                             >
-                                <span class="text-sm font-medium uppercase">{{
-                                    paymentMethod.brand
-                                }}</span>
+                                <CardBrandIcon
+                                    :brand="paymentMethod.brand"
+                                />
                             </div>
                             <div>
                                 <p class="font-medium">
                                     •••• •••• •••• {{ paymentMethod.last4 }}
                                 </p>
                                 <p class="text-sm text-muted-foreground">
-                                    Expires {{ paymentMethod.expMonth }}/{{
-                                        paymentMethod.expYear
+                                    {{
+                                        t('admin.billing.show.expires')
+                                            .replace(':month', String(paymentMethod.expMonth))
+                                            .replace(':year', String(paymentMethod.expYear))
                                     }}
                                 </p>
                             </div>
                         </div>
                         <p v-else class="text-muted-foreground">
-                            No payment method on file.
+                            {{ t('admin.billing.show.no_payment_method') }}
                         </p>
                     </CardContent>
                 </Card>
@@ -209,20 +229,21 @@ function formatDate(dateString: string): string {
             <!-- Subscriptions -->
             <Card>
                 <CardHeader>
-                    <CardTitle>Subscriptions</CardTitle>
+                    <CardTitle>{{ t('admin.billing.show.subscriptions') }}</CardTitle>
                     <CardDescription>
-                        All subscription history for this user.
+                        {{ t('admin.billing.show.subscriptions_description') }}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table v-if="subscriptions.length > 0">
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Trial Ends</TableHead>
-                                <TableHead>Ends At</TableHead>
-                                <TableHead>Created</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_type') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_status') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_trial_ends') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_renews_at') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_ends_at') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_created') }}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -231,7 +252,7 @@ function formatDate(dateString: string): string {
                                 :key="subscription.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ subscription.type }}
+                                    {{ subscription.typeDisplayName ?? subscription.type }}
                                 </TableCell>
                                 <TableCell>
                                     <div class="flex items-center gap-2">
@@ -252,13 +273,13 @@ function formatDate(dateString: string): string {
                                             v-if="subscription.onTrial"
                                             class="text-xs text-muted-foreground"
                                         >
-                                            (Trial)
+                                            ({{ t('admin.billing.users.trial') }})
                                         </span>
                                         <span
                                             v-if="subscription.onGracePeriod"
                                             class="text-xs text-muted-foreground"
                                         >
-                                            (Grace)
+                                            ({{ t('admin.billing.show.grace') }})
                                         </span>
                                     </div>
                                 </TableCell>
@@ -268,6 +289,13 @@ function formatDate(dateString: string): string {
                                             ? formatDate(
                                                   subscription.trialEndsAt,
                                               )
+                                            : '-'
+                                    }}
+                                </TableCell>
+                                <TableCell>
+                                    {{
+                                        subscription.renewsAt
+                                            ? formatDate(subscription.renewsAt)
                                             : '-'
                                     }}
                                 </TableCell>
@@ -285,7 +313,7 @@ function formatDate(dateString: string): string {
                         </TableBody>
                     </Table>
                     <p v-else class="text-muted-foreground">
-                        No subscriptions found.
+                        {{ t('admin.billing.show.no_subscriptions') }}
                     </p>
                 </CardContent>
             </Card>
@@ -295,23 +323,23 @@ function formatDate(dateString: string): string {
                 <CardHeader>
                     <CardTitle class="flex items-center gap-2">
                         <FileText class="h-5 w-5" />
-                        Invoices
+                        {{ t('admin.billing.show.invoices') }}
                     </CardTitle>
                     <CardDescription>
-                        Payment history and invoice downloads.
+                        {{ t('admin.billing.show.invoices_description') }}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table v-if="invoices.length > 0">
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Invoice</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead class="text-right"
-                                    >Actions</TableHead
-                                >
+                                <TableHead>{{ t('admin.billing.show.table_invoice') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_date') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_amount') }}</TableHead>
+                                <TableHead>{{ t('admin.billing.show.table_status') }}</TableHead>
+                                <TableHead class="text-right">
+                                    {{ t('admin.billing.show.table_actions') }}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -357,7 +385,7 @@ function formatDate(dateString: string): string {
                         </TableBody>
                     </Table>
                     <p v-else class="text-muted-foreground">
-                        No invoices found.
+                        {{ t('admin.billing.show.no_invoices') }}
                     </p>
                 </CardContent>
             </Card>

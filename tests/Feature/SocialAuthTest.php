@@ -2,9 +2,14 @@
 
 use App\Models\SocialAccount;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Mockery as m;
+
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
 
 test('redirects to google oauth provider', function () {
     $provider = 'google';
@@ -63,6 +68,7 @@ test('creates new user from google oauth callback', function () {
         ->first();
     expect($socialAccount)->not->toBeNull();
     expect($socialAccount->provider_id)->toBe('123456789');
+    expect($user->hasRole('user'))->toBeTrue();
 });
 
 test('logs in existing user with social account', function () {

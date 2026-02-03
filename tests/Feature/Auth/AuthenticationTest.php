@@ -66,8 +66,11 @@ test('users can logout', function () {
 
     $response = $this->actingAs($user)->post(route('logout'));
 
-    $this->assertGuest();
     $response->assertRedirect(route('home'));
+
+    $this->get(route('home'));
+
+    $this->assertGuest();
 });
 
 test('users are rate limited', function () {

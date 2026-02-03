@@ -9,12 +9,15 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', User::class);
+
         $query = User::query()->with('roles');
 
         if ($request->filled('search')) {
@@ -37,6 +40,8 @@ class UserController extends Controller
 
     public function create(): Response
     {
+        $this->authorize('create', User::class);
+
         return Inertia::render('admin/users/Create', [
             'roles' => Role::all(['id', 'name']),
         ]);
@@ -44,15 +49,16 @@ class UserController extends Controller
 
     public function store(UserRequest $request): RedirectResponse
     {
+        $this->authorize('create', User::class);
+
         $user = User::create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
             'password' => bcrypt($request->validated('password')),
         ]);
 
-        if ($request->validated('roles')) {
-            $user->syncRoles($request->validated('roles'));
-        }
+        $roles = $request->validated('roles');
+        $user->syncRoles(! empty($roles) ? $roles : ['user']);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User created successfully.');
@@ -60,10 +66,24 @@ class UserController extends Controller
 
     public function edit(User $user): Response
     {
+        $this->authorize('update', $user);
+
+        $user->load('roles');
+
         return Inertia::render('admin/users/Edit', [
-            'user' => $user->load('roles'),
+            'user' => array_merge($user->toArray(), [
+                'two_factor_enabled' => $user->hasEnabledTwoFactorAuthentication(),
+            ]),
             'roles' => Role::all(['id', 'name']),
         ]);
+    }
+
+    public function disableTwoFactor(User $user, DisableTwoFactorAuthentication $disableTwoFactor): RedirectResponse
+    {
+        $disableTwoFactor($user);
+
+        return redirect()->route('admin.users.edit', $user)
+            ->with('success', 'Two-factor authentication has been disabled for this user.');
     }
 
     public function update(UserRequest $request, User $user): RedirectResponse
@@ -79,9 +99,8 @@ class UserController extends Controller
 
         $user->update($data);
 
-        if ($request->has('roles')) {
-            $user->syncRoles($request->validated('roles'));
-        }
+        $roles = $request->validated('roles');
+        $user->syncRoles(! empty($roles) ? $roles : ['user']);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User updated successfully.');
@@ -89,6 +108,8 @@ class UserController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
+        $this->authorize('delete', $user);
+
         if ($user->id === auth()->id()) {
             return redirect()->route('admin.users.index')
                 ->with('error', 'You cannot delete yourself.');

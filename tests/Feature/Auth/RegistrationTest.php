@@ -1,5 +1,12 @@
 <?php
 
+use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
+
 test('registration screen can be rendered', function () {
     $response = $this->get(route('register'));
 
@@ -16,4 +23,8 @@ test('new users can register', function () {
 
     $this->assertAuthenticated();
     $response->assertRedirect(route('dashboard', absolute: false));
+
+    $user = User::where('email', 'test@example.com')->first();
+    expect($user)->not->toBeNull();
+    expect($user->hasRole('user'))->toBeTrue();
 });

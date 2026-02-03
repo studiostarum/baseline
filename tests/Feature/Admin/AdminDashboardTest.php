@@ -39,6 +39,40 @@ test('super admin users can access admin dashboard', function () {
     $response->assertOk();
 });
 
+test('moderator users can access admin dashboard', function () {
+    $moderator = User::factory()->create();
+    $moderator->assignRole('moderator');
+
+    $response = $this->actingAs($moderator)->get('/admin');
+
+    $response->assertOk();
+});
+
+test('moderator can view admin users list', function () {
+    $moderator = User::factory()->create();
+    $moderator->assignRole('moderator');
+
+    $response = $this->actingAs($moderator)->get('/admin/users');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page->component('admin/users/Index'));
+});
+
+test('moderator cannot create users', function () {
+    $moderator = User::factory()->create();
+    $moderator->assignRole('moderator');
+
+    $response = $this->actingAs($moderator)->post('/admin/users', [
+        'name' => 'New User',
+        'email' => 'new@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+        'roles' => ['user'],
+    ]);
+
+    $response->assertForbidden();
+});
+
 test('admin dashboard displays stats', function () {
     $superAdmin = User::factory()->create();
     $superAdmin->assignRole('super-admin');

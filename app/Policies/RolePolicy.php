@@ -24,7 +24,7 @@ class RolePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('manage-roles');
+        return $user->hasRole('moderator') || $user->hasPermissionTo('manage-roles');
     }
 
     /**
@@ -32,7 +32,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
-        return $user->hasPermissionTo('manage-roles');
+        return $user->hasRole('moderator') || $user->hasPermissionTo('manage-roles');
     }
 
     /**
