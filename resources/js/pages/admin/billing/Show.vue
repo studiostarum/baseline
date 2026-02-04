@@ -22,7 +22,8 @@ import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import { users as billingUsers } from '@/routes/admin/billing';
-import { Head, Link } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Link } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     CreditCard,
@@ -134,7 +135,7 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="t('admin.billing.show.head_title').replace(':name', user.name)" />
+    <AppHead :title="t('admin.billing.show.head_title').replace(':name', user.name)" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">

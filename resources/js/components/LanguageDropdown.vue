@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import LanguageDropdownSidebar from '@/components/LanguageDropdownSidebar.vue';
 import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { Languages } from 'lucide-vue-next';
 
 type Props = {
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const page = usePage();
+const showLocales = computed(() => page.props.features?.locales !== false);
 const locale = page.props.locale ?? 'en';
 const locales = (page.props.locales ?? { en: 'English', nl: 'Nederlands' }) as Record<string, string>;
 const translations = (page.props.translations ?? {}) as Record<string, string>;
@@ -32,10 +34,15 @@ const switchLocale = (code: string) => {
 </script>
 
 <template>
-    <LanguageDropdownSidebar v-if="variant === 'sidebar'" />
-    <DropdownMenu v-else>
+    <template v-if="showLocales">
+        <LanguageDropdownSidebar v-if="variant === 'sidebar'" />
+        <DropdownMenu v-else>
         <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="icon" class="h-9 w-9">
+            <Button
+                variant="outline"
+                size="icon"
+                class="h-9 w-9 text-foreground border-border hover:bg-accent hover:text-accent-foreground"
+            >
                 <Languages class="size-5" />
                 <span class="sr-only">{{ label }}</span>
             </Button>
@@ -50,5 +57,6 @@ const switchLocale = (code: string) => {
                 {{ localeLabel }}
             </DropdownMenuItem>
         </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenu>
+    </template>
 </template>

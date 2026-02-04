@@ -20,7 +20,11 @@ import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
 const page = usePage();
-const canAccessAdmin = computed(() => page.props.auth.can_access_admin);
+const showAdmin = computed(
+    () =>
+        page.props.auth?.can_access_admin === true &&
+        page.props.features?.admin !== false,
+);
 const { t } = useTranslations();
 
 const mainNavItems = computed<NavItem[]>(() => [
@@ -59,7 +63,7 @@ const adminNavItems = computed<NavItem[]>(() => [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter v-if="canAccessAdmin" :items="adminNavItems" />
+            <NavFooter v-if="showAdmin" :items="adminNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

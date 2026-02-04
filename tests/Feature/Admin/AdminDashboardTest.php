@@ -67,7 +67,7 @@ test('moderator cannot create users', function () {
         'email' => 'new@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
-        'roles' => ['user'],
+        'role' => 'user',
     ]);
 
     $response->assertForbidden();

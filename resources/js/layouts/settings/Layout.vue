@@ -11,7 +11,7 @@ import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     CreditCard,
     KeyRound,
@@ -22,35 +22,41 @@ import {
 import { computed } from 'vue';
 import { isRef, type Ref } from 'vue';
 
+const page = usePage();
 const { t } = useTranslations();
 
-const sidebarNavItems = computed<NavItem[]>(() => [
-    {
-        title: t('navigation.profile'),
-        href: editProfile(),
-        icon: User,
-    },
-    {
-        title: t('navigation.password'),
-        href: editPassword(),
-        icon: KeyRound,
-    },
-    {
-        title: t('navigation.two_factor'),
-        href: show(),
-        icon: ShieldCheck,
-    },
-    {
-        title: t('navigation.appearance'),
-        href: editAppearance(),
-        icon: Palette,
-    },
-    {
-        title: t('navigation.billing'),
-        href: showBilling(),
-        icon: CreditCard,
-    },
-]);
+const sidebarNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: t('navigation.profile'),
+            href: editProfile(),
+            icon: User,
+        },
+        {
+            title: t('navigation.password'),
+            href: editPassword(),
+            icon: KeyRound,
+        },
+        {
+            title: t('navigation.two_factor'),
+            href: show(),
+            icon: ShieldCheck,
+        },
+        {
+            title: t('navigation.appearance'),
+            href: editAppearance(),
+            icon: Palette,
+        },
+    ];
+    if (page.props.features?.billing !== false) {
+        items.push({
+            title: t('navigation.billing'),
+            href: showBilling(),
+            icon: CreditCard,
+        });
+    }
+    return items;
+});
 
 const { isCurrentUrl } = useCurrentUrl();
 

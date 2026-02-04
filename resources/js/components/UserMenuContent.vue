@@ -3,15 +3,19 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import UserInfo from '@/components/UserInfo.vue';
+import { useAppearance } from '@/composables/useAppearance';
 import { useTranslations } from '@/composables/useTranslations';
 import { home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
-import type { User } from '@/types';
+import type { Appearance, User } from '@/types';
 import { Link, usePage, router } from '@inertiajs/vue3';
-import { Globe, Languages, LogOut, Settings } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { Globe, Languages, LogOut, Monitor, Moon, Settings, Sun } from 'lucide-vue-next';
 
 type Props = {
     user: User;
@@ -24,8 +28,10 @@ const handleLogout = () => {
 defineProps<Props>();
 
 const { t } = useTranslations();
+const { appearance, updateAppearance } = useAppearance();
 
 const page = usePage();
+const showLocales = computed(() => page.props.features?.locales !== false);
 const locale = page.props.locale ?? 'en';
 const locales = (page.props.locales ?? {
     en: 'English',
@@ -62,15 +68,39 @@ const switchLocale = (code: string) => {
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
     <DropdownMenuGroup>
-        <DropdownMenuItem
-            v-for="(localeLabel, code) in locales"
-            :key="code"
-            :class="{ 'bg-accent': locale === code }"
-            @select="switchLocale(code)"
+        <DropdownMenuRadioGroup
+            :model-value="appearance"
+            @update:model-value="(v) => v && updateAppearance(v as Appearance)"
         >
-            <Languages class="mr-2 h-4 w-4" />
-            {{ localeLabel }}
-        </DropdownMenuItem>
+            <DropdownMenuRadioItem value="light">
+                <Sun class="mr-2 size-4 shrink-0" />
+                {{ t('settings.appearance.light') }}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="dark">
+                <Moon class="mr-2 size-4 shrink-0" />
+                {{ t('settings.appearance.dark') }}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="system">
+                <Monitor class="mr-2 size-4 shrink-0" />
+                {{ t('settings.appearance.system') }}
+            </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator v-if="showLocales" />
+    <DropdownMenuGroup v-if="showLocales">
+        <DropdownMenuRadioGroup
+            :model-value="locale"
+            @update:model-value="(v) => typeof v === 'string' && switchLocale(v)"
+        >
+            <DropdownMenuRadioItem
+                v-for="(localeLabel, code) in locales"
+                :key="code"
+                :value="code"
+            >
+                <Languages class="mr-2 size-4 shrink-0" />
+                {{ localeLabel }}
+            </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
     <DropdownMenuItem :as-child="true">

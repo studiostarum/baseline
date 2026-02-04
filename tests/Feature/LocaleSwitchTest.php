@@ -16,7 +16,7 @@ it('applies locale on subsequent request', function () {
     $this->get('/locale/nl');
     $response = $this->get('/');
 
-    $response->assertInertia(fn ($page) => $page->component('Welcome')->where('locale', 'nl'));
+    $response->assertInertia(fn ($page) => $page->component('Home')->where('locale', 'nl'));
 });
 
 it('persists locale in cookie when switching', function () {
@@ -28,7 +28,7 @@ it('persists locale in cookie when switching', function () {
 it('applies locale from cookie when session has no locale', function () {
     $response = $this->withCookie('locale', 'nl')->get('/');
 
-    $response->assertInertia(fn ($page) => $page->component('Welcome')->where('locale', 'nl'));
+    $response->assertInertia(fn ($page) => $page->component('Home')->where('locale', 'nl'));
 });
 
 it('rejects invalid locale', function () {

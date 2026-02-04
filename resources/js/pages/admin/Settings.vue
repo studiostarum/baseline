@@ -12,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const { t } = useTranslations();
@@ -47,7 +48,7 @@ function submit(): void {
 </script>
 
 <template>
-    <Head :title="t('admin.settings.title')" />
+    <AppHead :title="t('admin.settings.title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
@@ -60,7 +61,7 @@ function submit(): void {
                 </p>
             </div>
 
-            <form @submit.prevent="submit" class="max-w-2xl space-y-6">
+            <form @submit.prevent="submit" class="space-y-6">
                 <Card>
                     <CardHeader>
                         <CardTitle>{{ t('admin.settings.general') }}</CardTitle>

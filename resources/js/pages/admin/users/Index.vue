@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
@@ -96,7 +97,7 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="t('admin.users.title')" />
+    <AppHead :title="t('admin.users.title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">

@@ -5,7 +5,8 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
-import { Form, Head } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form } from '@inertiajs/vue3';
 
 defineProps<{
     status?: string;
@@ -17,7 +18,7 @@ defineProps<{
         title="Verify email"
         description="Please verify your email address by clicking on the link we just emailed to you."
     >
-        <Head title="Verify email" />
+        <AppHead title="Verify email" />
 
         <div
             v-if="status === 'verification-link-sent'"

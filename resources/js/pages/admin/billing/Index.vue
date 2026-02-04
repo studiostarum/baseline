@@ -12,7 +12,8 @@ import {
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Link } from '@inertiajs/vue3';
 import { CreditCard, TrendingUp, Users, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -92,7 +93,7 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="t('admin.billing.head_title')" />
+    <AppHead :title="t('admin.billing.head_title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">

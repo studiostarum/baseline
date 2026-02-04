@@ -27,8 +27,7 @@ class UserRequest extends FormRequest
                 'max:255',
                 Rule::unique('users')->ignore($userId),
             ],
-            'roles' => ['nullable', 'array'],
-            'roles.*' => ['string', 'exists:roles,name'],
+            'role' => ['required', 'string', 'exists:roles,name'],
         ];
 
         if ($this->isMethod('POST')) {

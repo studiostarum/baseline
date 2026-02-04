@@ -44,7 +44,7 @@ test('admin can create a user', function () {
         'email' => 'newuser@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
-        'roles' => ['moderator'],
+        'role' => 'moderator',
     ]);
 
     $response->assertRedirect('/admin/users');
@@ -100,7 +100,7 @@ test('admin can update a user', function () {
     $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", [
         'name' => 'Updated Name',
         'email' => $user->email,
-        'roles' => [],
+        'role' => 'user',
     ]);
 
     $response->assertRedirect('/admin/users');

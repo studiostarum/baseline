@@ -51,3 +51,19 @@ test('settings can be retrieved by key', function () {
     expect(Setting::get('test_key'))->toBe('test_value');
     expect(Setting::get('nonexistent', 'default'))->toBe('default');
 });
+
+test('site name from settings is used in app when set', function () {
+    Setting::set('site_name', 'My Custom Site');
+
+    $response = $this->get('/');
+
+    $response->assertInertia(fn ($page) => $page->where('name', 'My Custom Site'));
+});
+
+test('site description from settings is shared with frontend', function () {
+    Setting::set('site_description', 'My tagline');
+
+    $response = $this->get('/');
+
+    $response->assertInertia(fn ($page) => $page->where('siteDescription', 'My tagline'));
+});

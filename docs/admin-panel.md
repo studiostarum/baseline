@@ -2,6 +2,15 @@
 
 The admin panel provides user management, role management, and settings configuration.
 
+## First-time setup
+
+After cloning and running `composer run setup`, seed roles and optionally assign the first admin:
+
+- **Option A:** `composer run setup:full` — runs full setup then seeds roles and permissions.
+- **Option B:** `php artisan baseline:install` — seeds roles and permissions, then prompts for an email to assign the `super-admin` role (leave empty to skip).
+
+Then open `/admin` with a user that has an admin role.
+
 ## Setup
 
 ### 1. Seed Roles and Permissions

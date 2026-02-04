@@ -40,12 +40,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
 
-    Route::get('settings/billing', [BillingController::class, 'show'])
-        ->name('billing.show');
+    if (config('baseline.features.billing', true)) {
+        Route::get('settings/billing', [BillingController::class, 'show'])
+            ->name('billing.show');
 
-    Route::post('settings/billing/portal', [BillingController::class, 'portal'])
-        ->name('billing.portal');
+        Route::post('settings/billing/portal', [BillingController::class, 'portal'])
+            ->name('billing.portal');
 
-    Route::post('settings/billing/checkout', [BillingController::class, 'checkout'])
-        ->name('billing.checkout');
+        Route::post('settings/billing/checkout', [BillingController::class, 'checkout'])
+            ->name('billing.checkout');
+    }
 });

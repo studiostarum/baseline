@@ -10,8 +10,9 @@ import {
 } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
+import AppHead from '@/components/AppHead.vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { Key, Shield, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -52,7 +53,7 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="t('admin.title')" />
+    <AppHead :title="t('admin.title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
@@ -127,7 +128,6 @@ function formatDate(dateString: string): string {
                         </div>
                     </CardContent>
                 </Card>
-
                 <Card>
                     <CardHeader>
                         <CardTitle>{{ t('admin.quick_actions.title') }}</CardTitle>

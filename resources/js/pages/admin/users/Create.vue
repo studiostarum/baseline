@@ -8,13 +8,13 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const { t } = useTranslations();
@@ -42,7 +42,7 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    roles: ['user'] as string[],
+    role: 'user',
 });
 
 function submit(): void {
@@ -59,23 +59,10 @@ const sortedRoles = computed(() => {
     );
 });
 
-function isRoleChecked(roleName: string): boolean {
-    return form.roles.includes(roleName);
-}
-
-function setRoleChecked(roleName: string, checked: boolean): void {
-    if (checked) {
-        if (!form.roles.includes(roleName)) {
-            form.roles = [...form.roles, roleName];
-        }
-    } else {
-        form.roles = form.roles.filter((name) => name !== roleName);
-    }
-}
 </script>
 
 <template>
-    <Head :title="t('admin.users.create_title')" />
+    <AppHead :title="t('admin.users.create_title')" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
@@ -162,13 +149,13 @@ function setRoleChecked(roleName: string, checked: boolean): void {
                                     :key="role.id"
                                     class="flex items-center space-x-2"
                                 >
-                                    <Checkbox
+                                    <input
                                         :id="`role-${role.id}`"
-                                        :model-value="isRoleChecked(role.name)"
-                                        @update:model-value="
-                                            (val: boolean) =>
-                                                setRoleChecked(role.name, val)
-                                        "
+                                        v-model="form.role"
+                                        type="radio"
+                                        name="role"
+                                        :value="role.name"
+                                        class="h-4 w-4 border-input text-primary focus:ring-primary"
                                     />
                                     <Label
                                         :for="`role-${role.id}`"
@@ -185,7 +172,7 @@ function setRoleChecked(roleName: string, checked: boolean): void {
                                 {{ t('admin.users.no_roles_available_create') }}
                             </p>
                         </div>
-                        <InputError :message="form.errors.roles" class="mt-2" />
+                        <InputError :message="form.errors.role" class="mt-2" />
                     </CardContent>
                 </Card>
 

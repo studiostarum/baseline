@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { dashboard } from '@/routes';
-import { Head, Link } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Link } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
 
 defineProps<{
@@ -18,7 +19,7 @@ const { t } = useTranslations();
         :title="t('errors.forbidden.title')"
         :description="t('errors.forbidden.description')"
     >
-        <Head :title="t('errors.forbidden.title')" />
+        <AppHead :title="t('errors.forbidden.title')" />
 
         <div class="flex flex-col gap-6">
             <p

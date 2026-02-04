@@ -12,7 +12,8 @@ import AuthBase from '@/layouts/AuthLayout.vue';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import { Form, Head, router, usePage } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form, router, usePage } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 
 defineProps<{
@@ -36,7 +37,7 @@ onMounted(() => {
         title="Log in to your account"
         description="Enter your email and password below to log in"
     >
-        <Head title="Log in" />
+        <AppHead title="Log in" />
 
         <div
             v-if="status"

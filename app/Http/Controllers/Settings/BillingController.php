@@ -66,6 +66,7 @@ class BillingController extends Controller
                             'number' => $invoice->number,
                             'date' => $invoice->date()->toIso8601String(),
                             'total' => $invoice->rawTotal(),
+                            'currency' => strtoupper($invoice->currency ?? config('cashier.currency', 'usd')),
                             'status' => $invoice->status,
                             'invoicePdfUrl' => $invoice->invoice_pdf,
                         ])->take(20)->values()->all();

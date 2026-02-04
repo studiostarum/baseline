@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { update } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps<{
@@ -22,7 +23,7 @@ const inputEmail = ref(props.email);
         title="Reset password"
         description="Please enter your new password below"
     >
-        <Head title="Reset password" />
+        <AppHead title="Reset password" />
 
         <Form
             v-bind="update.form()"

@@ -20,7 +20,8 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem } from '@/types';
-import { Form, Head, Link, router, usePage } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form, Link, router, usePage } from '@inertiajs/vue3';
 import { Link2, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -68,7 +69,7 @@ function handleUnlink(provider: string): void {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="t('settings.profile.title')" />
+        <AppHead :title="t('settings.profile.title')" />
 
         <h1 class="sr-only">{{ t('settings.profile.title') }}</h1>
 

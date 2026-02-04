@@ -10,7 +10,8 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { disable, enable, show } from '@/routes/two-factor';
 import type { BreadcrumbItem } from '@/types';
-import { Form, Head } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form } from '@inertiajs/vue3';
 import { ShieldBan, ShieldCheck } from 'lucide-vue-next';
 import { computed, onUnmounted, ref } from 'vue';
 
@@ -43,7 +44,7 @@ onUnmounted(() => {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Head :title="t('settings.two_factor.title')" />
+        <AppHead :title="t('settings.two_factor.title')" />
 
         <h1 class="sr-only">{{ t('settings.two_factor.title') }}</h1>
 

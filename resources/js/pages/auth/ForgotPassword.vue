@@ -8,7 +8,8 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form } from '@inertiajs/vue3';
 
 defineProps<{
     status?: string;
@@ -20,7 +21,7 @@ defineProps<{
         title="Forgot password"
         description="Enter your email to receive a password reset link"
     >
-        <Head title="Forgot password" />
+        <AppHead title="Forgot password" />
 
         <div
             v-if="status"

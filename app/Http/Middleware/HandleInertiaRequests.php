@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,7 +40,8 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
+            'name' => $this->appName(),
+            'siteDescription' => $this->siteDescription(),
             'csrf_token' => csrf_token(),
             'auth' => [
                 'user' => $user,
@@ -49,18 +51,23 @@ class HandleInertiaRequests extends Middleware
                 'can_manage_settings' => $this->safeHasPermissionTo($user, 'manage-settings'),
             ],
             'locale' => app()->getLocale(),
-            'locales' => collect(config('locales.available', []))
-                ->mapWithKeys(fn (string $code) => [$code => config("locales.labels.{$code}", $code)])
-                ->all(),
-            'translations' => (function () {
-                $path = lang_path(app()->getLocale().'.json');
-                if (file_exists($path)) {
-                    return json_decode(file_get_contents($path), true) ?? [];
-                }
+            'locales' => config('baseline.features.locales', true)
+                ? collect(config('locales.available', []))
+                    ->mapWithKeys(fn (string $code) => [$code => config("locales.labels.{$code}", $code)])
+                    ->all()
+                : [],
+            'translations' => config('baseline.features.locales', true)
+                ? (function () {
+                    $path = lang_path(app()->getLocale().'.json');
+                    if (file_exists($path)) {
+                        return json_decode(file_get_contents($path), true) ?? [];
+                    }
 
-                return [];
-            })(),
+                    return [];
+                })()
+                : [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'features' => config('baseline.features', ['admin' => true, 'billing' => true, 'locales' => true]),
         ];
     }
 
@@ -94,5 +101,27 @@ class HandleInertiaRequests extends Middleware
         } catch (\Throwable) {
             return false;
         }
+    }
+
+    protected function appName(): string
+    {
+        try {
+            $name = Setting::get('site_name');
+        } catch (\Throwable) {
+            return config('app.name');
+        }
+
+        return $name !== null && $name !== '' ? (string) $name : config('app.name');
+    }
+
+    protected function siteDescription(): string
+    {
+        try {
+            $description = Setting::get('site_description');
+        } catch (\Throwable) {
+            return '';
+        }
+
+        return $description !== null ? (string) $description : '';
     }
 }

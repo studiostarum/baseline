@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
     CreditCard,
@@ -54,6 +55,7 @@ type Invoice = {
     number: string | null;
     date: string;
     total: number;
+    currency?: string;
     status: string;
     invoicePdfUrl: string | null;
 };
@@ -152,10 +154,10 @@ function submitCheckoutForm(): void {
     form?.submit();
 }
 
-function formatCurrency(amount: number): string {
+function formatCurrency(amount: number, currency?: string): string {
     return new Intl.NumberFormat(props.currencyLocale, {
         style: 'currency',
-        currency: props.currency,
+        currency: currency ?? props.currency,
     }).format(amount / 100);
 }
 
@@ -170,7 +172,7 @@ function formatShortDate(dateString: string): string {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="t('settings.billing.title')" />
+        <AppHead :title="t('settings.billing.title')" />
 
         <h1 class="sr-only">{{ t('settings.billing.title') }}</h1>
 
@@ -212,7 +214,7 @@ function formatShortDate(dateString: string): string {
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <AlertCircle class="mt-0.75 size-4" />
-                            Unable to process billing request
+                            {{ t('settings.billing.error_title') }}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -229,11 +231,10 @@ function formatShortDate(dateString: string): string {
                             <div class="flex-1">
                                 <CardTitle class="flex items-center gap-2">
                                     <CreditCard class="h-5 w-5" />
-                                    Subscription
+                                    {{ t('settings.billing.subscription') }}
                                 </CardTitle>
                                 <CardDescription>
-                                    Your current subscription status and plan
-                                    details.
+                                    {{ t('settings.billing.subscription_description') }}
                                 </CardDescription>
                             </div>
                             <Button
@@ -246,7 +247,7 @@ function formatShortDate(dateString: string): string {
                                 @click="submitCheckoutForm"
                             >
                                 <ExternalLink class="mr-2 h-4 w-4" />
-                                {{ isLoading ? 'Loading...' : 'Subscribe Now' }}
+                                {{ isLoading ? t('settings.billing.loading') : t('settings.billing.subscribe_now') }}
                             </Button>
                             <Button
                                 v-else
@@ -256,8 +257,8 @@ function formatShortDate(dateString: string): string {
                                 <ExternalLink class="mr-2 h-4 w-4" />
                                 {{
                                     isLoading
-                                        ? 'Loading...'
-                                        : 'Manage Subscription'
+                                        ? t('settings.billing.loading')
+                                        : t('settings.billing.manage_subscription')
                                 }}
                             </Button>
                         </div>
@@ -265,7 +266,7 @@ function formatShortDate(dateString: string): string {
                     <CardContent>
                         <div v-if="subscription" class="space-y-1">
                             <div class="flex items-center gap-2">
-                                <span class="font-medium">Status:</span>
+                                <span class="font-medium">{{ t('settings.billing.status') }}</span>
                                 <Badge
                                     :variant="
                                         getStatusVariant(subscription.status)
@@ -282,7 +283,7 @@ function formatShortDate(dateString: string): string {
                                 "
                                 class="text-sm text-muted-foreground"
                             >
-                                Trial ends on
+                                {{ t('settings.billing.trial_ends_on') }}
                                 {{ formatDate(subscription.trialEndsAt) }}
                             </p>
 
@@ -290,7 +291,7 @@ function formatShortDate(dateString: string): string {
                                 v-if="subscription.onGracePeriod"
                                 class="text-sm text-muted-foreground"
                             >
-                                Access until
+                                {{ t('settings.billing.access_until') }}
                                 {{ formatDate(subscription.endsAt) }}
                             </p>
 
@@ -301,13 +302,13 @@ function formatShortDate(dateString: string): string {
                                 "
                                 class="text-sm text-muted-foreground"
                             >
-                                Canceled on
+                                {{ t('settings.billing.canceled_on') }}
                                 {{ formatDate(subscription.canceledAt) }}
                             </p>
                         </div>
 
                         <Card v-else class="p-4 text-sm text-muted-foreground">
-                            You don't have an active subscription.
+                            {{ t('settings.billing.no_subscription') }}
                         </Card>
                     </CardContent>
                 </Card>
@@ -315,9 +316,9 @@ function formatShortDate(dateString: string): string {
                 <!-- Payment Method -->
                 <Card>
                     <CardHeader>
-                        <CardTitle>Payment Method</CardTitle>
+                        <CardTitle>{{ t('settings.billing.payment_method') }}</CardTitle>
                         <CardDescription>
-                            Your default payment method for subscriptions.
+                            {{ t('settings.billing.payment_method_description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -338,7 +339,7 @@ function formatShortDate(dateString: string): string {
                                         •••• •••• •••• {{ paymentMethod.last4 }}
                                     </p>
                                     <p class="text-sm text-muted-foreground">
-                                        Expires {{ paymentMethod.expMonth }}/{{
+                                        {{ t('settings.billing.expires') }} {{ paymentMethod.expMonth }}/{{
                                             paymentMethod.expYear
                                         }}
                                     </p>
@@ -349,11 +350,11 @@ function formatShortDate(dateString: string): string {
                                 :disabled="isLoading || !stripeConfigured"
                                 @click="submitPortalForm"
                             >
-                                {{ isLoading ? 'Loading...' : 'Manage' }}
+                                {{ isLoading ? t('settings.billing.loading') : t('settings.billing.manage') }}
                             </Button>
                         </div>
                         <Card v-else class="p-4 text-sm text-muted-foreground">
-                            No payment method on file.
+                            {{ t('settings.billing.no_payment_method') }}
 
                             <Button
                                 variant="outline"
@@ -362,10 +363,10 @@ function formatShortDate(dateString: string): string {
                             >
                                 {{
                                     isLoading
-                                        ? 'Loading...'
+                                        ? t('settings.billing.loading')
                                         : hasStripeCustomer
-                                          ? 'Update Payment Method'
-                                          : 'Add Payment Method'
+                                          ? t('settings.billing.update_payment_method')
+                                          : t('settings.billing.add_payment_method')
                                 }}
                             </Button>
                         </Card>
@@ -377,10 +378,10 @@ function formatShortDate(dateString: string): string {
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
                             <FileText class="h-5 w-5" />
-                            Payment History
+                            {{ t('settings.billing.payment_history') }}
                         </CardTitle>
                         <CardDescription>
-                            View and download your invoices.
+                            {{ t('settings.billing.payment_history_description') }}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -388,18 +389,18 @@ function formatShortDate(dateString: string): string {
                             v-if="!stripeConfigured"
                             class="p-4 text-sm text-muted-foreground"
                         >
-                            Payment processing is not yet configured.
+                            {{ t('settings.billing.not_configured') }}
                         </Card>
                         <template v-else>
                             <Table v-if="invoices.length > 0">
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Invoice</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Amount</TableHead>
-                                        <TableHead>Status</TableHead>
+                                        <TableHead>{{ t('settings.billing.invoice') }}</TableHead>
+                                        <TableHead>{{ t('settings.billing.date') }}</TableHead>
+                                        <TableHead>{{ t('settings.billing.amount') }}</TableHead>
+                                        <TableHead>{{ t('settings.billing.status_column') }}</TableHead>
                                         <TableHead class="text-right"
-                                            >Actions</TableHead
+                                            >{{ t('settings.billing.actions') }}</TableHead
                                         >
                                     </TableRow>
                                 </TableHeader>
@@ -415,7 +416,7 @@ function formatShortDate(dateString: string): string {
                                             {{ formatShortDate(invoice.date) }}
                                         </TableCell>
                                         <TableCell class="font-medium">
-                                            {{ formatCurrency(invoice.total) }}
+                                            {{ formatCurrency(invoice.total, invoice.currency) }}
                                         </TableCell>
                                         <TableCell>
                                             <Badge
@@ -443,7 +444,7 @@ function formatShortDate(dateString: string): string {
                                                     "
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    title="Download invoice"
+                                                    :title="t('settings.billing.download_invoice')"
                                                 >
                                                     <Download class="h-4 w-4" />
                                                 </a>
@@ -456,8 +457,7 @@ function formatShortDate(dateString: string): string {
                                 v-else
                                 class="p-4 text-sm text-muted-foreground"
                             >
-                                No invoices found. Your payment history will
-                                appear here once you have active subscriptions.
+                                {{ t('settings.billing.no_invoices') }}
                             </Card>
                         </template>
                     </CardContent>

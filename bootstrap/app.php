@@ -20,10 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function (): void {
-            Route::middleware(['web', 'auth', 'verified', 'admin'])
-                ->prefix('admin')
-                ->name('admin.')
-                ->group(base_path('routes/admin.php'));
+            if (config('baseline.features.admin', true)) {
+                Route::middleware(['web', 'auth', 'verified', 'admin'])
+                    ->prefix('admin')
+                    ->name('admin.')
+                    ->group(base_path('routes/admin.php'));
+            }
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

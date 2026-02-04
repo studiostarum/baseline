@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "studiostarum/baseline",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Internal Laravel + Vue starter kit with admin CMS, Stripe billing, and i18n.",
     "keywords": [
         "laravel",
         "framework"
@@ -50,6 +50,10 @@
             "@php artisan migrate --force",
             "npm install",
             "npm run build"
+        ],
+        "setup:full": [
+            "@setup",
+            "@php artisan db:seed --class=RolesAndPermissionsSeeder --force"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",

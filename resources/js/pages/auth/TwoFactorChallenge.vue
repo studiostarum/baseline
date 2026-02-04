@@ -10,7 +10,8 @@ import {
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/two-factor/login';
 import type { TwoFactorConfigContent } from '@/types';
-import { Form, Head } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Form } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const authConfigContent = computed<TwoFactorConfigContent>(() => {
@@ -47,7 +48,7 @@ const code = ref<string>('');
         :title="authConfigContent.title"
         :description="authConfigContent.description"
     >
-        <Head title="Two-Factor Authentication" />
+        <AppHead title="Two-Factor Authentication" />
 
         <div class="space-y-6">
             <template v-if="!showRecoveryInput">

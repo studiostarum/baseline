@@ -5,26 +5,28 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-Route::get('/locale/{locale}', function (string $locale) {
-    $available = config('locales.available', []);
-    if (in_array($locale, $available, true)) {
-        session(['locale' => $locale]);
+if (config('baseline.features.locales', true)) {
+    Route::get('/locale/{locale}', function (string $locale) {
+        $available = config('locales.available', []);
+        if (in_array($locale, $available, true)) {
+            session(['locale' => $locale]);
 
-        return redirect()->back()->cookie(
-            'locale',
-            $locale,
-            (int) config('locales.cookie_minutes', 60 * 24 * 365),
-            '/',
-            null,
-            request()->secure(),
-            true,
-            false,
-            'lax',
-        );
-    }
+            return redirect()->back()->cookie(
+                'locale',
+                $locale,
+                (int) config('locales.cookie_minutes', 60 * 24 * 365),
+                '/',
+                null,
+                request()->secure(),
+                true,
+                false,
+                'lax',
+            );
+        }
 
-    return redirect()->back();
-})->name('locale.switch')->where('locale', 'en|nl');
+        return redirect()->back();
+    })->name('locale.switch')->where('locale', 'en|nl');
+}
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

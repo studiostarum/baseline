@@ -8,13 +8,14 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { show as billingShow } from '@/routes/admin/billing';
+import AppHead from '@/components/AppHead.vue';
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const { t } = useTranslations();
@@ -54,7 +55,7 @@ const form = useForm({
     email: props.user.email,
     password: '',
     password_confirmation: '',
-    roles: props.user.roles.map((r) => r.name),
+    role: props.user.roles[0]?.name ?? 'user',
 });
 
 function submit(): void {
@@ -71,19 +72,6 @@ const sortedRoles = computed(() => {
     );
 });
 
-function isRoleChecked(roleName: string): boolean {
-    return form.roles.includes(roleName);
-}
-
-function setRoleChecked(roleName: string, checked: boolean): void {
-    if (checked) {
-        if (!form.roles.includes(roleName)) {
-            form.roles = [...form.roles, roleName];
-        }
-    } else {
-        form.roles = form.roles.filter((name) => name !== roleName);
-    }
-}
 
 const disablingTwoFactor = ref(false);
 
@@ -118,7 +106,7 @@ function disableTwoFactor(): void {
 </script>
 
 <template>
-    <Head :title="`${t('admin.users.edit_title')} ${user.name}`" />
+    <AppHead :title="`${t('admin.users.edit_title')} ${user.name}`" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
@@ -132,15 +120,98 @@ function disableTwoFactor(): void {
             </div>
 
             <form @submit.prevent="submit" class="space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{{ t('admin.users.user_info') }}</CardTitle>
-                        <CardDescription>
-                            {{ t('admin.users.user_info_update') }}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="space-y-4">
-                        <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid gap-6 sm:grid-cols-[7fr_3fr]">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{{ t('admin.users.user_info') }}</CardTitle>
+                            <CardDescription>
+                                {{ t('admin.users.user_info_update') }}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent class="space-y-4">
+                            <div class="space-y-2">
+                                <Label for="name">{{ t('fields.name') }}</Label>
+                                <Input
+                                    id="name"
+                                    v-model="form.name"
+                                    type="text"
+                                    required
+                                    :disabled="!canManageUsers"
+                                />
+                                <InputError :message="form.errors.name" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label for="email">{{ t('fields.email') }}</Label>
+                                <Input
+                                    id="email"
+                                    v-model="form.email"
+                                    type="email"
+                                    required
+                                    :disabled="!canManageUsers"
+                                />
+                                <InputError :message="form.errors.email" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <Label>{{ t('admin.users.roles') }}</Label>
+                                <div class="flex flex-col gap-3">
+                                    <div
+                                        v-for="role in sortedRoles"
+                                        :key="role.id"
+                                        class="flex items-center space-x-2"
+                                    >
+                                        <input
+                                            :id="`role-${role.id}`"
+                                            v-model="form.role"
+                                            type="radio"
+                                            name="role"
+                                            :value="role.name"
+                                            :disabled="!canManageUsers"
+                                            class="h-4 w-4 border-input text-primary focus:ring-primary"
+                                        />
+                                        <Label
+                                            :for="`role-${role.id}`"
+                                            :class="{
+                                                'cursor-pointer': canManageUsers,
+                                                'opacity-50': !canManageUsers,
+                                            }"
+                                        >
+                                            {{ roleDisplayName(role.name) }}
+                                        </Label>
+                                    </div>
+                                </div>
+                                <p
+                                    v-if="sortedRoles.length === 0"
+                                    class="text-sm text-muted-foreground"
+                                >
+                                    {{ t('admin.users.no_roles_available') }}
+                                </p>
+                            </div>
+                            <InputError :message="form.errors.role" class="mt-2" />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{{ t('admin.users.details') }}</CardTitle>
+                        </CardHeader>
+                        <CardContent class="space-y-4">
+                            <div class="space-y-2">
+                                <Label>{{ t('admin.users.user_id') }}</Label>
+                                <p
+                                    class="font-mono text-sm text-muted-foreground break-all"
+                                    :title="user.id"
+                                >
+                                    {{ user.id }}
+                                </p>
+                                <Link
+                                    :href="billingShow.url(user.id)"
+                                    class="text-sm text-primary underline-offset-4 hover:underline"
+                                >
+                                    {{ t('admin.users.view_subscription') }}
+                                </Link>
+                            </div>
                             <div class="space-y-2">
                                 <Label>{{ t('admin.users.created') }}</Label>
                                 <p class="text-sm text-muted-foreground">
@@ -153,70 +224,9 @@ function disableTwoFactor(): void {
                                     {{ formatDate(user.updated_at) }}
                                 </p>
                             </div>
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="name">{{ t('fields.name') }}</Label>
-                            <Input
-                                id="name"
-                                v-model="form.name"
-                                type="text"
-                                required
-                                :disabled="!canManageUsers"
-                            />
-                            <InputError :message="form.errors.name" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="email">{{ t('fields.email') }}</Label>
-                            <Input
-                                id="email"
-                                v-model="form.email"
-                                type="email"
-                                required
-                                :disabled="!canManageUsers"
-                            />
-                            <InputError :message="form.errors.email" />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label>{{ t('admin.users.roles') }}</Label>
-                            <div class="flex flex-col gap-3">
-                                <div
-                                    v-for="role in sortedRoles"
-                                    :key="role.id"
-                                    class="flex items-center space-x-2"
-                                >
-                                    <Checkbox
-                                        :id="`role-${role.id}`"
-                                        :model-value="isRoleChecked(role.name)"
-                                        :disabled="!canManageUsers"
-                                        @update:model-value="
-                                            (val: boolean) =>
-                                                setRoleChecked(role.name, val)
-                                        "
-                                    />
-                                    <Label
-                                        :for="`role-${role.id}`"
-                                        :class="{
-                                            'cursor-pointer': canManageUsers,
-                                            'opacity-50': !canManageUsers,
-                                        }"
-                                    >
-                                        {{ roleDisplayName(role.name) }}
-                                    </Label>
-                                </div>
-                            </div>
-                            <p
-                                v-if="sortedRoles.length === 0"
-                                class="text-sm text-muted-foreground"
-                            >
-                                {{ t('admin.users.no_roles_available') }}
-                            </p>
-                        </div>
-                        <InputError :message="form.errors.roles" class="mt-2" />
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </div>
 
                 <Card>
                     <CardHeader>

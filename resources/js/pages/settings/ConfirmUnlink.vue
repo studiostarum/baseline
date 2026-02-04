@@ -6,7 +6,8 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';
 import { unlink } from '@/routes/social';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
+import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 type Props = {
@@ -38,7 +39,7 @@ function confirmUnlink(): void {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="`Unlink ${provider}`" />
+        <AppHead :title="`Unlink ${provider}`" />
 
         <h1 class="sr-only">Unlink {{ provider }}</h1>
 

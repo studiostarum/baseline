@@ -16,6 +16,8 @@ Route::resource('roles', RoleController::class);
 Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
 Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 
-Route::get('billing', [BillingController::class, 'index'])->name('billing.index');
-Route::get('billing/users', [BillingController::class, 'users'])->name('billing.users');
-Route::get('billing/users/{user}', [BillingController::class, 'show'])->name('billing.show');
+if (config('baseline.features.billing', true)) {
+    Route::get('billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::get('billing/users', [BillingController::class, 'users'])->name('billing.users');
+    Route::get('billing/users/{user}', [BillingController::class, 'show'])->name('billing.show');
+}

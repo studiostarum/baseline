@@ -14,7 +14,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/appearance';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import AppHead from '@/components/AppHead.vue';
 import { Languages, Palette } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -30,7 +30,7 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head :title="t('settings.appearance.title')" />
+        <AppHead :title="t('settings.appearance.title')" />
 
         <h1 class="sr-only">{{ t('settings.appearance.title') }}</h1>
 

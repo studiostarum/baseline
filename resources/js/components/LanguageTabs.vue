@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const page = usePage();
+const showLocales = computed(() => page.props.features?.locales !== false);
 const locale = page.props.locale ?? 'en';
 const locales = (page.props.locales ?? { en: 'English', nl: 'Nederlands' }) as Record<string, string>;
 
@@ -14,6 +16,7 @@ const switchLocale = (code: string) => {
 
 <template>
     <div
+        v-if="showLocales"
         class="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
     >
         <button
