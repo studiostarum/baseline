@@ -29,7 +29,7 @@ if (config('baseline.features.locales', true)) {
 }
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Home', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
