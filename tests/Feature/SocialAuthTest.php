@@ -36,10 +36,12 @@ test('redirects to google oauth provider', function () {
 
 test('creates new user from google oauth callback', function () {
     $provider = 'google';
+    $avatarUrl = 'https://lh3.googleusercontent.com/a/test-avatar';
     $socialiteUser = m::mock(SocialiteUser::class);
     $socialiteUser->shouldReceive('getId')->andReturn('123456789');
     $socialiteUser->shouldReceive('getEmail')->andReturn('test@example.com');
     $socialiteUser->shouldReceive('getName')->andReturn('Test User');
+    $socialiteUser->shouldReceive('getAvatar')->andReturn($avatarUrl);
     $socialiteUser->token = 'oauth-token';
     $socialiteUser->refreshToken = 'refresh-token';
 
@@ -60,6 +62,7 @@ test('creates new user from google oauth callback', function () {
     $user = User::where('email', 'test@example.com')->first();
     expect($user)->not->toBeNull();
     expect($user->name)->toBe('Test User');
+    expect($user->avatar)->toBe($avatarUrl);
     // Email should be verified when created via social auth
     expect($user->email_verified_at)->not->toBeNull();
 
@@ -88,6 +91,7 @@ test('logs in existing user with social account', function () {
     $socialiteUser->shouldReceive('getId')->andReturn('123456789');
     $socialiteUser->shouldReceive('getEmail')->andReturn('existing@example.com');
     $socialiteUser->shouldReceive('getName')->andReturn('Existing User');
+    $socialiteUser->shouldReceive('getAvatar')->andReturn('https://example.com/avatar.png');
     $socialiteUser->token = 'new-oauth-token';
     $socialiteUser->refreshToken = 'new-refresh-token';
 
@@ -104,6 +108,8 @@ test('logs in existing user with social account', function () {
 
     $response->assertRedirect(route('dashboard', absolute: false));
     $this->assertAuthenticatedAs($user);
+    $user->refresh();
+    expect($user->avatar)->toBe('https://example.com/avatar.png');
 });
 
 test('links social account to existing user by email', function () {
@@ -116,6 +122,7 @@ test('links social account to existing user by email', function () {
     $socialiteUser->shouldReceive('getId')->andReturn('123456789');
     $socialiteUser->shouldReceive('getEmail')->andReturn('existing@example.com');
     $socialiteUser->shouldReceive('getName')->andReturn('Existing User');
+    $socialiteUser->shouldReceive('getAvatar')->andReturn('https://example.com/linked-avatar.png');
     $socialiteUser->token = 'oauth-token';
     $socialiteUser->refreshToken = 'refresh-token';
 
@@ -137,6 +144,8 @@ test('links social account to existing user by email', function () {
         ->where('provider', $provider)
         ->first();
     expect($socialAccount)->not->toBeNull();
+    $user->refresh();
+    expect($user->avatar)->toBe('https://example.com/linked-avatar.png');
 });
 
 test('links social account when user is authenticated', function () {
@@ -147,6 +156,7 @@ test('links social account when user is authenticated', function () {
     $socialiteUser->shouldReceive('getId')->andReturn('123456789');
     $socialiteUser->shouldReceive('getEmail')->andReturn('social@example.com');
     $socialiteUser->shouldReceive('getName')->andReturn('Social User');
+    $socialiteUser->shouldReceive('getAvatar')->andReturn('https://example.com/social-avatar.png');
     $socialiteUser->token = 'oauth-token';
     $socialiteUser->refreshToken = 'refresh-token';
 
@@ -192,6 +202,8 @@ test('links social account when user is authenticated', function () {
         ->where('provider', $provider)
         ->first();
     expect($socialAccount)->not->toBeNull();
+    $user->refresh();
+    expect($user->avatar)->toBe('https://example.com/social-avatar.png');
 });
 
 test('unlinks social account after password confirmation', function () {

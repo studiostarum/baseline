@@ -264,7 +264,7 @@ class SocialAuthController extends Controller
             ]);
 
             if ($socialAccount) {
-                // User exists, log them in
+                $this->updateUserAvatarFromSocial($socialAccount->user, $socialUser);
                 Auth::login($socialAccount->user);
 
                 Log::info('Existing user logged in', [
@@ -291,7 +291,7 @@ class SocialAuthController extends Controller
             ]);
 
             if ($user) {
-                // Email exists, link the social account
+                $this->updateUserAvatarFromSocial($user, $socialUser);
                 $this->createSocialAccount($user, $provider, $socialUser);
                 Auth::login($user);
 
@@ -383,7 +383,7 @@ class SocialAuthController extends Controller
                     ->with('error', 'You already have a '.ucfirst($provider).' account linked.');
             }
 
-            // Link the account
+            $this->updateUserAvatarFromSocial($user, $socialUser);
             $this->createSocialAccount($user, $provider, $socialUser);
 
             if ($isPopup) {
@@ -399,6 +399,27 @@ class SocialAuthController extends Controller
     }
 
     /**
+     * Get avatar URL from social user if available.
+     */
+    private function getAvatarFromSocialUser($socialUser): ?string
+    {
+        $url = $socialUser->getAvatar();
+
+        return is_string($url) && $url !== '' ? $url : null;
+    }
+
+    /**
+     * Update the user's avatar from the social provider when present.
+     */
+    private function updateUserAvatarFromSocial(User $user, $socialUser): void
+    {
+        $avatar = $this->getAvatarFromSocialUser($socialUser);
+        if ($avatar !== null) {
+            $user->update(['avatar' => $avatar]);
+        }
+    }
+
+    /**
      * Create a user from social provider data.
      * Same email as OAuth; no password set so the user can add one later in Password settings if they want.
      */
@@ -410,9 +431,12 @@ class SocialAuthController extends Controller
             throw new \Exception('Email is required but not provided by '.ucfirst($provider));
         }
 
+        $avatar = $this->getAvatarFromSocialUser($socialUser);
+
         $user = User::create([
             'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'User',
             'email' => $email,
+            'avatar' => $avatar,
             'email_verified_at' => now(),
             'password' => null,
         ]);
