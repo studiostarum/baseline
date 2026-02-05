@@ -5,21 +5,22 @@ Internal Laravel + Vue starter kit with **admin CMS** (users, roles, settings), 
 ## Quick start
 
 ```bash
-composer run setup
+./setup
+```
+
+Or `composer run setup`. Use `./setup` to silence PHP/Composer deprecation notices on the console.
+
+This runs the combined Baseline script: it installs PHP deps, then shows the **feature selection** (admin, billing, languages — **space** to toggle, **enter** to confirm). After you confirm, it installs the rest (key, migrations, wayfinder, npm, build) and seeds roles when admin is enabled. Then seed roles and optionally assign the first admin:
+
+```bash
 composer run setup:full
 ```
 
-Or after `composer run setup`, run `php artisan baseline:install` to seed roles and optionally assign the first admin by email.
+Or after `composer run setup`, run `php artisan db:seed --class=RolesAndPermissionsSeeder --force` then `php artisan baseline:install` to assign an admin by email.
 
-To choose which features to include (admin, billing, languages), run:
+To change features later: edit `BASELINE_ADMIN`, `BASELINE_BILLING`, and `BASELINE_LOCALES` in `.env`, then run `php artisan config:clear`. For non-interactive installs (e.g. CI), set `BASELINE_SETUP_NON_INTERACTIVE=1` before running setup.
 
-```bash
-php artisan baseline:configure
-```
-
-Use the interactive menu: **space** to toggle an option, **enter** to confirm. The command updates `.env` and clears config.
-
-**Client projects:** When handing off to a client, run `php artisan baseline:strip` after configuring. It removes the configure command, locks the current feature flags into config, and strips `BASELINE_*` from `.env` so clients cannot re-enable features.
+**Client projects:** When handing off to a client, run `php artisan baseline:strip`. It locks the current feature flags into config and strips `BASELINE_*` from `.env` so clients cannot re-enable features.
 
 ## First admin user
 
