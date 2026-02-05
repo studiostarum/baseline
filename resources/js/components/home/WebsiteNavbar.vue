@@ -1,38 +1,97 @@
 <script setup lang="ts">
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import UserMenuContent from '@/components/UserMenuContent.vue';
+import UserInfo from '@/components/UserInfo.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { dashboard, home, login, logout, register } from '@/routes';
 import { Link, usePage } from '@inertiajs/vue3';
-import { List, X } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ChevronsUpDown, List, X } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 
 const open = ref(false);
+const navVisible = ref(true);
+const lastScrollY = ref(0);
+const scrollThreshold = 60;
+
+function onScroll() {
+    if (open.value) {
+        return;
+    }
+    const y = window.scrollY;
+    if (y <= 10) {
+        navVisible.value = true;
+    } else if (y > lastScrollY.value && y > scrollThreshold) {
+        navVisible.value = false;
+    } else if (y < lastScrollY.value) {
+        navVisible.value = true;
+    }
+    lastScrollY.value = y;
+}
+
+let tick: ReturnType<typeof requestAnimationFrame> | null = null;
+function handleScroll() {
+    if (tick === null) {
+        tick = requestAnimationFrame(() => {
+            onScroll();
+            tick = null;
+        });
+    }
+}
+
+onMounted(() => {
+    lastScrollY.value = window.scrollY;
+    window.addEventListener('scroll', handleScroll, { passive: true });
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
+
+const { t } = useTranslations();
 
 const page = usePage();
 const user = page.props.auth?.user;
 const appName = (page.props.name as string) ?? 'Laravel';
+const canRegister = (page.props.canRegister ?? true) as boolean;
 
-const navLinks: { href: string; label: string }[] = [
-    { href: '#pricing', label: 'Pricing' },
-];
+const navLinks = computed(() => [
+    { href: '#pricing', label: t('website.pricing') },
+]);
 
 function closeMenu() {
     open.value = false;
 }
+
+function toggleMenu() {
+    open.value = !open.value;
+    if (open.value) {
+        navVisible.value = true;
+    }
+}
 </script>
 
 <template>
-    <div class="relative">
-        <nav
-            class="sticky top-0 left-0 right-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg">
-            <div class="container flex min-h-12 items-center justify-between md:min-h-14">
+    <div
+        class="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-lg transition-transform duration-300 ease-out"
+        :class="{ '-translate-y-full': !navVisible }"
+    >
+        <nav class="border-b">
+            <div class="container mx-auto flex min-h-12 items-center justify-between md:min-h-14">
                 <!-- Logo/Brand -->
                 <Link :href="home()" class="flex items-center gap-2">
                     <AppLogoIcon class="size-6 text-primary dark:text-foreground" />
-                    <span class="text-2xl font-extrabold leading-none tracking-tight">{{
+                    <span class="text-xl font-bold leading-none tracking-tight">{{
                         appName
                     }}</span>
                 </Link>
@@ -52,32 +111,48 @@ function closeMenu() {
                     </Link>
                 </div>
 
-                <!-- Desktop Auth Buttons -->
+                <!-- Desktop: User menu -->
                 <div class="hidden items-center gap-2 md:flex">
-                    <template v-if="user">
-                        <Link :href="dashboard()">
-                            <Button size="sm">
-                                Dashboard
+                    <DropdownMenu v-if="user">
+                        <DropdownMenuTrigger as-child>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                class="flex h-9 items-center gap-2 px-2 data-[state=open]:bg-accent"
+                            >
+                                <UserInfo :user="user" />
+                                <ChevronsUpDown class="size-4 opacity-50" />
                             </Button>
-                        </Link>
-                        <Link :href="logout()" method="post" as="button">
-                            <Button variant="ghost" size="sm">
-                                Log out
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="min-w-56">
+                            <UserMenuContent :user="user" />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu v-else>
+                        <DropdownMenuTrigger as-child>
+                            <Button variant="outline" size="sm" class="gap-2">
+                                <Avatar class="size-6">
+                                    <AvatarFallback class="rounded-md text-xs">
+                                        ?
+                                    </AvatarFallback>
+                                </Avatar>
+                                {{ t('website.sign_in') }}
+                                <ChevronsUpDown class="size-4 opacity-50" />
                             </Button>
-                        </Link>
-                    </template>
-                    <template v-else>
-                        <Link :href="login()">
-                            <Button size="sm" variant="outline">
-                                Sign in
-                            </Button>
-                        </Link>
-                        <Link v-if="($page.props.canRegister ?? true)" :href="register()">
-                            <Button size="sm">
-                                Get started
-                            </Button>
-                        </Link>
-                    </template>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="min-w-48">
+                            <DropdownMenuItem :as-child="true">
+                                <Link :href="login()" class="cursor-pointer">
+                                    {{ t('website.sign_in') }}
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem v-if="canRegister" :as-child="true">
+                                <Link :href="register()" class="cursor-pointer font-medium">
+                                    {{ t('website.get_started') }}
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -87,7 +162,7 @@ function closeMenu() {
                         size="icon-sm"
                         type="button"
                         aria-label="Toggle menu"
-                        @click="open = !open">
+                        @click="toggleMenu">
                         <X v-if="open" class="size-5" />
                         <List v-else class="size-5" />
                     </Button>
@@ -136,7 +211,7 @@ function closeMenu() {
                                     )
                                 "
                                 @click="closeMenu">
-                                Dashboard
+                                {{ t('navigation.dashboard') }}
                             </Link>
                             <Link
                                 :href="logout()"
@@ -152,7 +227,7 @@ function closeMenu() {
                                     )
                                 "
                                 @click="closeMenu">
-                                Log out
+                                {{ t('navigation.log_out') }}
                             </Link>
                         </template>
                         <template v-else>
@@ -168,7 +243,7 @@ function closeMenu() {
                                     )
                                 "
                                 @click="closeMenu">
-                                Sign in
+                                {{ t('website.sign_in') }}
                             </Link>
                             <Link
                                 v-if="($page.props.canRegister ?? true)"
@@ -180,7 +255,7 @@ function closeMenu() {
                                     )
                                 "
                                 @click="closeMenu">
-                                Get started
+                                {{ t('website.get_started') }}
                             </Link>
                         </template>
                     </div>

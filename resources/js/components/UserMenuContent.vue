@@ -9,13 +9,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import UserInfo from '@/components/UserInfo.vue';
 import { useAppearance } from '@/composables/useAppearance';
+import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useTranslations } from '@/composables/useTranslations';
-import { home, logout } from '@/routes';
+import { dashboard, home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { Appearance, User } from '@/types';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { Globe, Languages, LogOut, Monitor, Moon, Settings, Sun } from 'lucide-vue-next';
+import { Globe, Languages, LayoutGrid, LogOut, Monitor, Moon, Settings, Sun } from 'lucide-vue-next';
 
 type Props = {
     user: User;
@@ -43,6 +44,12 @@ const switchLocale = (code: string) => {
         window.location.href = `/locale/${code}`;
     }
 };
+
+const { currentUrl } = useCurrentUrl();
+const isAppSide = computed(() => {
+    const path = currentUrl.value;
+    return path.startsWith('/dashboard') || path.startsWith('/settings') || path.startsWith('/admin');
+});
 </script>
 
 <template>
@@ -54,15 +61,20 @@ const switchLocale = (code: string) => {
     <DropdownMenuSeparator />
     <DropdownMenuGroup>
         <DropdownMenuItem :as-child="true">
-            <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
-                <Settings class="mr-2 h-4 w-4" />
-                {{ t('navigation.settings') }}
+            <Link
+                class="block w-full cursor-pointer"
+                :href="isAppSide ? home() : dashboard()"
+                prefetch
+            >
+                <LayoutGrid v-if="!isAppSide" class="mr-2 h-4 w-4" />
+                <Globe v-else class="mr-2 h-4 w-4" />
+                {{ isAppSide ? t('navigation.go_to_website') : t('navigation.go_to_app') }}
             </Link>
         </DropdownMenuItem>
         <DropdownMenuItem :as-child="true">
-            <Link class="block w-full cursor-pointer" :href="home()" prefetch>
-                <Globe class="mr-2 h-4 w-4" />
-                {{ t('navigation.website') }}
+            <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
+                <Settings class="mr-2 h-4 w-4" />
+                {{ t('navigation.settings') }}
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>

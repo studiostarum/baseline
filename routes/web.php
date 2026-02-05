@@ -29,8 +29,13 @@ if (config('baseline.features.locales', true)) {
 }
 
 Route::get('/', function () {
+    $user = auth()->user();
+
     return Inertia::render('Home', [
         'canRegister' => Features::enabled(Features::registration()),
+        'stripeConfigured' => ! empty(config('cashier.key')) && ! empty(config('cashier.secret')),
+        'defaultPriceId' => config('services.stripe.price_id'),
+        'hasActiveSubscription' => $user?->subscribed('default') ?? false,
     ]);
 })->name('home');
 
