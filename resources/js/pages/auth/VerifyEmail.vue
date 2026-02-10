@@ -3,10 +3,13 @@ import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 import AppHead from '@/components/AppHead.vue';
 import { Form } from '@inertiajs/vue3';
+
+const { t } = useTranslations();
 
 defineProps<{
     status?: string;
@@ -15,17 +18,16 @@ defineProps<{
 
 <template>
     <AuthLayout
-        title="Verify email"
-        description="Please verify your email address by clicking on the link we just emailed to you."
+        :title="t('auth.verify_email.title')"
+        :description="t('auth.verify_email.description')"
     >
-        <AppHead title="Verify email" />
+        <AppHead :title="t('auth.verify_email.title')" />
 
         <div
             v-if="status === 'verification-link-sent'"
             class="mb-4 text-center text-sm font-medium text-green-600"
         >
-            A new verification link has been sent to the email address you
-            provided during registration.
+            {{ t('auth.verify_email.link_sent') }}
         </div>
 
         <Form
@@ -35,7 +37,7 @@ defineProps<{
         >
             <Button :disabled="processing" variant="secondary">
                 <Spinner v-if="processing" />
-                Resend verification email
+                {{ t('auth.verify_email.resend_button') }}
             </Button>
 
             <TextLink
@@ -43,7 +45,7 @@ defineProps<{
                 as="button"
                 class="mx-auto block text-sm"
             >
-                Log out
+                {{ t('navigation.log_out') }}
             </TextLink>
         </Form>
     </AuthLayout>

@@ -9,12 +9,15 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import AppHead from '@/components/AppHead.vue';
 import { Form, router, usePage } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
+
+const { t } = useTranslations();
 
 defineProps<{
     status?: string;
@@ -34,10 +37,10 @@ onMounted(() => {
 
 <template>
     <AuthBase
-        title="Log in to your account"
-        description="Enter your email and password below to log in"
+        :title="t('auth.login.title')"
+        :description="t('auth.login.description')"
     >
-        <AppHead title="Log in" />
+        <AppHead :title="t('auth.login.heading')" />
 
         <div
             v-if="status"
@@ -54,7 +57,7 @@ onMounted(() => {
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">{{ t('fields.email') }}</Label>
                     <Input
                         id="email"
                         type="email"
@@ -63,21 +66,21 @@ onMounted(() => {
                         autofocus
                         :tabindex="1"
                         autocomplete="email"
-                        placeholder="email@example.com"
+                        :placeholder="t('fields.email_placeholder')"
                     />
                     <InputError :message="errors.email" />
                 </div>
 
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
+                        <Label for="password">{{ t('fields.password') }}</Label>
                         <TextLink
                             v-if="canResetPassword"
                             :href="request()"
                             class="text-sm"
                             :tabindex="5"
                         >
-                            Forgot password?
+                            {{ t('auth.login.forgot_password') }}
                         </TextLink>
                     </div>
                     <Input
@@ -87,7 +90,7 @@ onMounted(() => {
                         required
                         :tabindex="2"
                         autocomplete="current-password"
-                        placeholder="Password"
+                        :placeholder="t('fields.password_placeholder')"
                     />
                     <InputError :message="errors.password" />
                 </div>
@@ -95,7 +98,7 @@ onMounted(() => {
                 <div class="flex items-center justify-between">
                     <Label for="remember" class="flex items-center space-x-3">
                         <Checkbox id="remember" name="remember" :tabindex="3" />
-                        <span>Remember me</span>
+                        <span>{{ t('auth.login.remember_me') }}</span>
                     </Label>
                 </div>
 
@@ -107,7 +110,7 @@ onMounted(() => {
                     data-test="login-button"
                 >
                     <Spinner v-if="processing" />
-                    Log in
+                    {{ t('auth.login.button') }}
                 </Button>
             </div>
 
@@ -117,7 +120,7 @@ onMounted(() => {
                 </div>
                 <div class="relative flex justify-center text-xs uppercase">
                     <span class="bg-background px-2 text-muted-foreground">
-                        Or continue with
+                        {{ t('common.or') }}
                     </span>
                 </div>
             </div>
@@ -128,8 +131,8 @@ onMounted(() => {
                 class="text-center text-sm text-muted-foreground"
                 v-if="canRegister"
             >
-                Don't have an account?
-                <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+                {{ t('auth.login.no_account') }}
+                <TextLink :href="register()" :tabindex="5">{{ t('auth.login.sign_up') }}</TextLink>
             </div>
         </Form>
     </AuthBase>

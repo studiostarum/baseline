@@ -5,17 +5,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { store } from '@/routes/password/confirm';
 import AppHead from '@/components/AppHead.vue';
 import { Form } from '@inertiajs/vue3';
+
+const { t } = useTranslations();
 </script>
 
 <template>
     <AuthLayout
-        title="Confirm your password"
-        description="This is a secure area of the application. Please confirm your password before continuing."
+        :title="t('auth.confirm_password.title')"
+        :description="t('auth.confirm_password.description')"
     >
-        <AppHead title="Confirm password" />
+        <AppHead :title="t('auth.confirm_password.title')" />
 
         <Form
             v-bind="store.form()"
@@ -24,7 +27,7 @@ import { Form } from '@inertiajs/vue3';
         >
             <div class="space-y-6">
                 <div class="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{{ t('fields.password') }}</Label>
                     <Input
                         id="password"
                         type="password"
@@ -45,7 +48,7 @@ import { Form } from '@inertiajs/vue3';
                         data-test="confirm-password-button"
                     >
                         <Spinner v-if="processing" />
-                        Confirm Password
+                        {{ t('auth.confirm_password.button') }}
                     </Button>
                 </div>
             </div>

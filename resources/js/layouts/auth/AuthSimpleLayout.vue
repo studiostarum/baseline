@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageDropdown from '@/components/LanguageDropdown.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/vue3';
+import { ArrowLeft } from 'lucide-vue-next';
+
+const { t } = useTranslations();
 
 defineProps<{
     title?: string;
@@ -14,6 +18,13 @@ defineProps<{
     <div
         class="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10"
     >
+        <Link
+            :href="home()"
+            class="absolute left-4 top-4 flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:underline"
+        >
+            <ArrowLeft class="size-4 shrink-0" />
+            {{ t('auth.back_to_home') }}
+        </Link>
         <div class="absolute right-4 top-4">
             <LanguageDropdown />
         </div>

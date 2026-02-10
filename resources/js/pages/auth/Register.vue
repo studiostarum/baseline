@@ -9,9 +9,13 @@ import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import AppHead from '@/components/AppHead.vue';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { usePage } from '@inertiajs/vue3';
+import { Form, router, usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+
+const { t } = useTranslations();
 
 defineProps<{
     canRegister: boolean;
@@ -29,10 +33,10 @@ onMounted(() => {
 
 <template>
     <AuthBase
-        title="Create an account"
-        description="Enter your details below to create your account"
+        :title="t('auth.register.title')"
+        :description="t('auth.register.description')"
     >
-        <AppHead title="Register" />
+        <AppHead :title="t('auth.register.heading')" />
 
         <Form
             v-bind="store.form()"
@@ -42,7 +46,7 @@ onMounted(() => {
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="name">Name</Label>
+                    <Label for="name">{{ t('fields.name') }}</Label>
                     <Input
                         id="name"
                         type="text"
@@ -51,13 +55,13 @@ onMounted(() => {
                         :tabindex="1"
                         autocomplete="name"
                         name="name"
-                        placeholder="Full name"
+                        :placeholder="t('fields.full_name')"
                     />
                     <InputError :message="errors.name" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">{{ t('fields.email') }}</Label>
                     <Input
                         id="email"
                         type="email"
@@ -65,13 +69,13 @@ onMounted(() => {
                         :tabindex="2"
                         autocomplete="email"
                         name="email"
-                        placeholder="email@example.com"
+                        :placeholder="t('fields.email_placeholder')"
                     />
                     <InputError :message="errors.email" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Password</Label>
+                    <Label for="password">{{ t('fields.password') }}</Label>
                     <Input
                         id="password"
                         type="password"
@@ -79,13 +83,13 @@ onMounted(() => {
                         :tabindex="3"
                         autocomplete="new-password"
                         name="password"
-                        placeholder="Password"
+                        :placeholder="t('fields.password_placeholder')"
                     />
                     <InputError :message="errors.password" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
+                    <Label for="password_confirmation">{{ t('fields.confirm_password') }}</Label>
                     <Input
                         id="password_confirmation"
                         type="password"
@@ -93,7 +97,7 @@ onMounted(() => {
                         :tabindex="4"
                         autocomplete="new-password"
                         name="password_confirmation"
-                        placeholder="Confirm password"
+                        :placeholder="t('fields.confirm_password_placeholder')"
                     />
                     <InputError :message="errors.password_confirmation" />
                 </div>
@@ -106,7 +110,7 @@ onMounted(() => {
                     data-test="register-user-button"
                 >
                     <Spinner v-if="processing" />
-                    Create account
+                    {{ t('auth.register.button') }}
                 </Button>
             </div>
 
@@ -116,7 +120,7 @@ onMounted(() => {
                 </div>
                 <div class="relative flex justify-center text-xs uppercase">
                     <span class="bg-background px-2 text-muted-foreground">
-                        Or continue with
+                        {{ t('common.or') }}
                     </span>
                 </div>
             </div>
@@ -124,12 +128,12 @@ onMounted(() => {
             <SocialLoginButton provider="google" class="w-full" />
 
             <div class="text-center text-sm text-muted-foreground">
-                Already have an account?
+                {{ t('auth.register.have_account') }}
                 <TextLink
                     :href="login()"
                     class="underline underline-offset-4"
                     :tabindex="6"
-                    >Log in</TextLink
+                    >{{ t('auth.register.log_in') }}</TextLink
                 >
             </div>
         </Form>

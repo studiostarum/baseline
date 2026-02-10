@@ -5,10 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import { useTranslations } from '@/composables/useTranslations';
 import { update } from '@/routes/password';
 import AppHead from '@/components/AppHead.vue';
 import { Form } from '@inertiajs/vue3';
 import { ref } from 'vue';
+
+const { t } = useTranslations();
 
 const props = defineProps<{
     token: string;
@@ -20,10 +23,10 @@ const inputEmail = ref(props.email);
 
 <template>
     <AuthLayout
-        title="Reset password"
-        description="Please enter your new password below"
+        :title="t('auth.reset_password.title')"
+        :description="t('auth.reset_password.description')"
     >
-        <AppHead title="Reset password" />
+        <AppHead :title="t('auth.reset_password.title')" />
 
         <Form
             v-bind="update.form()"
@@ -33,7 +36,7 @@ const inputEmail = ref(props.email);
         >
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">{{ t('fields.email') }}</Label>
                     <Input
                         id="email"
                         type="email"
@@ -47,7 +50,7 @@ const inputEmail = ref(props.email);
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Password</Label>
+                    <Label for="password">{{ t('fields.password') }}</Label>
                     <Input
                         id="password"
                         type="password"
@@ -55,20 +58,20 @@ const inputEmail = ref(props.email);
                         autocomplete="new-password"
                         class="mt-1 block w-full"
                         autofocus
-                        placeholder="Password"
+                        :placeholder="t('fields.password_placeholder')"
                     />
                     <InputError :message="errors.password" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
+                    <Label for="password_confirmation">{{ t('fields.confirm_password') }}</Label>
                     <Input
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
                         autocomplete="new-password"
                         class="mt-1 block w-full"
-                        placeholder="Confirm password"
+                        :placeholder="t('fields.confirm_password_placeholder')"
                     />
                     <InputError :message="errors.password_confirmation" />
                 </div>
@@ -80,7 +83,7 @@ const inputEmail = ref(props.email);
                     data-test="reset-password-button"
                 >
                     <Spinner v-if="processing" />
-                    Reset password
+                    {{ t('auth.reset_password.button') }}
                 </Button>
             </div>
         </Form>

@@ -2,8 +2,11 @@
 import { OhVueIcon, addIcons } from 'oh-vue-icons';
 import { SiGoogle } from 'oh-vue-icons/icons';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 import { router } from '@inertiajs/vue3';
 import { redirect, link } from '@/routes/social';
+
+const { t } = useTranslations();
 
 // Register the Google icon
 if (typeof window !== 'undefined') {
@@ -176,8 +179,8 @@ const handleClick = (event: MouseEvent) => {
             class="size-4"
         />
         <span v-if="intent === 'link'"
-            >Connect {{ providerNames[provider] }}</span
+            >{{ t('auth.social.connect') }} {{ providerNames[provider] }}</span
         >
-        <span v-else>Continue with {{ providerNames[provider] }}</span>
+        <span v-else>{{ t('auth.social.continue_with') }} {{ providerNames[provider] }}</span>
     </Button>
 </template>
