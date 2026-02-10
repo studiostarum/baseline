@@ -10,11 +10,17 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useTranslations } from '@/composables/useTranslations';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import AppHead from '@/components/AppHead.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import { Trash2 } from 'lucide-vue-next';
+import { Info, Trash2 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
 const SOCIAL_PLATFORMS = [
@@ -81,7 +87,6 @@ const form = useForm({
         site_name: props.settings.site_name || '',
         site_description: props.settings.site_description || '',
         contact_email: props.settings.contact_email || '',
-        support_phone: props.settings.support_phone || '',
         maintenance_mode: props.settings.maintenance_mode || 'false',
         footer_social_links: props.settings.footer_social_links || '[]',
     },
@@ -141,9 +146,34 @@ function submit(): void {
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="site_description">
-                                {{ t('admin.settings.site_description') }}
-                            </Label>
+                            <div class="flex items-center gap-1.5">
+                                <Label for="site_description">
+                                    {{ t('admin.settings.site_description') }}
+                                </Label>
+                                <TooltipProvider :delay-duration="0">
+                                    <Tooltip>
+                                        <TooltipTrigger as-child>
+                                            <button
+                                                type="button"
+                                                class="rounded-full text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                aria-label="Info"
+                                            >
+                                                <Info class="size-4" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent
+                                            side="top"
+                                            class="max-w-64"
+                                        >
+                                            {{
+                                                t(
+                                                    'admin.settings.site_description_seo_hint',
+                                                )
+                                            }}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
                             <Input
                                 id="site_description"
                                 v-model="form.settings.site_description"
@@ -181,22 +211,6 @@ function submit(): void {
                             />
                             <InputError
                                 :message="form.errors['settings.contact_email']"
-                            />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="support_phone">{{
-                                t('admin.settings.support_phone')
-                            }}</Label>
-                            <Input
-                                id="support_phone"
-                                v-model="form.settings.support_phone"
-                                type="tel"
-                                :placeholder="t('admin.settings.support_phone_placeholder')"
-                                :disabled="!canManageSettings"
-                            />
-                            <InputError
-                                :message="form.errors['settings.support_phone']"
                             />
                         </div>
                     </CardContent>
