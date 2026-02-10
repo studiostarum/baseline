@@ -7,6 +7,9 @@ import { initializeTheme } from './composables/useAppearance';
 
 createInertiaApp({
     title: (title) => title ?? import.meta.env.VITE_APP_NAME ?? 'Laravel',
+    defaults: {
+        visitOptions: () => ({ viewTransition: true }),
+    },
     resolve: (name) =>
         resolvePageComponent(
             `./pages/${name}.vue`,

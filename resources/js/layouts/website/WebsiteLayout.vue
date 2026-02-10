@@ -14,7 +14,7 @@ defineProps<{
     <div class="flex min-h-screen flex-col">
         <WebsiteNavbar />
         <main
-            class="container mx-auto flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-8 border-b py-16 text-center md:gap-12 md:py-20 lg:gap-20 lg:py-28">
+            class="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-8 border-b py-16 text-center md:gap-12 md:py-20 lg:gap-20 lg:py-28">
             <slot />
         </main>
         <slot name="below" />
