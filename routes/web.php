@@ -39,6 +39,9 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('/contact', [App\Http\Controllers\ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+
 Route::post('stripe/webhook', WebhookController::class)
     ->name('cashier.webhook');
 

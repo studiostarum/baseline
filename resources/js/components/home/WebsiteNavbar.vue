@@ -2,16 +2,14 @@
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import UserInfo from '@/components/UserInfo.vue';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { dashboard, home, login, logout, register } from '@/routes';
+import { contact, dashboard, home, login, logout, register } from '@/routes';
 import { Link, usePage } from '@inertiajs/vue3';
 import { ChevronsUpDown, List, X } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
@@ -66,7 +64,9 @@ const appName = (page.props.name as string) ?? 'Laravel';
 const canRegister = (page.props.canRegister ?? true) as boolean;
 
 const navLinks = computed(() => [
-    { href: '#pricing', label: t('website.pricing') },
+    { href: `${home().url}#features`, label: t('website.footer.features') },
+    { href: `${home().url}#pricing`, label: t('website.pricing') },
+    { href: contact().url, label: t('website.footer.contact') },
 ]);
 
 function closeMenu() {
@@ -111,48 +111,37 @@ function toggleMenu() {
                     </Link>
                 </div>
 
-                <!-- Desktop: User menu -->
+                <!-- Desktop: Auth – same buttons as hero when not logged in, user menu when logged in -->
                 <div class="hidden items-center gap-2 md:flex">
-                    <DropdownMenu v-if="user">
-                        <DropdownMenuTrigger as-child>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                class="flex h-9 items-center gap-2 px-2 data-[state=open]:bg-accent"
-                            >
-                                <UserInfo :user="user" />
-                                <ChevronsUpDown class="size-4 opacity-50" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" class="min-w-56">
-                            <UserMenuContent :user="user" />
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <DropdownMenu v-else>
-                        <DropdownMenuTrigger as-child>
-                            <Button variant="outline" size="sm" class="gap-2">
-                                <Avatar class="size-6">
-                                    <AvatarFallback class="rounded-md text-xs">
-                                        ?
-                                    </AvatarFallback>
-                                </Avatar>
+                    <template v-if="user">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    class="flex h-9 items-center gap-2 px-2 data-[state=open]:bg-accent"
+                                >
+                                    <UserInfo :user="user" />
+                                    <ChevronsUpDown class="size-4 opacity-50" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" class="min-w-56">
+                                <UserMenuContent :user="user" />
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </template>
+                    <template v-else>
+                        <Button v-if="canRegister" as-child size="sm">
+                            <Link :href="register()">
+                                {{ t('website.get_started') }}
+                            </Link>
+                        </Button>
+                        <Button as-child variant="outline" size="sm">
+                            <Link :href="login()">
                                 {{ t('website.sign_in') }}
-                                <ChevronsUpDown class="size-4 opacity-50" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" class="min-w-48">
-                            <DropdownMenuItem :as-child="true">
-                                <Link :href="login()" class="cursor-pointer">
-                                    {{ t('website.sign_in') }}
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem v-if="canRegister" :as-child="true">
-                                <Link :href="register()" class="cursor-pointer font-medium">
-                                    {{ t('website.get_started') }}
-                                </Link>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                            </Link>
+                        </Button>
+                    </template>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -232,6 +221,18 @@ function toggleMenu() {
                         </template>
                         <template v-else>
                             <Link
+                                v-if="canRegister"
+                                :href="register()"
+                                class="w-full justify-start"
+                                :class="
+                                    cn(
+                                        buttonVariants({ size: 'sm' }),
+                                    )
+                                "
+                                @click="closeMenu">
+                                {{ t('website.get_started') }}
+                            </Link>
+                            <Link
                                 :href="login()"
                                 class="w-full justify-start"
                                 :class="
@@ -244,18 +245,6 @@ function toggleMenu() {
                                 "
                                 @click="closeMenu">
                                 {{ t('website.sign_in') }}
-                            </Link>
-                            <Link
-                                v-if="($page.props.canRegister ?? true)"
-                                :href="register()"
-                                class="w-full justify-start"
-                                :class="
-                                    cn(
-                                        buttonVariants({ size: 'sm' }),
-                                    )
-                                "
-                                @click="closeMenu">
-                                {{ t('website.get_started') }}
                             </Link>
                         </template>
                     </div>
