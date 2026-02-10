@@ -68,6 +68,7 @@ class HandleInertiaRequests extends Middleware
                 : [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'features' => config('baseline.features', ['admin' => true, 'billing' => true, 'locales' => true]),
+            'footer_social_links' => $this->footerSocialLinks(),
         ];
     }
 
@@ -123,5 +124,30 @@ class HandleInertiaRequests extends Middleware
         }
 
         return $description !== null ? (string) $description : '';
+    }
+
+    /**
+     * @return array<int, array{platform: string, url: string}>
+     */
+    protected function footerSocialLinks(): array
+    {
+        try {
+            $json = Setting::get('footer_social_links', '[]');
+            $decoded = is_string($json) ? json_decode($json, true) : $json;
+
+            if (! is_array($decoded)) {
+                return [];
+            }
+
+            return array_values(array_filter($decoded, function (mixed $item): bool {
+                return is_array($item)
+                    && isset($item['platform'], $item['url'])
+                    && is_string($item['platform'])
+                    && is_string($item['url'])
+                    && $item['url'] !== '';
+            }));
+        } catch (\Throwable) {
+            return [];
+        }
     }
 }

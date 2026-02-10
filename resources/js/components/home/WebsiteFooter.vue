@@ -11,7 +11,15 @@ import {
 } from 'lucide-vue-next';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { dashboard, home, login, register } from '@/routes';
+
+const SOCIAL_ICONS: Record<string, typeof Facebook> = {
+    facebook: Facebook,
+    instagram: Instagram,
+    twitter: Twitter,
+    linkedin: Linkedin,
+    youtube: Youtube,
+};
+import { contact, dashboard, home, login, register } from '@/routes';
 import { useTranslations } from '@/composables/useTranslations';
 import { cn } from '@/lib/utils';
 
@@ -73,15 +81,15 @@ const defaultColumnLinks = computed<ColumnLinks[]>(() => [
     {
         title: t('website.footer.product'),
         links: [
-            { title: t('website.pricing'), url: '#pricing' },
-            { title: t('website.footer.features'), url: '#' },
+            { title: t('website.pricing'), url: `${home().url}#pricing` },
+            { title: t('website.footer.features'), url: `${home().url}#features` },
         ],
     },
     {
         title: t('website.footer.company'),
         links: [
             { title: t('website.footer.about'), url: '#' },
-            { title: t('website.footer.contact'), url: '#' },
+            { title: t('website.footer.contact'), url: contact().url },
         ],
     },
     {
@@ -97,17 +105,20 @@ const columnLinks = computed(
     () => props.columnLinks ?? defaultColumnLinks.value,
 );
 
-const defaultSocialLinks = computed<SocialLink[]>(() => [
-    { url: '#', icon: Facebook },
-    { url: '#', icon: Instagram },
-    { url: '#', icon: Twitter },
-    { url: '#', icon: Linkedin },
-    { url: '#', icon: Youtube },
-]);
+const socialMediaLinks = computed(() => {
+    if (props.socialMediaLinks !== undefined) {
+        return props.socialMediaLinks;
+    }
+    const shared = (page.props.footer_social_links as { platform: string; url: string }[] | undefined) ?? [];
+    return shared
+        .filter((item) => item.url && SOCIAL_ICONS[item.platform])
+        .map((item) => ({
+            url: item.url,
+            icon: SOCIAL_ICONS[item.platform],
+        }));
+});
 
-const socialMediaLinks = computed(
-    () => props.socialMediaLinks ?? defaultSocialLinks.value,
-);
+const showSocialLinks = computed(() => socialMediaLinks.value.length > 0);
 </script>
 
 <template>
@@ -115,7 +126,7 @@ const socialMediaLinks = computed(
         <div class="container">
             <!-- CTA Section -->
             <div
-                class="rounded-xl border bg-muted/50 px-6 py-10 md:px-10 md:py-12 lg:flex lg:items-center lg:justify-between lg:gap-8"
+                class="rounded-xl border bg-muted/50 px-6 py-10 md:px-10 md:py-12 lg:flex lg:items-center lg:justify-between lg:gap-8 mb-12 md:mb-16 lg:mb-20"
             >
                 <div class="max-w-xl">
                     <h2
@@ -139,16 +150,6 @@ const socialMediaLinks = computed(
                                 {{ t('website.sign_in') }}
                             </Button>
                         </Link>
-                        <a
-                            href="#pricing"
-                            :class="
-                                cn(
-                                    'text-center text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline',
-                                )
-                            "
-                        >
-                            {{ t('website.footer.cta.view_pricing') }}
-                        </a>
                     </template>
                     <Link v-else :href="dashboard()">
                         <Button size="lg" class="w-full sm:w-auto">
@@ -157,8 +158,6 @@ const socialMediaLinks = computed(
                     </Link>
                 </div>
             </div>
-
-            <div class="my-12 h-px w-full bg-border md:my-16 lg:my-20" />
 
             <div class="mb-12 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 md:mb-16 md:gap-y-12 lg:mb-20 lg:grid-cols-3">
                 <div
@@ -172,7 +171,7 @@ const socialMediaLinks = computed(
                             v-for="(link, linkIndex) in column.links"
                             :key="linkIndex"
                         >
-                            <a
+                            <Link
                                 :href="link.url"
                                 :class="
                                     cn(
@@ -181,7 +180,7 @@ const socialMediaLinks = computed(
                                 "
                             >
                                 {{ link.title }}
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -204,18 +203,24 @@ const socialMediaLinks = computed(
                 <p class="text-muted-foreground">{{ footerText }}</p>
                 <div class="flex items-center gap-3">
                     <LanguageDropdown variant="button" side="top" />
-                    <a
-                        v-for="(link, index) in socialMediaLinks"
-                        :key="index"
-                        :href="link.url"
-                        class="text-muted-foreground transition-colors hover:text-foreground"
-                        :aria-label="link.url"
-                    >
-                        <component
-                            :is="link.icon"
-                            class="size-5"
+                    <template v-if="showSocialLinks">
+                        <span
+                            class="h-4 w-px shrink-0 bg-border"
+                            aria-hidden="true"
                         />
-                    </a>
+                        <a
+                            v-for="(link, index) in socialMediaLinks"
+                            :key="index"
+                            :href="link.url"
+                            class="text-muted-foreground transition-colors hover:text-foreground"
+                            :aria-label="link.url"
+                        >
+                            <component
+                                :is="link.icon"
+                                class="size-5"
+                            />
+                        </a>
+                    </template>
                 </div>
             </div>
         </div>
