@@ -16,6 +16,7 @@ import { ref } from 'vue';
 const { t } = useTranslations();
 const page = usePage();
 const status = (page.props.status as string | undefined) ?? null;
+const error = (page.props.error as string | undefined) ?? null;
 const acceptTerms = ref<boolean | 'indeterminate'>(false);
 </script>
 
@@ -80,6 +81,12 @@ const acceptTerms = ref<boolean | 'indeterminate'>(false);
                             v-slot="{ errors, processing }"
                             class="grid grid-cols-1 grid-rows-[auto_auto] gap-6"
                         >
+                            <div
+                                v-if="error"
+                                class="rounded-md bg-red-50 p-4 text-sm text-red-800 dark:bg-red-950 dark:text-red-200"
+                            >
+                                {{ error }}
+                            </div>
                             <div
                                 v-if="status"
                                 class="rounded-md bg-green-50 p-4 text-sm text-green-800 dark:bg-green-950 dark:text-green-200"
