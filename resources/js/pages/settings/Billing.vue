@@ -87,6 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const page = usePage();
+const dateLocale = computed(() => (page.props.locale as string) ?? 'en');
 const isLoading = ref(false);
 const billingInterval = ref<BillingInterval>('monthly');
 
@@ -143,7 +144,7 @@ function formatDate(dateString: string | null): string {
     if (!dateString) {
         return '';
     }
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(dateLocale.value, {
         month: 'long',
         day: 'numeric',
         year: 'numeric',
@@ -186,7 +187,7 @@ function formatCurrency(amount: number, currency?: string): string {
 }
 
 function formatShortDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(dateLocale.value, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
