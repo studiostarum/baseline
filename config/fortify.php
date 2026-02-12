@@ -77,6 +77,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Redirect Paths
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the path to redirect to after login, registration,
+    | and other authentication flows. Null falls back to the value of 'home'.
+    |
+    */
+
+    'redirects' => [
+        'login' => '/dashboard',
+        'register' => '/dashboard',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain
     |--------------------------------------------------------------------------
     |
