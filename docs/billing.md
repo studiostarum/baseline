@@ -13,6 +13,8 @@ Set these in `.env`:
 | `STRIPE_WEBHOOK_SECRET` | Webhook signing secret (from `stripe listen` locally, or Stripe Dashboard in production) |
 | `STRIPE_PRICE_ID` | Stripe Price ID for **monthly** checkout (create in Stripe Dashboard → Products) |
 | `STRIPE_PRICE_ID_ANNUAL` | Optional. Stripe Price ID for **yearly** checkout. If unset, only the monthly plan is offered. |
+| `STRIPE_TRIAL_DAYS_MONTHLY` | Trial days for monthly plan (default: 3). Set to 0 to disable. |
+| `STRIPE_TRIAL_DAYS_ANNUAL` | Trial days for annual plan (default: 7). Set to 0 to disable. |
 | `CASHIER_CURRENCY` | e.g. `usd` |
 | `CASHIER_CURRENCY_LOCALE` | e.g. `en` |
 

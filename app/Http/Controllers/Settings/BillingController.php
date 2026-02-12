@@ -163,8 +163,14 @@ class BillingController extends Controller
                 $user->createAsStripeCustomer();
             }
 
-            return $user
-                ->newSubscription('default', $priceId)
+            $trialDays = $this->trialDaysForPriceId($priceId);
+            $builder = $user->newSubscription('default', $priceId);
+
+            if ($trialDays > 0) {
+                $builder->trialDays($trialDays);
+            }
+
+            return $builder
                 ->checkout([
                     'success_url' => route('billing.show').'?checkout=success',
                     'cancel_url' => route('billing.show').'?checkout=cancel',
@@ -240,6 +246,22 @@ class BillingController extends Controller
         $priceId = is_object($firstLine->price) ? $firstLine->price->id : $firstLine->price;
 
         return $this->planTypeFromPriceId($priceId);
+    }
+
+    /**
+     * Trial days for the given Stripe price ID (monthly: 3, annual: 7).
+     */
+    protected function trialDaysForPriceId(string $priceId): int
+    {
+        $planType = $this->planTypeFromPriceId($priceId);
+        if ($planType === 'annual') {
+            return config('services.stripe.trial_days_annual', 7);
+        }
+        if ($planType === 'monthly') {
+            return config('services.stripe.trial_days_monthly', 3);
+        }
+
+        return 0;
     }
 
     /**

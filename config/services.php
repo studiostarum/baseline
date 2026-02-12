@@ -46,6 +46,8 @@ return [
         'secret' => env('STRIPE_SECRET'),
         'price_id' => env('STRIPE_PRICE_ID'),
         'price_id_annual' => env('STRIPE_PRICE_ID_ANNUAL'),
+        'trial_days_monthly' => (int) env('STRIPE_TRIAL_DAYS_MONTHLY', 3),
+        'trial_days_annual' => (int) env('STRIPE_TRIAL_DAYS_ANNUAL', 7),
     ],
 
 ];
