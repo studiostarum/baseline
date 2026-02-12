@@ -19,11 +19,14 @@ import { useTranslations } from '@/composables/useTranslations';
 import { dashboard, register } from '@/routes';
 import { Link, usePage } from '@inertiajs/vue3';
 import { ArrowRight, Check, Info } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
+type BillingInterval = 'monthly' | 'annual';
 
 type Props = {
     stripeConfigured?: boolean;
     defaultPriceId?: string | null;
+    defaultPriceIdAnnual?: string | null;
     hasActiveSubscription?: boolean;
     canRegister?: boolean;
 };
@@ -31,21 +34,46 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
     stripeConfigured: false,
     defaultPriceId: null,
+    defaultPriceIdAnnual: null,
     hasActiveSubscription: false,
     canRegister: true,
 });
 
 const { t } = useTranslations();
 const page = usePage();
+const billingInterval = ref<BillingInterval>('monthly');
 
 const csrfToken = computed(() => (page.props as { csrf_token?: string }).csrf_token ?? '');
 const billingEnabled = computed(() => page.props.features?.billing !== false);
+
+const showBillingIntervalToggle = computed(
+    () => Boolean(props.defaultPriceId && props.defaultPriceIdAnnual),
+);
+
+const selectedPriceId = computed(() =>
+    billingInterval.value === 'annual'
+        ? props.defaultPriceIdAnnual
+        : props.defaultPriceId,
+);
+
 const canCheckout = computed(
     () =>
         props.stripeConfigured &&
-        props.defaultPriceId &&
+        selectedPriceId.value &&
         billingEnabled.value &&
         !props.hasActiveSubscription,
+);
+
+const proPrice = computed(() =>
+    billingInterval.value === 'annual'
+        ? t('website.pricing.pro.price_annual')
+        : t('website.pricing.pro.price'),
+);
+
+const proPeriod = computed(() =>
+    billingInterval.value === 'annual'
+        ? t('website.pricing.pro.period_annual')
+        : t('website.pricing.pro.period'),
 );
 
 const freePlanFeatures = computed(() => [
@@ -69,8 +97,8 @@ const proPlanFeatures = computed(() => [
 function submitCheckout(e: Event) {
     const form = e.target as HTMLFormElement;
     const priceInput = form.querySelector<HTMLInputElement>('input[name="price_id"]');
-    if (priceInput && props.defaultPriceId) {
-        priceInput.value = props.defaultPriceId;
+    if (priceInput && selectedPriceId.value) {
+        priceInput.value = selectedPriceId.value;
     }
     form.submit();
 }
@@ -172,12 +200,41 @@ function submitCheckout(e: Event) {
                             <CardTitle class="text-xl text-primary-foreground">
                                 {{ t('website.pricing.pro.name') }}
                             </CardTitle>
+                            <div
+                                v-if="showBillingIntervalToggle"
+                                class="flex justify-center gap-2"
+                            >
+                                <button
+                                    type="button"
+                                    class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                                    :class="
+                                        billingInterval === 'monthly'
+                                            ? 'bg-primary-foreground/20 text-primary-foreground'
+                                            : 'text-primary-foreground/70 hover:text-primary-foreground'
+                                    "
+                                    @click="billingInterval = 'monthly'"
+                                >
+                                    {{ t('settings.billing.plan_monthly') }}
+                                </button>
+                                <button
+                                    type="button"
+                                    class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                                    :class="
+                                        billingInterval === 'annual'
+                                            ? 'bg-primary-foreground/20 text-primary-foreground'
+                                            : 'text-primary-foreground/70 hover:text-primary-foreground'
+                                    "
+                                    @click="billingInterval = 'annual'"
+                                >
+                                    {{ t('settings.billing.plan_annual') }}
+                                </button>
+                            </div>
                             <div class="flex items-baseline justify-center gap-1.5">
                                 <span class="text-5xl font-black text-primary-foreground">
-                                    {{ t('website.pricing.pro.price') }}
+                                    {{ proPrice }}
                                 </span>
                                 <span class="text-lg font-medium text-primary-foreground/80">
-                                    {{ t('website.pricing.pro.period') }}
+                                    {{ proPeriod }}
                                 </span>
                                 <TooltipProvider v-if="billingEnabled">
                                     <Tooltip>
@@ -220,7 +277,7 @@ function submitCheckout(e: Event) {
                                     @submit="submitCheckout"
                                 >
                                     <input type="hidden" name="_token" :value="csrfToken" />
-                                    <input type="hidden" name="price_id" :value="defaultPriceId ?? ''" />
+                                    <input type="hidden" name="price_id" :value="selectedPriceId ?? ''" />
                                     <Button
                                         type="submit"
                                         variant="secondary"

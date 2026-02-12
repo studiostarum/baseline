@@ -35,6 +35,7 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
         'stripeConfigured' => ! empty(config('cashier.key')) && ! empty(config('cashier.secret')),
         'defaultPriceId' => config('services.stripe.price_id'),
+        'defaultPriceIdAnnual' => config('services.stripe.price_id_annual'),
         'hasActiveSubscription' => $user?->subscribed('default') ?? false,
     ]);
 })->name('home');

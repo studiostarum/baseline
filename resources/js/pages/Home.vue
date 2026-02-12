@@ -17,12 +17,14 @@ withDefaults(
         canRegister: boolean;
         stripeConfigured?: boolean;
         defaultPriceId?: string | null;
+        defaultPriceIdAnnual?: string | null;
         hasActiveSubscription?: boolean;
     }>(),
     {
         canRegister: true,
         stripeConfigured: false,
         defaultPriceId: null,
+        defaultPriceIdAnnual: null,
         hasActiveSubscription: false,
     },
 );
@@ -76,6 +78,7 @@ withDefaults(
                 :can-register="canRegister"
                 :stripe-configured="stripeConfigured ?? false"
                 :default-price-id="defaultPriceId"
+                :default-price-id-annual="defaultPriceIdAnnual"
                 :has-active-subscription="hasActiveSubscription ?? false"
             />
             <div class="h-px w-full shrink-0 bg-border" />

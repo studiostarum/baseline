@@ -36,6 +36,7 @@ import { type BreadcrumbItem } from '@/types';
 type Subscription = {
     name: string;
     status: string;
+    planType: 'monthly' | 'annual' | null;
     onTrial: boolean;
     trialEndsAt: string | null;
     endsAt: string | null;
@@ -57,8 +58,11 @@ type Invoice = {
     total: number;
     currency?: string;
     status: string;
+    planType: 'monthly' | 'annual' | null;
     invoicePdfUrl: string | null;
 };
+
+type BillingInterval = 'monthly' | 'annual';
 
 type Props = {
     subscription: Subscription | null;
@@ -67,6 +71,7 @@ type Props = {
     hasStripeCustomer: boolean;
     stripeConfigured?: boolean;
     defaultPriceId?: string | null;
+    defaultPriceIdAnnual?: string | null;
     currency?: string;
     currencyLocale?: string;
     error?: string | null;
@@ -75,6 +80,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
     stripeConfigured: true,
     defaultPriceId: null,
+    defaultPriceIdAnnual: null,
     currency: 'USD',
     currencyLocale: 'en',
     error: null,
@@ -82,6 +88,17 @@ const props = withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const isLoading = ref(false);
+const billingInterval = ref<BillingInterval>('monthly');
+
+const showBillingIntervalToggle = computed(
+    () => Boolean(props.defaultPriceId && props.defaultPriceIdAnnual),
+);
+
+const selectedPriceId = computed(() =>
+    billingInterval.value === 'annual'
+        ? props.defaultPriceIdAnnual
+        : props.defaultPriceId,
+);
 const { t } = useTranslations();
 
 const errorMessage = computed(() => {
@@ -116,6 +133,12 @@ function formatStatus(status: string): string {
     return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
+function translatedStatus(status: string): string {
+    const key = `settings.billing.status_${status}`;
+    const translated = t(key);
+    return translated !== key ? translated : formatStatus(status);
+}
+
 function formatDate(dateString: string | null): string {
     if (!dateString) {
         return '';
@@ -138,7 +161,8 @@ function submitPortalForm(): void {
 }
 
 function submitCheckoutForm(): void {
-    if (!props.stripeConfigured || !props.defaultPriceId) {
+    const priceId = selectedPriceId.value;
+    if (!props.stripeConfigured || !priceId) {
         return;
     }
     isLoading.value = true;
@@ -149,7 +173,7 @@ function submitCheckoutForm(): void {
         'input[name="price_id"]',
     ) as HTMLInputElement;
     if (priceInput) {
-        priceInput.value = props.defaultPriceId;
+        priceInput.value = priceId;
     }
     form?.submit();
 }
@@ -242,7 +266,7 @@ function formatShortDate(dateString: string): string {
                                 :disabled="
                                     isLoading ||
                                     !stripeConfigured ||
-                                    !defaultPriceId
+                                    !selectedPriceId
                                 "
                                 @click="submitCheckoutForm"
                             >
@@ -264,17 +288,69 @@ function formatShortDate(dateString: string): string {
                         </div>
                     </CardHeader>
                     <CardContent>
+                        <div
+                            v-if="!subscription && showBillingIntervalToggle"
+                            class="mb-4 flex gap-2"
+                        >
+                            <Button
+                                type="button"
+                                :variant="
+                                    billingInterval === 'monthly'
+                                        ? 'default'
+                                        : 'outline'
+                                "
+                                size="sm"
+                                @click="billingInterval = 'monthly'"
+                            >
+                                {{ t('settings.billing.plan_monthly') }}
+                            </Button>
+                            <Button
+                                type="button"
+                                :variant="
+                                    billingInterval === 'annual'
+                                        ? 'default'
+                                        : 'outline'
+                                "
+                                size="sm"
+                                @click="billingInterval = 'annual'"
+                            >
+                                {{ t('settings.billing.plan_annual') }}
+                            </Button>
+                        </div>
                         <div v-if="subscription" class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium">{{ t('settings.billing.status') }}</span>
-                                <Badge
-                                    :variant="
-                                        getStatusVariant(subscription.status)
-                                    "
+                            <dl class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                                <div class="flex items-center gap-2">
+                                    <dt class="text-sm font-medium text-muted-foreground">
+                                        {{ t('settings.billing.status') }}
+                                    </dt>
+                                    <dd class="flex items-center">
+                                        <Badge
+                                            :variant="
+                                                getStatusVariant(subscription.status)
+                                            "
+                                        >
+                                            {{ translatedStatus(subscription.status) }}
+                                        </Badge>
+                                    </dd>
+                                </div>
+                                <div
+                                    v-if="subscription.planType"
+                                    class="flex items-center gap-2"
                                 >
-                                    {{ formatStatus(subscription.status) }}
-                                </Badge>
-                            </div>
+                                    <dt class="text-sm font-medium text-muted-foreground">
+                                        {{ t('settings.billing.plan') }}
+                                    </dt>
+                                    <dd class="flex items-center">
+                                        <Badge variant="secondary">
+                                            {{
+                                                subscription.planType === 'annual'
+                                                    ? t('settings.billing.plan_annual')
+                                                    : t('settings.billing.plan_monthly')
+                                            }}
+                                        </Badge>
+                                    </dd>
+                                </div>
+                            </dl>
 
                             <p
                                 v-if="
@@ -397,6 +473,7 @@ function formatShortDate(dateString: string): string {
                                     <TableRow>
                                         <TableHead>{{ t('settings.billing.invoice') }}</TableHead>
                                         <TableHead>{{ t('settings.billing.date') }}</TableHead>
+                                        <TableHead>{{ t('settings.billing.plan_column') }}</TableHead>
                                         <TableHead>{{ t('settings.billing.amount') }}</TableHead>
                                         <TableHead>{{ t('settings.billing.status_column') }}</TableHead>
                                         <TableHead class="text-right"
@@ -415,6 +492,19 @@ function formatShortDate(dateString: string): string {
                                         <TableCell>
                                             {{ formatShortDate(invoice.date) }}
                                         </TableCell>
+                                        <TableCell>
+                                            <span
+                                                v-if="invoice.planType"
+                                                class="text-sm text-muted-foreground"
+                                            >
+                                                {{
+                                                    invoice.planType === 'annual'
+                                                        ? t('settings.billing.plan_annual')
+                                                        : t('settings.billing.plan_monthly')
+                                                }}
+                                            </span>
+                                            <span v-else class="text-sm text-muted-foreground">—</span>
+                                        </TableCell>
                                         <TableCell class="font-medium">
                                             {{ formatCurrency(invoice.total, invoice.currency) }}
                                         </TableCell>
@@ -427,7 +517,7 @@ function formatShortDate(dateString: string): string {
                                                 "
                                             >
                                                 {{
-                                                    formatStatus(invoice.status)
+                                                    translatedStatus(invoice.status)
                                                 }}
                                             </Badge>
                                         </TableCell>

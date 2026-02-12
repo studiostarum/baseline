@@ -32,9 +32,14 @@ class BillingController extends Controller
                 $subscription = $user->subscription('default');
 
                 if ($subscription) {
+                    $stripePriceId = $subscription->stripe_price
+                        ?? $subscription->items->first()?->stripe_price;
+                    $planType = $this->planTypeFromPriceId($stripePriceId);
+
                     $subscriptionData = [
                         'name' => $subscription->type,
                         'status' => $subscription->stripe_status,
+                        'planType' => $planType,
                         'onTrial' => $subscription->onTrial(),
                         'trialEndsAt' => $subscription->trial_ends_at?->toIso8601String(),
                         'endsAt' => $subscription->ends_at?->toIso8601String(),
@@ -61,15 +66,22 @@ class BillingController extends Controller
 
                 if ($user->hasStripeId()) {
                     try {
-                        $invoices = collect($user->invoices())->map(fn ($invoice) => [
-                            'id' => $invoice->id,
-                            'number' => $invoice->number,
-                            'date' => $invoice->date()->toIso8601String(),
-                            'total' => $invoice->rawTotal(),
-                            'currency' => strtoupper($invoice->currency ?? config('cashier.currency', 'usd')),
-                            'status' => $invoice->status,
-                            'invoicePdfUrl' => $invoice->invoice_pdf,
-                        ])->take(20)->values()->all();
+                        $invoices = collect($user->invoices(false, [
+                            'expand' => ['data.lines.data.price'],
+                        ]))->map(function ($invoice) {
+                            $planType = $this->getInvoicePlanType($invoice);
+
+                            return [
+                                'id' => $invoice->id,
+                                'number' => $invoice->number,
+                                'date' => $invoice->date()->toIso8601String(),
+                                'total' => $invoice->rawTotal(),
+                                'currency' => strtoupper($invoice->currency ?? config('cashier.currency', 'usd')),
+                                'status' => $invoice->status,
+                                'planType' => $planType,
+                                'invoicePdfUrl' => $invoice->invoice_pdf,
+                            ];
+                        })->take(20)->values()->all();
                     } catch (\Exception $e) {
                         $invoices = [];
                     }
@@ -88,6 +100,7 @@ class BillingController extends Controller
             'hasStripeCustomer' => $user->hasStripeId(),
             'stripeConfigured' => $stripeConfigured,
             'defaultPriceId' => $this->defaultPriceId(),
+            'defaultPriceIdAnnual' => $this->defaultPriceIdAnnual(),
             'currency' => strtoupper(config('cashier.currency', 'usd')),
             'currencyLocale' => config('cashier.currency_locale', 'en'),
             'error' => $error ?? $request->session()->get('error'),
@@ -131,6 +144,14 @@ class BillingController extends Controller
             return back()->with('error', 'Please select a plan or set STRIPE_PRICE_ID in your environment.');
         }
 
+        $allowedPriceIds = array_filter([
+            $this->defaultPriceId(),
+            $this->defaultPriceIdAnnual(),
+        ]);
+        if ($allowedPriceIds && ! in_array($priceId, $allowedPriceIds, true)) {
+            return back()->with('error', 'Please select a valid plan.');
+        }
+
         if (! $this->isStripeConfigured()) {
             Log::warning('Billing checkout: Stripe not configured');
 
@@ -168,11 +189,75 @@ class BillingController extends Controller
     }
 
     /**
-     * Default Stripe price ID for new subscriptions (used when user has no subscription).
+     * Default Stripe price ID for new subscriptions (monthly).
      */
     protected function defaultPriceId(): ?string
     {
         return config('services.stripe.price_id') ?: null;
+    }
+
+    /**
+     * Stripe price ID for annual subscriptions (optional).
+     */
+    protected function defaultPriceIdAnnual(): ?string
+    {
+        return config('services.stripe.price_id_annual') ?: null;
+    }
+
+    /**
+     * Get plan type (monthly or annual) for an invoice from its line item price.
+     */
+    protected function getInvoicePlanType(\Laravel\Cashier\Invoice $invoice): ?string
+    {
+        $stripeInvoice = $invoice->asStripeInvoice();
+        $planType = $this->planTypeFromInvoiceLines($stripeInvoice);
+
+        if ($planType === null) {
+            try {
+                $invoice->refresh(['lines.data.price']);
+                $stripeInvoice = $invoice->asStripeInvoice();
+                $planType = $this->planTypeFromInvoiceLines($stripeInvoice);
+            } catch (\Throwable) {
+                // Leave planType null
+            }
+        }
+
+        return $planType;
+    }
+
+    /**
+     * Extract plan type from a Stripe invoice's first line item price.
+     */
+    protected function planTypeFromInvoiceLines(\Stripe\Invoice $stripeInvoice): ?string
+    {
+        $lines = $stripeInvoice->lines->data ?? [];
+        $firstLine = $lines[0] ?? null;
+
+        if (! $firstLine || ! isset($firstLine->price)) {
+            return null;
+        }
+
+        $priceId = is_object($firstLine->price) ? $firstLine->price->id : $firstLine->price;
+
+        return $this->planTypeFromPriceId($priceId);
+    }
+
+    /**
+     * Derive plan type (monthly or annual) from Stripe price ID.
+     */
+    protected function planTypeFromPriceId(?string $stripePriceId): ?string
+    {
+        if (! $stripePriceId) {
+            return null;
+        }
+        if ($stripePriceId === config('services.stripe.price_id_annual')) {
+            return 'annual';
+        }
+        if ($stripePriceId === config('services.stripe.price_id')) {
+            return 'monthly';
+        }
+
+        return null;
     }
 
     /**
