@@ -259,14 +259,24 @@ function runDatabaseConfig(string $basePath): ?array
 
     $vars = ['DB_CONNECTION' => $driver];
 
-    $databaseNameDefault = $driver === 'sqlite' ? 'database/database.sqlite' : 'laravel';
-    $vars['DB_DATABASE'] = \Laravel\Prompts\text(
-        label: 'Database name',
-        default: $databaseNameDefault,
-        placeholder: $databaseNameDefault,
-        required: true,
-        hint: $driver === 'sqlite' ? 'Path to SQLite file (e.g. database/database.sqlite).' : 'Name of the database to use.',
-    );
+    if ($driver === 'sqlite') {
+        $name = \Laravel\Prompts\text(
+            label: 'Database name',
+            default: 'database',
+            placeholder: 'database',
+            required: true,
+            hint: 'Filename without path or extension (stored as database/<name>.sqlite).',
+        );
+        $vars['DB_DATABASE'] = 'database/'.preg_replace('/\.sqlite$/i', '', $name).'.sqlite';
+    } else {
+        $vars['DB_DATABASE'] = \Laravel\Prompts\text(
+            label: 'Database name',
+            default: 'laravel',
+            placeholder: 'laravel',
+            required: true,
+            hint: 'Name of the database to use.',
+        );
+    }
 
     if ($driver !== 'sqlite') {
         $defaultPort = $driver === 'pgsql' ? '5432' : '3306';
@@ -291,6 +301,14 @@ function runDatabaseConfig(string $basePath): ?array
             required: false,
         );
     }
+
+    // Always set all DB_ vars so .env lines get uncommented/overwritten
+    $vars += [
+        'DB_HOST' => $vars['DB_HOST'] ?? '',
+        'DB_PORT' => $vars['DB_PORT'] ?? '',
+        'DB_USERNAME' => $vars['DB_USERNAME'] ?? '',
+        'DB_PASSWORD' => $vars['DB_PASSWORD'] ?? '',
+    ];
 
     return $vars;
 }
