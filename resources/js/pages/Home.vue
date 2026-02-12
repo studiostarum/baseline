@@ -35,38 +35,41 @@ withDefaults(
         <template #default>
             <section class="w-full">
                 <div
-                    class="container mx-auto flex flex-col items-center justify-center gap-6 md:gap-8">
-                    <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4">
-                        <Badge variant="outline">
-                            {{ t('website.hero.badge') }}
-                        </Badge>
-                        <h1 class="font-bold leading-tight tracking-tight text-4xl sm:text-5xl md:text-6xl">
-                            {{ t('website.hero.heading') }}
-                        </h1>
-                        <p class="max-w-xl text-lg text-muted-foreground md:text-xl">
-                            {{ t('website.hero.description') }}
-                        </p>
-                    </div>
-                    <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
-                        <template v-if="$page.props.auth.user">
-                            <Button as-child size="lg">
-                                <Link :href="dashboard()">
-                                    {{ t('navigation.dashboard') }}
-                                </Link>
-                            </Button>
-                        </template>
-                        <template v-else>
-                            <Button v-if="canRegister" as-child size="lg">
-                                <Link :href="register()">
-                                    {{ t('website.get_started') }}
-                                </Link>
-                            </Button>
-                            <Button as-child variant="outline" size="lg">
-                                <Link :href="login()">
-                                    {{ t('website.sign_in') }}
-                                </Link>
-                            </Button>
-                        </template>
+                    class="container mx-auto flex flex-col items-center justify-center gap-10 md:gap-16">
+                    <div
+                        class="flex flex-col items-center justify-center gap-10 md:gap-16">
+                        <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4">
+                            <Badge variant="outline">
+                                {{ t('website.hero.badge') }}
+                            </Badge>
+                            <h1 class="font-bold leading-tight tracking-tight text-4xl sm:text-5xl md:text-6xl">
+                                {{ t('website.hero.heading') }}
+                            </h1>
+                            <p class="max-w-xl text-lg text-muted-foreground md:text-xl">
+                                {{ t('website.hero.description') }}
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                            <template v-if="$page.props.auth.user">
+                                <Button as-child size="lg">
+                                    <Link :href="dashboard()">
+                                        {{ t('navigation.dashboard') }}
+                                    </Link>
+                                </Button>
+                            </template>
+                            <template v-else>
+                                <Button v-if="canRegister" as-child size="lg">
+                                    <Link :href="register()">
+                                        {{ t('website.get_started') }}
+                                    </Link>
+                                </Button>
+                                <Button as-child variant="outline" size="lg">
+                                    <Link :href="login()">
+                                        {{ t('website.sign_in') }}
+                                    </Link>
+                                </Button>
+                            </template>
+                        </div>
                     </div>
                     <HeroMockupDesktop />
                     <HeroMockupMobile />
