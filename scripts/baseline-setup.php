@@ -45,7 +45,19 @@ if (! $ok) {
 }
 echo "\n  ✓ PHP dependencies installed.\n\n";
 
-// ---------- Step 2: Feature selection (in-process, Laravel Prompts multiselect) ----------
+// ---------- Step 2: Database configuration (interactive only) ----------
+if (! $nonInteractive) {
+    echo "  Database configuration\n\n";
+    $dbVars = runDatabaseConfig($basePath);
+    if ($dbVars === null) {
+        fwrite(STDERR, "  Database configuration failed.\n");
+        exit(1);
+    }
+    setEnvVars($envPath, $dbVars);
+    echo "\n  ✓ Database configured.\n\n";
+}
+
+// ---------- Step 3: Feature selection (in-process, Laravel Prompts multiselect) ----------
 $previousFeatures = $envExistedBefore ? readEnvFeatures($envPath) : null;
 
 if ($nonInteractive) {
@@ -219,6 +231,68 @@ function getDeselectedFeatures(?array $previous, array $new): array
 }
 
 /**
+ * Bootstrap Laravel and run interactive database configuration (Laravel Prompts).
+ * Returns DB_* env vars to write, or null on failure.
+ *
+ * @return array<string, string>|null
+ */
+function runDatabaseConfig(string $basePath): ?array
+{
+    if (! is_file($basePath.'/vendor/autoload.php')) {
+        return null;
+    }
+    require $basePath.'/vendor/autoload.php';
+    $app = require $basePath.'/bootstrap/app.php';
+    $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+    $driver = \Laravel\Prompts\select(
+        label: 'Which database will you use?',
+        options: [
+            'sqlite' => 'SQLite (file, good for local development)',
+            'mysql' => 'MySQL',
+            'mariadb' => 'MariaDB',
+            'pgsql' => 'PostgreSQL',
+        ],
+        default: 'sqlite',
+        hint: 'SQLite does not require a server. Others need host, database name, and credentials.',
+    );
+
+    $vars = ['DB_CONNECTION' => $driver];
+
+    if ($driver !== 'sqlite') {
+        $defaultPort = $driver === 'pgsql' ? '5432' : '3306';
+        $vars['DB_HOST'] = \Laravel\Prompts\text(
+            label: 'Database host',
+            default: '127.0.0.1',
+            placeholder: '127.0.0.1',
+        );
+        $vars['DB_PORT'] = \Laravel\Prompts\text(
+            label: 'Database port',
+            default: $defaultPort,
+            placeholder: $defaultPort,
+        );
+        $vars['DB_DATABASE'] = \Laravel\Prompts\text(
+            label: 'Database name',
+            default: 'laravel',
+            placeholder: 'laravel',
+            required: true,
+        );
+        $vars['DB_USERNAME'] = \Laravel\Prompts\text(
+            label: 'Database username',
+            default: 'root',
+            placeholder: 'root',
+        );
+        $vars['DB_PASSWORD'] = \Laravel\Prompts\password(
+            label: 'Database password',
+            placeholder: '(leave empty if none)',
+            required: false,
+        );
+    }
+
+    return $vars;
+}
+
+/**
  * Bootstrap Laravel and run interactive feature selection (Laravel Prompts multiselect).
  * Returns selected feature keys or null on failure.
  *
@@ -260,6 +334,41 @@ function updateEnv(string $envPath, array $vars): void
         $written = false;
         foreach ($vars as $key => $value) {
             if (str_starts_with(trim($line), $key.'=')) {
+                $updated[$key] = true;
+                $content .= $key.'='.$value.PHP_EOL;
+                $written = true;
+                break;
+            }
+        }
+        if (! $written) {
+            $content .= $line.PHP_EOL;
+        }
+    }
+    foreach ($vars as $key => $value) {
+        if (! $updated[$key]) {
+            $content .= $key.'='.$value.PHP_EOL;
+        }
+    }
+    file_put_contents($envPath, $content);
+}
+
+/**
+ * Set env vars, replacing existing or commented lines (e.g. # DB_HOST=...).
+ */
+function setEnvVars(string $envPath, array $vars): void
+{
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        throw new RuntimeException('Could not read .env');
+    }
+    $updated = array_fill_keys(array_keys($vars), false);
+    $content = '';
+    foreach ($lines as $line) {
+        $trimmed = trim($line);
+        $normalized = preg_replace('/^\s*#?\s*/', '', $trimmed);
+        $written = false;
+        foreach ($vars as $key => $value) {
+            if (str_starts_with($normalized, $key.'=')) {
                 $updated[$key] = true;
                 $content .= $key.'='.$value.PHP_EOL;
                 $written = true;
