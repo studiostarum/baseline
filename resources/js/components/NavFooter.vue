@@ -38,6 +38,7 @@ const getTitle = (title: string | Ref<string>): string => {
                     <SidebarMenuButton
                         class="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
                         as-child
+                        :tooltip="getTitle(item.title)"
                     >
                         <a
                             v-if="isExternalUrl(item.href)"

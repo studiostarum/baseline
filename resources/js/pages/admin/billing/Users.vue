@@ -4,7 +4,7 @@ import Pagination from '@/components/admin/Pagination.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { index as billingIndex, show as billingShow } from '@/routes/admin/billing';
 import AppHead from '@/components/AppHead.vue';
 import { Link } from '@inertiajs/vue3';
@@ -97,7 +97,7 @@ function formatDate(dateString: string): string {
 <template>
     <AppHead :title="t('admin.billing.users.head_title')" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -177,5 +177,5 @@ function formatDate(dateString: string): string {
                 :total="users.total"
             />
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>

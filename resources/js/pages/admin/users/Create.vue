@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import AppHead from '@/components/AppHead.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -64,7 +64,7 @@ const sortedRoles = computed(() => {
 <template>
     <AppHead :title="t('admin.users.create_title')" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">
@@ -192,5 +192,5 @@ const sortedRoles = computed(() => {
                 </div>
             </form>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>

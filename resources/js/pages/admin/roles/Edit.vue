@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import AppHead from '@/components/AppHead.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { CheckCheck, X } from 'lucide-vue-next';
@@ -150,7 +150,7 @@ function deselectAll(): void {
 <template>
     <AppHead :title="`${t('admin.roles.edit_title')} ${roleDisplayName(role.name)}`" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">
@@ -312,5 +312,5 @@ function deselectAll(): void {
                 </div>
             </form>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import AppHead from '@/components/AppHead.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
@@ -99,7 +99,7 @@ function formatDate(dateString: string): string {
 <template>
     <AppHead :title="t('admin.users.title')" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -185,7 +185,7 @@ function formatDate(dateString: string): string {
                 :total="users.total"
             />
         </div>
-    </AdminLayout>
+    </AppLayout>
 
     <ConfirmDialog
         v-model:open="deleteDialog"

@@ -11,7 +11,7 @@ import {
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
 import AppHead from '@/components/AppHead.vue';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { Key, Shield, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
@@ -55,7 +55,7 @@ function formatDate(dateString: string): string {
 <template>
     <AppHead :title="t('admin.title')" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">
@@ -163,5 +163,5 @@ function formatDate(dateString: string): string {
                 </Card>
             </div>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>

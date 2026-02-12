@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { show as billingShow } from '@/routes/admin/billing';
 import AppHead from '@/components/AppHead.vue';
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
@@ -108,7 +108,7 @@ function disableTwoFactor(): void {
 <template>
     <AppHead :title="`${t('admin.users.edit_title')} ${user.name}`" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">
@@ -311,5 +311,5 @@ function disableTwoFactor(): void {
                 </div>
             </form>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>

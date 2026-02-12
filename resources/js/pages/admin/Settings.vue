@@ -17,7 +17,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import AppHead from '@/components/AppHead.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { Info, Trash2 } from 'lucide-vue-next';
@@ -109,7 +109,7 @@ function submit(): void {
 <template>
     <AppHead :title="t('admin.settings.title')" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">
@@ -307,5 +307,5 @@ function submit(): void {
                 </div>
             </form>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>

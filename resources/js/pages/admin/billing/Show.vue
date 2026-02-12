@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/table';
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
-import AdminLayout from '@/layouts/AdminLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { users as billingUsers } from '@/routes/admin/billing';
 import AppHead from '@/components/AppHead.vue';
 import { Link } from '@inertiajs/vue3';
@@ -137,7 +137,7 @@ function formatDate(dateString: string): string {
 <template>
     <AppHead :title="t('admin.billing.show.head_title').replace(':name', user.name)" />
 
-    <AdminLayout :breadcrumbs="breadcrumbs">
+    <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
             <div class="flex items-center gap-4">
                 <Button variant="ghost" size="icon" as-child>
@@ -391,5 +391,5 @@ function formatDate(dateString: string): string {
                 </CardContent>
             </Card>
         </div>
-    </AdminLayout>
+    </AppLayout>
 </template>
