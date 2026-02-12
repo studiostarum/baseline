@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WebsiteLayout from '@/layouts/website/WebsiteLayout.vue';
+import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

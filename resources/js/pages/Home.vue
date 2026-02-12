@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WebsiteLayout from '@/layouts/website/WebsiteLayout.vue';
+import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
 import HeroMockupDesktop from '@/components/home/HeroMockupDesktop.vue';
 import HeroMockupMobile from '@/components/home/HeroMockupMobile.vue';
 import HomeFaq from '@/components/home/HomeFaq.vue';
