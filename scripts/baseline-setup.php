@@ -259,6 +259,15 @@ function runDatabaseConfig(string $basePath): ?array
 
     $vars = ['DB_CONNECTION' => $driver];
 
+    $databaseNameDefault = $driver === 'sqlite' ? 'database/database.sqlite' : 'laravel';
+    $vars['DB_DATABASE'] = \Laravel\Prompts\text(
+        label: 'Database name',
+        default: $databaseNameDefault,
+        placeholder: $databaseNameDefault,
+        required: true,
+        hint: $driver === 'sqlite' ? 'Path to SQLite file (e.g. database/database.sqlite).' : 'Name of the database to use.',
+    );
+
     if ($driver !== 'sqlite') {
         $defaultPort = $driver === 'pgsql' ? '5432' : '3306';
         $vars['DB_HOST'] = \Laravel\Prompts\text(
@@ -270,12 +279,6 @@ function runDatabaseConfig(string $basePath): ?array
             label: 'Database port',
             default: $defaultPort,
             placeholder: $defaultPort,
-        );
-        $vars['DB_DATABASE'] = \Laravel\Prompts\text(
-            label: 'Database name',
-            default: 'laravel',
-            placeholder: 'laravel',
-            required: true,
         );
         $vars['DB_USERNAME'] = \Laravel\Prompts\text(
             label: 'Database username',
@@ -353,7 +356,8 @@ function updateEnv(string $envPath, array $vars): void
 }
 
 /**
- * Set env vars, replacing existing or commented lines (e.g. # DB_HOST=...).
+ * Set env vars, overwriting existing or commented lines (e.g. # DB_HOST=...).
+ * Matches exact key names only (e.g. DB_DATABASE does not match DB_DATABASE_URL).
  */
 function setEnvVars(string $envPath, array $vars): void
 {
@@ -368,7 +372,8 @@ function setEnvVars(string $envPath, array $vars): void
         $normalized = preg_replace('/^\s*#?\s*/', '', $trimmed);
         $written = false;
         foreach ($vars as $key => $value) {
-            if (str_starts_with($normalized, $key.'=')) {
+            $prefix = $key.'=';
+            if (str_starts_with($normalized, $prefix) && (strlen($normalized) === strlen($prefix) || $normalized[strlen($prefix)] !== '_')) {
                 $updated[$key] = true;
                 $content .= $key.'='.$value.PHP_EOL;
                 $written = true;
