@@ -41,7 +41,7 @@ class ContactRequest extends FormRequest
             'email.email' => __('validation.contact.email_email'),
             'message.required' => __('validation.contact.message_required'),
             'accept_terms.required' => __('validation.contact.accept_terms_required'),
-            'accept_terms.accepted' => __('validation.contact.accept_terms_accepted'),
+            'accept_terms.accepted' => __('validation.contact.accept_terms_required'),
         ];
     }
 }
