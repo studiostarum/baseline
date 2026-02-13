@@ -19,7 +19,8 @@ class BillingController extends Controller
      */
     public function index(): Response
     {
-        if (! request()->user()->hasAnyPermission(self::BILLING_PERMISSIONS)) {
+        $user = request()->user();
+        if (! $user->hasRole('super-admin') && ! $user->hasAnyPermission(self::BILLING_PERMISSIONS)) {
             abort(403, __('errors.unauthorized'));
         }
 
@@ -71,7 +72,7 @@ class BillingController extends Controller
     public function users(Request $request): Response
     {
         $requestUser = $request->user();
-        if (! $requestUser->hasRole('moderator') && ! $requestUser->hasAnyPermission(self::BILLING_PERMISSIONS)) {
+        if (! $requestUser->hasRole('super-admin') && ! $requestUser->hasRole('moderator') && ! $requestUser->hasAnyPermission(self::BILLING_PERMISSIONS)) {
             abort(403, __('errors.unauthorized'));
         }
 
@@ -130,7 +131,7 @@ class BillingController extends Controller
     public function show(User $user): Response
     {
         $requestUser = request()->user();
-        if (! $requestUser->hasRole('moderator') && ! $requestUser->hasAnyPermission(self::BILLING_PERMISSIONS)) {
+        if (! $requestUser->hasRole('super-admin') && ! $requestUser->hasRole('moderator') && ! $requestUser->hasAnyPermission(self::BILLING_PERMISSIONS)) {
             abort(403, __('errors.unauthorized'));
         }
 

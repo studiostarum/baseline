@@ -120,32 +120,19 @@ function formatDate(dateString: string): string {
                 :search-placeholder="t('admin.roles.search_placeholder')"
             >
                 <template #cell-name="{ item }">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium">{{
-                            roleDisplayName((item as Role).name)
-                        }}</span>
-                        <Badge
-                            v-if="(item as Role).name === 'super-admin'"
-                            variant="default"
-                        >
-                            {{ t('admin.roles.system_badge') }}
-                        </Badge>
-                    </div>
+                    <span class="font-medium">{{
+                        roleDisplayName((item as Role).name)
+                    }}</span>
                 </template>
 
-                <template #cell-permissions_count="{ item, value }">
+                <template #cell-permissions_count="{ value }">
                     <Badge variant="secondary">
-                        <template v-if="(item as Role).name === 'super-admin'">
-                            {{ t('admin.roles.all_permissions') }}
-                        </template>
-                        <template v-else>
-                            {{ value }}
-                            {{
-                                (value as number) === 1
-                                    ? t('admin.roles.permission_singular')
-                                    : t('admin.roles.permission_plural')
-                            }}
-                        </template>
+                        {{ value }}
+                        {{
+                            (value as number) === 1
+                                ? t('admin.roles.permission_singular')
+                                : t('admin.roles.permission_plural')
+                        }}
                     </Badge>
                 </template>
 
@@ -168,7 +155,6 @@ function formatDate(dateString: string): string {
                         <Button
                             variant="ghost"
                             size="icon"
-                            :disabled="(item as Role).name === 'super-admin'"
                             @click="openDeleteDialog(item as Role)"
                         >
                             <Trash2 class="h-4 w-4 text-destructive" />

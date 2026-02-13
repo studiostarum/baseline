@@ -111,6 +111,27 @@ test('admin can update a user', function () {
     ]);
 });
 
+test('user has only one role when updated', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $user = User::factory()->create();
+    $user->assignRole('moderator');
+
+    $this->actingAs($admin)->put("/admin/users/{$user->id}", [
+        'name' => $user->name,
+        'email' => $user->email,
+        'role' => 'admin',
+    ]);
+
+    $user->refresh();
+    $user->load('roles');
+
+    expect($user->roles)->toHaveCount(1);
+    expect($user->hasRole('admin'))->toBeTrue();
+    expect($user->hasRole('moderator'))->toBeFalse();
+});
+
 test('admin can delete a user', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');

@@ -14,7 +14,7 @@ class SettingController extends Controller
     public function index(): Response
     {
         $user = request()->user();
-        if (! $user->hasRole('moderator') && ! $user->hasPermissionTo('manage-settings')) {
+        if (! $user->hasRole('super-admin') && ! $user->hasRole('moderator') && ! $user->hasPermissionTo('manage-settings')) {
             abort(403, __('errors.unauthorized'));
         }
 
@@ -27,7 +27,8 @@ class SettingController extends Controller
 
     public function update(SettingRequest $request): RedirectResponse
     {
-        if (! $request->user()->hasPermissionTo('manage-settings')) {
+        $user = $request->user();
+        if (! $user->hasRole('super-admin') && ! $user->hasPermissionTo('manage-settings')) {
             abort(403, __('errors.unauthorized'));
         }
 

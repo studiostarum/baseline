@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useTranslations } from '@/composables/useTranslations';
-import { dashboard } from '@/routes';
+import { dashboard as appDashboard } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as billingIndex, users as billingUsers } from '@/routes/admin/billing';
 import { index as rolesIndex } from '@/routes/admin/roles';
@@ -55,7 +55,7 @@ const getTitle = (title: string | Ref<string>): string => {
 const mainNavItems = computed<NavItem[]>(() => [
     {
         title: t('navigation.dashboard'),
-        href: dashboard(),
+        href: appDashboard(),
         icon: LayoutGrid,
     },
 ]);
@@ -113,7 +113,7 @@ const billingNavItems = computed<NavItem[]>(() => [
 const footerNavItems = computed<NavItem[]>(() => [
     {
         title: t('admin.navigation.back_to_app'),
-        href: dashboard.url(),
+        href: appDashboard.url(),
         icon: ArrowLeft,
     },
 ]);
@@ -125,7 +125,7 @@ const footerNavItems = computed<NavItem[]>(() => [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="isAdminArea ? adminDashboard.url() : dashboard()">
+                        <Link :href="isAdminArea ? adminDashboard.url() : appDashboard()">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

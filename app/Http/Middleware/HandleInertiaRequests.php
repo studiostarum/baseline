@@ -98,7 +98,7 @@ class HandleInertiaRequests extends Middleware
         }
 
         try {
-            return $user->hasPermissionTo($permission);
+            return $user->hasRole('super-admin') || $user->hasPermissionTo($permission);
         } catch (\Throwable) {
             return false;
         }

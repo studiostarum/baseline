@@ -17,7 +17,9 @@ class RoleController extends Controller
     {
         $this->authorize('viewAny', Role::class);
 
-        $query = Role::query()->withCount('permissions');
+        $query = Role::query()
+            ->where('name', '!=', 'super-admin')
+            ->withCount('permissions');
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -36,6 +38,8 @@ class RoleController extends Controller
 
     public function create(): Response
     {
+        $this->authorize('create', Role::class);
+
         return Inertia::render('admin/roles/Create', [
             'permissions' => Permission::all(['id', 'name']),
         ]);
@@ -57,6 +61,8 @@ class RoleController extends Controller
 
     public function edit(Role $role): Response
     {
+        $this->authorize('update', $role);
+
         $role->load('permissions');
 
         return Inertia::render('admin/roles/Edit', [
@@ -71,6 +77,8 @@ class RoleController extends Controller
 
     public function update(RoleRequest $request, Role $role): RedirectResponse
     {
+        $this->authorize('update', $role);
+
         $role->update(['name' => $request->validated('name')]);
 
         if ($request->has('permissions')) {

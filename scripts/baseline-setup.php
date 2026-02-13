@@ -172,6 +172,19 @@ if (envBool($envPath, 'BASELINE_ADMIN', true)) {
     }
 }
 
+// ---------- New git repository (fresh history for the new project) ----------
+$gitDir = $basePath.'/.git';
+if (is_dir($gitDir)) {
+    echo "\n  Reinitializing git repository (new project)…\n\n";
+    deleteDirectory($gitDir);
+}
+if (! is_dir($gitDir)) {
+    $ok = run('git init', $basePath);
+    if ($ok) {
+        echo "\n  ✓ New git repository initialized.\n";
+    }
+}
+
 echo "\n  ┌──────────────────────────────────────────────────────────┐\n";
 echo "  │ ✓ Setup complete.                                        │\n";
 echo "  │   Assign first admin: php artisan baseline:install        │\n";
@@ -408,6 +421,29 @@ function setEnvVars(string $envPath, array $vars): void
         }
     }
     file_put_contents($envPath, $content);
+}
+
+function deleteDirectory(string $path): void
+{
+    if (! is_dir($path)) {
+        return;
+    }
+    $entries = @scandir($path);
+    if ($entries === false) {
+        return;
+    }
+    foreach ($entries as $entry) {
+        if ($entry === '.' || $entry === '..') {
+            continue;
+        }
+        $full = $path.DIRECTORY_SEPARATOR.$entry;
+        if (is_dir($full)) {
+            deleteDirectory($full);
+        } else {
+            @unlink($full);
+        }
+    }
+    @rmdir($path);
 }
 
 function run(string $command, string $cwd): bool

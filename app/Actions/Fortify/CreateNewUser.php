@@ -31,9 +31,9 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $input['password'],
         ]);
 
-        $user->assignRole(Role::firstOrCreate(
+        $user->syncRoles([Role::firstOrCreate(
             ['name' => 'user', 'guard_name' => config('auth.defaults.guard')]
-        ));
+        )->name]);
 
         return $user;
     }

@@ -441,9 +441,9 @@ class SocialAuthController extends Controller
             'password' => null,
         ]);
 
-        $user->assignRole(Role::firstOrCreate(
+        $user->syncRoles([Role::firstOrCreate(
             ['name' => 'user', 'guard_name' => config('auth.defaults.guard')]
-        ));
+        )->name]);
 
         return $user;
     }
