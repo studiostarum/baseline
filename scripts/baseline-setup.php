@@ -244,6 +244,20 @@ function getDeselectedFeatures(?array $previous, array $new): array
 }
 
 /**
+ * Default database name derived from project directory so each clone has a unique DB.
+ * Safe for SQLite (filename) and MySQL/Postgres (identifier: alphanumeric + underscore).
+ */
+function defaultDatabaseNameForProject(string $basePath): string
+{
+    $name = basename($basePath);
+    $name = preg_replace('/[^a-zA-Z0-9_\-.]/', '_', $name);
+    $name = str_replace(['-', '.'], '_', $name);
+    $name = trim($name, '_');
+
+    return $name !== '' ? $name : 'laravel';
+}
+
+/**
  * Bootstrap Laravel and run interactive database configuration (Laravel Prompts).
  * Returns DB_* env vars to write, or null on failure.
  *
@@ -272,22 +286,24 @@ function runDatabaseConfig(string $basePath): ?array
 
     $vars = ['DB_CONNECTION' => $driver];
 
+    $defaultDbName = defaultDatabaseNameForProject($basePath);
+
     if ($driver === 'sqlite') {
         $name = \Laravel\Prompts\text(
             label: 'Database name',
-            default: 'database',
-            placeholder: 'database',
+            default: $defaultDbName,
+            placeholder: $defaultDbName,
             required: true,
-            hint: 'Filename without path or extension (stored as database/<name>.sqlite).',
+            hint: 'Filename without path or extension (stored as database/<name>.sqlite). Unique per project.',
         );
         $vars['DB_DATABASE'] = 'database/'.preg_replace('/\.sqlite$/i', '', $name).'.sqlite';
     } else {
         $vars['DB_DATABASE'] = \Laravel\Prompts\text(
             label: 'Database name',
-            default: 'laravel',
-            placeholder: 'laravel',
+            default: $defaultDbName,
+            placeholder: $defaultDbName,
             required: true,
-            hint: 'Name of the database to use.',
+            hint: 'Name of the database to use. Use a unique name per project so clones do not share data.',
         );
     }
 
