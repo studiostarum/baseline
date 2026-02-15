@@ -34,7 +34,8 @@
         "log_out": "Uitloggen"
     },
     "auth": {
-        "back_to_home": "Terug naar start",
+        "back_to_home": "Terug naar homepagina",
+        "back_to_settings": "Terug naar instellingen",
         "or_continue_with": "Of doorgaan met",
         "social": {
             "continue_with": "Doorgaan met",
@@ -149,6 +150,10 @@
             "system": "Systeem",
             "theme": "Thema",
             "theme_description": "Kies je voorkeurs kleurenschema voor de interface.",
+            "sidebar": "Zijbalk",
+            "sidebar_description": "Kies of de zijbalk standaard uitgeklapt of ingeklapt is.",
+            "sidebar_expanded": "Uitgeklapt",
+            "sidebar_collapsed": "Ingeklapt",
             "language_description": "Kies je voorkeurstaal voor de interface.",
             "description_short": "Pas je visuele voorkeuren aan."
         },
@@ -343,12 +348,14 @@
             "role_name": "Rolnaam",
             "role_name_placeholder": "bijv. Content Editor, Moderator",
             "role_key": "Sleutel",
-            "role_key_description": "Gebruikt in code en URL's (afgeleid van rolnaam)",
+            "role_key_placeholder": "bijv. content-editor, moderator",
+            "role_key_description": "Gebruikt in code en URL's. Kan na aanmaak niet worden gewijzigd.",
             "permissions_title": "Rechten",
             "permissions_description": "Selecteer rechten voor deze rol.",
             "permissions_manage": "Beheer rolrechten.",
             "super_admin_all": "Super-admin heeft standaard alle rechten.",
             "super_admin_readonly": "De super-admin rolnaam kan niet worden gewijzigd.",
+            "system_role_key_readonly": "De sleutel van een systeemrol kan niet worden gewijzigd. Het label kunt u hierboven aanpassen.",
             "select_all": "Alles selecteren",
             "deselect_all": "Alles deselecteren",
             "no_permissions": "Geen rechten beschikbaar.",
@@ -360,6 +367,7 @@
             "search_placeholder": "Zoek rollen..."
         },
         "role_labels": {
+            "admin": "Beheerder",
             "user": "Gebruiker",
             "moderator": "Moderator",
             "super_admin": "Superbeheerder"
@@ -495,6 +503,11 @@
             "title": "Toegang geweigerd",
             "description": "U heeft geen toestemming om deze pagina te bekijken.",
             "head_back": "Terug"
+        },
+        "not_found": {
+            "title": "Pagina niet gevonden",
+            "description": "De pagina die u zoekt bestaat niet of is verplaatst.",
+            "back_home": "Terug naar home"
         },
         "unauthorized": "Niet geautoriseerd.",
         "unauthorized_admin": "Geen toegang tot het beheergebied."

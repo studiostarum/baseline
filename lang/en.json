@@ -35,6 +35,7 @@
     },
     "auth": {
         "back_to_home": "Back to home",
+        "back_to_settings": "Back to settings",
         "or_continue_with": "Or continue with",
         "social": {
             "continue_with": "Continue with",
@@ -149,6 +150,10 @@
             "system": "System",
             "theme": "Theme",
             "theme_description": "Choose your preferred color scheme for the interface.",
+            "sidebar": "Sidebar",
+            "sidebar_description": "Choose whether the sidebar is expanded or collapsed by default.",
+            "sidebar_expanded": "Expanded",
+            "sidebar_collapsed": "Collapsed",
             "language_description": "Choose your preferred language for the interface.",
             "description_short": "Customize your visual preferences."
         },
@@ -343,12 +348,14 @@
             "role_name": "Role Name",
             "role_name_placeholder": "e.g. Content Editor, Moderator",
             "role_key": "Key",
-            "role_key_description": "Used in code and URLs (derived from role name)",
+            "role_key_placeholder": "e.g. content-editor, moderator",
+            "role_key_description": "Used in code and URLs. Cannot be changed after creation.",
             "permissions_title": "Permissions",
             "permissions_description": "Select permissions for this role.",
             "permissions_manage": "Manage role permissions.",
             "super_admin_all": "Super admin has all permissions by default.",
             "super_admin_readonly": "The super-admin role name cannot be changed.",
+            "system_role_key_readonly": "System role key cannot be changed. You can edit the label in the field above.",
             "select_all": "Select All",
             "deselect_all": "Deselect All",
             "no_permissions": "No permissions available.",
@@ -360,6 +367,7 @@
             "search_placeholder": "Search roles..."
         },
         "role_labels": {
+            "admin": "Admin",
             "user": "User",
             "moderator": "Moderator",
             "super_admin": "Super Admin"
@@ -495,6 +503,11 @@
             "title": "Access denied",
             "description": "You don't have permission to view this page.",
             "head_back": "Head back"
+        },
+        "not_found": {
+            "title": "Page not found",
+            "description": "The page you're looking for doesn't exist or was moved.",
+            "back_home": "Back to home"
         },
         "unauthorized": "Unauthorized.",
         "unauthorized_admin": "Unauthorized access to admin area."
