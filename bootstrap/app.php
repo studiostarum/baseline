@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -54,6 +55,29 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => $e->getMessage(),
             ])->toResponse($request);
             $response->setStatusCode(403);
+
+            return $response;
+        });
+
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            $translations = config('baseline.features.locales', true)
+                ? (function () {
+                    $path = lang_path(app()->getLocale().'.json');
+
+                    return file_exists($path)
+                        ? (json_decode((string) file_get_contents($path), true) ?? [])
+                        : [];
+                })()
+                : [];
+
+            $response = Inertia::render('errors/NotFound', [
+                'message' => null,
+                'translations' => $translations,
+                'auth' => [
+                    'user' => $request->user(),
+                ],
+            ])->toResponse($request);
+            $response->setStatusCode(404);
 
             return $response;
         });
