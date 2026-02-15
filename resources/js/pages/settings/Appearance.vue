@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
 import LanguageTabs from '@/components/LanguageTabs.vue';
+import SidebarPreferenceTabs from '@/components/SidebarPreferenceTabs.vue';
 import Heading from '@/components/Heading.vue';
 import { useTranslations } from '@/composables/useTranslations';
 import {
@@ -15,7 +16,7 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/appearance';
 import { type BreadcrumbItem } from '@/types';
 import AppHead from '@/components/AppHead.vue';
-import { Languages, Palette } from 'lucide-vue-next';
+import { Languages, PanelLeft, Palette } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const { t } = useTranslations();
@@ -54,6 +55,21 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
                     </CardHeader>
                     <CardContent>
                         <AppearanceTabs />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2">
+                            <PanelLeft class="h-5 w-5" />
+                            {{ t('settings.appearance.sidebar') }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{ t('settings.appearance.sidebar_description') }}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <SidebarPreferenceTabs />
                     </CardContent>
                 </Card>
 
