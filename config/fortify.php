@@ -88,6 +88,7 @@ return [
     'redirects' => [
         'login' => '/dashboard',
         'register' => '/dashboard',
+        'password-confirmation' => '/dashboard',
     ],
 
     /*

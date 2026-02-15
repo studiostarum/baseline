@@ -40,7 +40,7 @@ test('two factor settings page requires password confirmation when enabled', fun
     $response = $this->actingAs($user)
         ->get(route('two-factor.show'));
 
-    $response->assertRedirect(route('password.confirm'));
+    $response->assertRedirect(route('two-factor.show').'?confirm_password=1');
 });
 
 test('two factor settings page does not requires password confirmation when disabled', function () {

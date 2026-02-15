@@ -286,7 +286,7 @@ test('show unlink confirm redirects to password confirm when not recently confir
     $response = $this->actingAs($user)
         ->get(route('social.unlink.confirm', ['provider' => $provider]));
 
-    $response->assertRedirect(route('password.confirm'));
+    $response->assertRedirect(route('social.unlink.confirm', ['provider' => $provider]).'?confirm_password=1');
 });
 
 test('unlink delete redirects to password confirm when not recently confirmed', function () {
@@ -305,7 +305,7 @@ test('unlink delete redirects to password confirm when not recently confirmed', 
     $response = $this->actingAs($user)
         ->delete(route('social.unlink', ['provider' => $provider]));
 
-    $response->assertRedirect(route('password.confirm'));
+    $response->assertRedirect(route('social.unlink', ['provider' => $provider]).'?confirm_password=1');
 });
 
 test('prevents linking already linked provider', function () {

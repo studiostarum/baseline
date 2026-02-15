@@ -67,6 +67,7 @@ class HandleInertiaRequests extends Middleware
                 })()
                 : [],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'showPasswordConfirmModal' => $request->boolean('confirm_password'),
             'features' => config('baseline.features', ['admin' => true, 'billing' => true, 'locales' => true]),
             'footer_social_links' => $this->footerSocialLinks(),
         ];

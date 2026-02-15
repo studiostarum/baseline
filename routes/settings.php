@@ -17,10 +17,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile/social/{provider}/link', [SocialAuthController::class, 'link'])
         ->name('social.link');
     Route::get('settings/profile/social/{provider}/unlink', [SocialAuthController::class, 'showUnlinkConfirm'])
-        ->middleware(['ensure.user.has.password', 'password.confirm'])
+        ->middleware(['ensure.user.has.password', 'password.confirm.modal'])
         ->name('social.unlink.confirm');
     Route::delete('settings/profile/social/{provider}/unlink', [SocialAuthController::class, 'unlink'])
-        ->middleware('password.confirm')
+        ->middleware('password.confirm.modal')
         ->name('social.unlink');
 });
 

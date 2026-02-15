@@ -20,3 +20,32 @@ test('password confirmation requires authentication', function () {
 
     $response->assertRedirect(route('login'));
 });
+
+test('successful password confirmation redirects to dashboard when intended url is home', function () {
+    $user = User::factory()->create([
+        'password' => bcrypt('password'),
+    ]);
+
+    $response = $this->actingAs($user)
+        ->withSession(['url.intended' => route('home')])
+        ->post(route('password.confirm.store'), [
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirect(route('dashboard'));
+});
+
+test('successful password confirmation redirects to intended url when not home', function () {
+    $user = User::factory()->create([
+        'password' => bcrypt('password'),
+    ]);
+    $intendedUrl = route('two-factor.show');
+
+    $response = $this->actingAs($user)
+        ->withSession(['url.intended' => $intendedUrl])
+        ->post(route('password.confirm.store'), [
+            'password' => 'password',
+        ]);
+
+    $response->assertRedirect($intendedUrl);
+});
