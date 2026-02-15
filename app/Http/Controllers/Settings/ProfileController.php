@@ -25,12 +25,14 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
             'error' => $request->session()->get('error'),
-            'socialAccounts' => $user->socialAccounts->map(function ($account) {
-                return [
+            'socialAccounts' => $user->socialAccounts()
+                ->select('provider', 'created_at')
+                ->get()
+                ->map(fn ($account) => [
                     'provider' => $account->provider,
                     'created_at' => $account->created_at,
-                ];
-            })->toArray(),
+                ])
+                ->toArray(),
         ]);
     }
 

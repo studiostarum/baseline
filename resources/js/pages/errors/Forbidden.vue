@@ -6,12 +6,23 @@ import { dashboard } from '@/routes';
 import AppHead from '@/components/AppHead.vue';
 import { Link } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     message?: string;
 }>();
 
 const { t } = useTranslations();
+
+const displayMessage = computed(() => {
+    if (!props.message) {
+        return null;
+    }
+    if (/^[\w.]+$/.test(props.message)) {
+        return t(props.message);
+    }
+    return props.message;
+});
 </script>
 
 <template>
@@ -23,10 +34,10 @@ const { t } = useTranslations();
 
         <div class="flex flex-col gap-6">
             <p
-                v-if="message"
+                v-if="displayMessage"
                 class="text-center text-sm text-muted-foreground"
             >
-                {{ message }}
+                {{ displayMessage }}
             </p>
             <Button as-child class="w-full" variant="default">
                 <Link :href="dashboard().url" class="inline-flex items-center gap-2">

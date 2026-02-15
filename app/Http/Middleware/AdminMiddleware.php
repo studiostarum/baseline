@@ -18,7 +18,7 @@ class AdminMiddleware
         $user = $request->user();
 
         if (! $user || ! $user->hasAnyRole(['super-admin', 'admin', 'moderator'])) {
-            abort(403, __('errors.unauthorized_admin'));
+            abort(403, 'errors.unauthorized_admin');
         }
 
         return $next($request);

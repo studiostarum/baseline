@@ -2,11 +2,15 @@
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import { useTranslations } from '@/composables/useTranslations';
-import { home } from '@/routes';
-import { Link } from '@inertiajs/vue3';
+import { dashboard, home } from '@/routes';
+import { Link, usePage } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 const { t } = useTranslations();
+const page = usePage();
+const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
+const backUrl = computed(() => (isAuthenticated.value ? dashboard().url : home().url));
 
 defineProps<{
     title?: string;
@@ -19,7 +23,7 @@ defineProps<{
         class="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10"
     >
         <Link
-            :href="home()"
+            :href="backUrl"
             class="absolute left-4 top-4 flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:underline"
         >
             <ArrowLeft class="size-4 shrink-0" />
@@ -32,7 +36,7 @@ defineProps<{
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col items-center gap-4">
                     <Link
-                        :href="home()"
+                        :href="backUrl"
                         class="flex flex-col items-center gap-2 font-medium"
                     >
                         <div
