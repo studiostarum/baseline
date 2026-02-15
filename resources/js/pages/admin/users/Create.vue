@@ -161,7 +161,7 @@ const sortedRoles = computed(() => {
                                         :for="`role-${role.id}`"
                                         class="cursor-pointer"
                                     >
-                                        {{ roleDisplayName(role.name) }}
+                                        {{ roleDisplayName(role.name, role.display_name) }}
                                     </Label>
                                 </div>
                             </div>

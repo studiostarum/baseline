@@ -43,7 +43,7 @@ class UserController extends Controller
         $this->authorize('create', User::class);
 
         return Inertia::render('admin/users/Create', [
-            'roles' => Role::all(['id', 'name']),
+            'roles' => Role::all(['id', 'name', 'display_name']),
         ]);
     }
 
@@ -74,7 +74,7 @@ class UserController extends Controller
             'user' => array_merge($user->toArray(), [
                 'two_factor_enabled' => $user->hasEnabledTwoFactorAuthentication(),
             ]),
-            'roles' => Role::all(['id', 'name']),
+            'roles' => Role::all(['id', 'name', 'display_name']),
         ]);
     }
 

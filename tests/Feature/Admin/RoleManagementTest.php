@@ -70,6 +70,24 @@ test('admin can view edit role form', function () {
     );
 });
 
+test('system role slug is not updated when updating permissions', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $role = Role::findByName('moderator');
+
+    $response = $this->actingAs($admin)->put("/admin/roles/{$role->id}", [
+        'name' => 'attempted-new-slug',
+        'permissions' => ['view-admin-dashboard'],
+    ]);
+
+    $response->assertRedirect('/admin/roles');
+    $this->assertDatabaseHas('roles', [
+        'id' => $role->id,
+        'name' => 'moderator',
+    ]);
+});
+
 test('edit role form includes role permissions for pre-selecting checkboxes', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
@@ -88,23 +106,24 @@ test('edit role form includes role permissions for pre-selecting checkboxes', fu
     );
 });
 
-test('admin can update a role', function () {
+test('admin can update a role display name only', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
 
     $role = Role::create(['name' => 'test-role']);
 
     $response = $this->actingAs($admin)->put("/admin/roles/{$role->id}", [
-        'name' => 'updated-role',
+        'name' => $role->name,
+        'display_name' => 'Test Role Label',
         'permissions' => ['manage-settings'],
     ]);
 
     $response->assertRedirect('/admin/roles');
 
-    $this->assertDatabaseHas('roles', [
-        'id' => $role->id,
-        'name' => 'updated-role',
-    ]);
+    $role->refresh();
+    expect($role->name)->toBe('test-role');
+    expect($role->display_name)->toBe('Test Role Label');
+    expect($role->getPermissionNames()->isEmpty())->toBeTrue();
 });
 
 test('admin can delete a role', function () {

@@ -19,6 +19,7 @@ const { roleDisplayName } = useRoleDisplayName();
 type Role = {
     id: number;
     name: string;
+    display_name?: string | null;
     permissions_count: number;
     created_at: string;
 };
@@ -121,7 +122,7 @@ function formatDate(dateString: string): string {
             >
                 <template #cell-name="{ item }">
                     <span class="font-medium">{{
-                        roleDisplayName((item as Role).name)
+                        roleDisplayName((item as Role).name, (item as Role).display_name)
                     }}</span>
                 </template>
 
@@ -180,7 +181,7 @@ function formatDate(dateString: string): string {
             roleToDelete
                 ? t('admin.roles.delete_confirm').replace(
                       '{name}',
-                      roleDisplayName(roleToDelete.name),
+                      roleDisplayName(roleToDelete.name, roleToDelete.display_name),
                   )
                 : ''
         "

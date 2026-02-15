@@ -19,7 +19,6 @@ export const translationAliases: Record<string, string> = {
     'fields.confirm_password': 'auth.confirm_password.title',
     'fields.confirm_password_placeholder': 'auth.confirm_password.title',
     'admin.breadcrumb': 'navigation.admin',
-    'admin.role_labels.admin': 'navigation.admin',
     'navigation.password': 'fields.password',
     'fields.password_placeholder': 'fields.password',
     'auth.login.heading': 'auth.login.button',

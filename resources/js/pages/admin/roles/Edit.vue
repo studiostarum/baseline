@@ -23,15 +23,6 @@ const { t } = useTranslations();
 const canManageRoles = computed(() => usePage().props.auth.can_manage_roles);
 const { roleDisplayName } = useRoleDisplayName();
 
-function slugify(value: string): string {
-    return value
-        .trim()
-        .toLowerCase()
-        .replace(/[\s_]+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-}
-
 function permissionLabel(name: string): string {
     return name
         .split(/[-_]/)
@@ -56,15 +47,17 @@ type Permission = {
 type Role = {
     id: number;
     name: string;
+    display_name?: string | null;
     permissions: Permission[];
 };
 
 type Props = {
     role: Role;
     permissions: Permission[];
+    is_system_role?: boolean;
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { is_system_role: false });
 
 function getRolePermissionNames(role: Role): string[] {
     const perms = role.permissions;
@@ -78,11 +71,12 @@ function getRolePermissionNames(role: Role): string[] {
 const breadcrumbs = computed(() => [
     { title: t('admin.breadcrumb'), href: '/admin' },
     { title: t('admin.navigation.roles'), href: '/admin/roles' },
-    { title: roleDisplayName(props.role.name) },
+    { title: roleDisplayName(props.role.name, props.role.display_name) },
 ]);
 
 const form = useForm({
     name: props.role.name,
+    display_name: props.role.display_name ?? roleDisplayName(props.role.name),
     permissions: [] as string[],
 });
 
@@ -108,24 +102,16 @@ watch(selectedPermissionNames, (names) => {
     form.permissions.push(...names);
 }, { immediate: true, deep: true });
 
-const displayName = ref(roleDisplayName(props.role.name));
-watch(displayName, (val) => {
-    form.name = slugify(val);
-});
-
 const isSuperAdmin = props.role.name === 'super-admin';
-
 const isPermissionChecked = (name: string): boolean =>
     isSuperAdmin || selectedPermissionNames.value.includes(name);
 
-const isRoleFormDisabled = computed(
-    () => isSuperAdmin || !canManageRoles.value,
-);
+const isPermissionsDisabled = computed(() => true);
 
 function submit(): void {
     form.permissions.length = 0;
     form.permissions.push(...selectedPermissionNames.value);
-    form.put(`/admin/roles/${props.role.id}`);
+    form.transform((data) => ({ ...data, name: props.role.name })).put(`/admin/roles/${props.role.id}`);
 }
 
 function setPermissionChecked(permissionName: string, checked: boolean): void {
@@ -148,7 +134,7 @@ function deselectAll(): void {
 </script>
 
 <template>
-    <AppHead :title="`${t('admin.roles.edit_title')} ${roleDisplayName(role.name)}`" />
+    <AppHead :title="`${t('admin.roles.edit_title')} ${roleDisplayName(role.name, role.display_name)}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
@@ -172,23 +158,23 @@ function deselectAll(): void {
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="space-y-2">
-                                <Label for="name">{{
+                                <Label for="display_name">{{
                                     t('admin.roles.role_name')
                                 }}</Label>
                                 <Input
-                                    id="name"
-                                    v-model="displayName"
+                                    id="display_name"
+                                    v-model="form.display_name"
                                     type="text"
-                                    :disabled="isRoleFormDisabled"
+                                    :disabled="!canManageRoles"
                                     required
                                 />
                                 <p
-                                    v-if="isSuperAdmin"
+                                    v-if="is_system_role"
                                     class="text-sm text-muted-foreground"
                                 >
-                                    {{ t('admin.roles.super_admin_readonly') }}
+                                    {{ t('admin.roles.system_role_key_readonly') }}
                                 </p>
-                                <InputError :message="form.errors.name" />
+                                <InputError :message="form.errors.display_name" />
                             </div>
                             <div class="space-y-2">
                                 <Label for="role-key">{{
@@ -224,7 +210,7 @@ function deselectAll(): void {
                                 </CardDescription>
                             </div>
                             <div
-                                v-if="canManageRoles && !isSuperAdmin"
+                                v-if="canManageRoles && !isPermissionsDisabled"
                                 class="flex gap-2"
                             >
                                 <Button
@@ -258,7 +244,7 @@ function deselectAll(): void {
                                 <Checkbox
                                     :id="`permission-${permission.id}`"
                                     :model-value="isPermissionChecked(permission.name)"
-                                    :disabled="isRoleFormDisabled"
+                                    :disabled="isPermissionsDisabled"
                                     @update:model-value="
                                         (val: boolean) =>
                                             setPermissionChecked(
@@ -270,8 +256,8 @@ function deselectAll(): void {
                                 <Label
                                     :for="`permission-${permission.id}`"
                                     :class="{
-                                        'cursor-pointer': !isSuperAdmin,
-                                        'opacity-50': isSuperAdmin,
+                                        'cursor-pointer': !isPermissionsDisabled,
+                                        'opacity-50': isPermissionsDisabled,
                                     }"
                                 >
                                     {{ permissionDisplayName(permission.name) }}

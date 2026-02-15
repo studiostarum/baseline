@@ -22,15 +22,6 @@ import { computed, ref, watch } from 'vue';
 const { t } = useTranslations();
 const { roleDisplayName } = useRoleDisplayName();
 
-function slugify(value: string): string {
-    return value
-        .trim()
-        .toLowerCase()
-        .replace(/[\s_]+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-}
-
 type Permission = {
     id: number;
     name: string;
@@ -50,6 +41,7 @@ const breadcrumbs = computed(() => [
 
 const form = useForm({
     name: '',
+    display_name: '',
     permissions: [] as string[],
 });
 
@@ -59,11 +51,6 @@ watch(selectedPermissionNames, (names) => {
     form.permissions.length = 0;
     form.permissions.push(...names);
 }, { immediate: true, deep: true });
-
-const displayName = ref(roleDisplayName(form.name) || '');
-watch(displayName, (val) => {
-    form.name = slugify(val);
-});
 
 function submit(): void {
     form.permissions.length = 0;
@@ -131,32 +118,29 @@ function permissionDisplayName(name: string): string {
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="space-y-2">
-                                <Label for="name">{{ t('admin.roles.role_name') }}</Label>
+                                <Label for="name">{{ t('admin.roles.role_key') }}</Label>
                                 <Input
                                     id="name"
-                                    v-model="displayName"
+                                    v-model="form.name"
                                     type="text"
-                                    :placeholder="t('admin.roles.role_name_placeholder')"
+                                    :placeholder="t('admin.roles.role_key_placeholder')"
+                                    class="font-mono"
                                     required
                                 />
+                                <p class="text-sm text-muted-foreground">
+                                    {{ t('admin.roles.role_key_description') }}
+                                </p>
                                 <InputError :message="form.errors.name" />
                             </div>
                             <div class="space-y-2">
-                                <Label for="role-key">{{
-                                    t('admin.roles.role_key')
-                                }}</Label>
+                                <Label for="display_name">{{ t('admin.roles.role_name') }}</Label>
                                 <Input
-                                    id="role-key"
-                                    :model-value="form.name"
+                                    id="display_name"
+                                    v-model="form.display_name"
                                     type="text"
-                                    disabled
-                                    class="bg-muted font-mono text-muted-foreground"
+                                    :placeholder="t('admin.roles.role_name_placeholder')"
                                 />
-                                <p class="text-sm text-muted-foreground">
-                                    {{
-                                        t('admin.roles.role_key_description')
-                                    }}
-                                </p>
+                                <InputError :message="form.errors.display_name" />
                             </div>
                         </CardContent>
                     </Card>

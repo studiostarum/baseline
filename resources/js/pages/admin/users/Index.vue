@@ -19,6 +19,7 @@ const { roleDisplayName } = useRoleDisplayName();
 type Role = {
     id: number;
     name: string;
+    display_name?: string | null;
 };
 
 type User = {
@@ -135,7 +136,7 @@ function formatDate(dateString: string): string {
                             :key="role.id"
                             variant="secondary"
                         >
-                            {{ roleDisplayName(role.name) }}
+                            {{ roleDisplayName(role.name, role.display_name) }}
                         </Badge>
                         <span
                             v-if="(item as User).roles.length === 0"

@@ -177,7 +177,7 @@ function disableTwoFactor(): void {
                                                 'opacity-50': !canManageUsers,
                                             }"
                                         >
-                                            {{ roleDisplayName(role.name) }}
+                                            {{ roleDisplayName(role.name, role.display_name) }}
                                         </Label>
                                     </div>
                                 </div>

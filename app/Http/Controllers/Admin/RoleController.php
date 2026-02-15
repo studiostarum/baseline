@@ -13,6 +13,8 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    private const SYSTEM_ROLE_NAMES = ['super-admin', 'admin', 'moderator', 'user'];
+
     public function index(Request $request): Response
     {
         $this->authorize('viewAny', Role::class);
@@ -49,7 +51,10 @@ class RoleController extends Controller
     {
         $this->authorize('create', Role::class);
 
-        $role = Role::create(['name' => $request->validated('name')]);
+        $role = Role::create([
+            'name' => $request->validated('name'),
+            'display_name' => $request->validated('display_name'),
+        ]);
 
         if ($request->validated('permissions')) {
             $role->syncPermissions($request->validated('permissions'));
@@ -69,9 +74,11 @@ class RoleController extends Controller
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,
+                'display_name' => $role->display_name,
                 'permissions' => $role->permissions->map(fn ($p) => ['id' => $p->id, 'name' => $p->name])->values()->all(),
             ],
             'permissions' => Permission::all(['id', 'name']),
+            'is_system_role' => in_array($role->name, self::SYSTEM_ROLE_NAMES, true),
         ]);
     }
 
@@ -79,11 +86,9 @@ class RoleController extends Controller
     {
         $this->authorize('update', $role);
 
-        $role->update(['name' => $request->validated('name')]);
-
-        if ($request->has('permissions')) {
-            $role->syncPermissions($request->validated('permissions'));
-        }
+        $role->update([
+            'display_name' => $request->validated('display_name'),
+        ]);
 
         return redirect()->route('admin.roles.index')
             ->with('success', 'Role updated successfully.');

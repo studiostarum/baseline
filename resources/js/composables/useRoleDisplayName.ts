@@ -10,7 +10,10 @@ function roleLabelFromKey(name: string): string {
 export function useRoleDisplayName() {
     const { t } = useTranslations();
 
-    function roleDisplayName(name: string): string {
+    function roleDisplayName(name: string, displayName?: string | null): string {
+        if (displayName?.trim()) {
+            return displayName.trim();
+        }
         const key = `admin.role_labels.${name.replace(/-/g, '_')}`;
         const translated = t(key);
         if (translated === key || translated.includes('admin.role_labels.')) {

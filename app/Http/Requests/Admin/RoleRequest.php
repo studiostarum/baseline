@@ -16,14 +16,16 @@ class RoleRequest extends FormRequest
     public function rules(): array
     {
         $roleId = $this->route('role')?->id;
+        $isUpdate = (bool) $this->route('role');
 
         return [
             'name' => [
-                'required',
+                $isUpdate ? 'nullable' : 'required',
                 'string',
                 'max:255',
                 Rule::unique('roles')->ignore($roleId),
             ],
+            'display_name' => ['nullable', 'string', 'max:255'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['string', 'exists:permissions,name'],
         ];
