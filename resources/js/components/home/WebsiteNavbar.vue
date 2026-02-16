@@ -1,21 +1,21 @@
 <script setup lang="ts">
+import { Link, usePage } from '@inertiajs/vue3';
+import { ChevronsUpDown, List, X } from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import UserMenuContent from '@/components/UserMenuContent.vue';
-import UserInfo from '@/components/UserInfo.vue';
 import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { contact, dashboard, home, login, logout, register } from '@/routes';
-import { Link, usePage } from '@inertiajs/vue3';
-import { ChevronsUpDown, List, X } from 'lucide-vue-next';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+import UserInfo from '@/components/UserInfo.vue';
+import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useTranslations } from '@/composables/useTranslations';
+import { cn } from '@/lib/utils';
+import { contact, dashboard, home, login, logout, register } from '@/routes';
 
 const open = ref(false);
 const navVisible = ref(true);

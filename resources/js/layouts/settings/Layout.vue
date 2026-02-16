@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    CreditCard,
+    KeyRound,
+    Palette,
+    ShieldCheck,
+    User,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+import { isRef, type Ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -11,16 +21,6 @@ import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/vue3';
-import {
-    CreditCard,
-    KeyRound,
-    Palette,
-    ShieldCheck,
-    User,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
-import { isRef, type Ref } from 'vue';
 
 const page = usePage();
 const { t } = useTranslations();

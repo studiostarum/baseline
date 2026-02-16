@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { Form } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/AuthLayout.vue';
 import { useTranslations } from '@/composables/useTranslations';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import { update } from '@/routes/password';
-import AppHead from '@/components/AppHead.vue';
-import { Form } from '@inertiajs/vue3';
-import { ref } from 'vue';
 
 const { t } = useTranslations();
 

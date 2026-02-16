@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { Form, Link, router, usePage } from '@inertiajs/vue3';
+import { Link2, User } from 'lucide-vue-next';
+import { computed } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import AppHead from '@/components/AppHead.vue';
 import DeleteUser from '@/components/DeleteUser.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -21,10 +25,6 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem } from '@/types';
-import AppHead from '@/components/AppHead.vue';
-import { Form, Link, router, usePage } from '@inertiajs/vue3';
-import { Link2, User } from 'lucide-vue-next';
-import { computed } from 'vue';
 
 type Props = {
     mustVerifyEmail: boolean;

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import LanguageDropdown from '@/components/LanguageDropdown.vue';
-import { Button } from '@/components/ui/button';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     Facebook,
     Instagram,
@@ -9,8 +7,10 @@ import {
     Twitter,
     Youtube,
 } from 'lucide-vue-next';
-import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import LanguageDropdown from '@/components/LanguageDropdown.vue';
+import { Button } from '@/components/ui/button';
 
 const SOCIAL_ICONS: Record<string, typeof Facebook> = {
     facebook: Facebook,
@@ -19,15 +19,9 @@ const SOCIAL_ICONS: Record<string, typeof Facebook> = {
     linkedin: Linkedin,
     youtube: Youtube,
 };
-import { contact, dashboard, home, login, register } from '@/routes';
 import { useTranslations } from '@/composables/useTranslations';
 import { cn } from '@/lib/utils';
-
-type ImageProps = {
-    url?: string;
-    src: string;
-    alt?: string;
-};
+import { contact, dashboard, home, login, register } from '@/routes';
 
 type LinkItem = {
     title: string;

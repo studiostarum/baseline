@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { Key, Shield, Users } from 'lucide-vue-next';
+import { computed } from 'vue';
 import StatCard from '@/components/admin/StatCard.vue';
+import AppHead from '@/components/AppHead.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     Card,
@@ -10,11 +14,7 @@ import {
 } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
-import AppHead from '@/components/AppHead.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
-import { Key, Shield, Users } from 'lucide-vue-next';
-import { computed } from 'vue';
 
 const { t } = useTranslations();
 

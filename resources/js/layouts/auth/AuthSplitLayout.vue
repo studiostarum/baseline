@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Link, usePage } from '@inertiajs/vue3';
+import { ArrowLeft } from 'lucide-vue-next';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import { useTranslations } from '@/composables/useTranslations';
 import { home } from '@/routes';
-import { Link, usePage } from '@inertiajs/vue3';
-import { ArrowLeft } from 'lucide-vue-next';
 
 const { t } = useTranslations();
 const page = usePage();

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
+import { Form, usePage } from '@inertiajs/vue3';
+import { Mail, MapPin, Phone } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { store } from '@/actions/App/Http/Controllers/ContactController';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Spinner } from '@/components/ui/spinner';
-import { store } from '@/actions/App/Http/Controllers/ContactController';
+import { Textarea } from '@/components/ui/textarea';
 import { useTranslations } from '@/composables/useTranslations';
-import { Form, usePage } from '@inertiajs/vue3';
-import { Mail, MapPin, Phone } from 'lucide-vue-next';
-import { ref } from 'vue';
+import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
 
 const { t } = useTranslations();
 const page = usePage();

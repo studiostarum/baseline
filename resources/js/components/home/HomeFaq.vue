@@ -29,6 +29,8 @@ const DEFAULT_FAQ_QUESTIONS: { title: string; answer: string }[] = [
 </script>
 
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import {
     Accordion,
     AccordionContent,
@@ -36,10 +38,8 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { contact } from '@/routes';
-import { Link } from '@inertiajs/vue3';
 import { useTranslations } from '@/composables/useTranslations';
-import { computed } from 'vue';
+import { contact } from '@/routes';
 
 export type FaqQuestion = {
     title: string;

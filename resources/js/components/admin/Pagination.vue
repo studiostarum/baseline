@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { useTranslations } from '@/composables/useTranslations';
 import { Link } from '@inertiajs/vue3';
 import { ChevronsLeft, ChevronsRight } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/composables/useTranslations';
 
 type PaginationLink = {
     url: string | null;
@@ -51,21 +51,13 @@ const showingText = computed(() =>
                     size="icon"
                     as-child
                 >
-                    <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-                    <Link
-                        :href="link.url"
-                        preserve-scroll
-                        v-html="link.label"
-                    />
+                    <Link :href="link.url" preserve-scroll>
+                        <span v-html="link.label" />
+                    </Link>
                 </Button>
-                <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-                <Button
-                    v-else
-                    variant="outline"
-                    size="icon"
-                    disabled
-                    v-html="link.label"
-                />
+                <Button v-else variant="outline" size="icon" disabled>
+                    <span v-html="link.label" />
+                </Button>
             </template>
 
             <Button

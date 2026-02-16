@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Link, usePage, router } from '@inertiajs/vue3';
+import { Globe, Languages, LayoutGrid, LogOut, Monitor, Moon, Settings, Sun } from 'lucide-vue-next';
+import { computed } from 'vue';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -14,9 +17,6 @@ import { useTranslations } from '@/composables/useTranslations';
 import { dashboard, home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { Appearance, User } from '@/types';
-import { Link, usePage, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { Globe, Languages, LayoutGrid, LogOut, Monitor, Moon, Settings, Sun } from 'lucide-vue-next';
 
 type Props = {
     user: User;

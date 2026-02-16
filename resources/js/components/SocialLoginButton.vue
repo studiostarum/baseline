@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { OhVueIcon, addIcons } from 'oh-vue-icons';
 import { SiGoogle } from 'oh-vue-icons/icons';
+import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
-import { router } from '@inertiajs/vue3';
 import { redirect, link } from '@/routes/social';
 
 const { t } = useTranslations();
@@ -33,6 +33,8 @@ const props = withDefaults(defineProps<Props>(), {
     size: 'default',
     class: '',
 });
+
+const customClass = computed(() => props.class);
 
 const providerNames: Record<string, string> = {
     google: 'Google',
@@ -169,7 +171,7 @@ const handleClick = (event: MouseEvent) => {
     <Button
         :variant="variant"
         :size="size"
-        :class="class"
+        :class="customClass"
         type="button"
         @click.stop="handleClick"
     >
@@ -178,9 +180,7 @@ const handleClick = (event: MouseEvent) => {
             :name="providerIcons[provider]"
             class="size-4"
         />
-        <span v-if="intent === 'link'"
-            >{{ t('auth.social.connect') }} {{ providerNames[provider] }}</span
-        >
+        <span v-if="intent === 'link'">{{ t('auth.social.connect') }} {{ providerNames[provider] }}</span>
         <span v-else>{{ t('auth.social.continue_with') }} {{ providerNames[provider] }}</span>
     </Button>
 </template>

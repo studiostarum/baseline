@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,9 +17,6 @@ import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { show as billingShow } from '@/routes/admin/billing';
-import AppHead from '@/components/AppHead.vue';
-import { Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
 
 const { t } = useTranslations();
 const canManageUsers = computed(() => usePage().props.auth.can_manage_users);

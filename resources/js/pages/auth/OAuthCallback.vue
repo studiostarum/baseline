@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useTranslations } from '@/composables/useTranslations';
 import { router } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
+import { useTranslations } from '@/composables/useTranslations';
 
 type Props = {
     success?: boolean;

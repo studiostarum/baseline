@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { ArrowLeft } from 'lucide-vue-next';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageDropdown from '@/components/LanguageDropdown.vue';
 import {
@@ -10,8 +12,6 @@ import {
 } from '@/components/ui/card';
 import { useTranslations } from '@/composables/useTranslations';
 import { home } from '@/routes';
-import { Link } from '@inertiajs/vue3';
-import { ArrowLeft } from 'lucide-vue-next';
 
 const { t } = useTranslations();
 

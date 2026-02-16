@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Link, usePage } from '@inertiajs/vue3';
+import { ArrowRight, Check, Info } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,9 +20,6 @@ import {
 } from '@/components/ui/tooltip';
 import { useTranslations } from '@/composables/useTranslations';
 import { dashboard, register } from '@/routes';
-import { Link, usePage } from '@inertiajs/vue3';
-import { ArrowRight, Check, Info } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
 
 type BillingInterval = 'monthly' | 'annual';
 

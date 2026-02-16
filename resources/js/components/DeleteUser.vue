@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { Form } from '@inertiajs/vue3';
+import { Trash2 } from 'lucide-vue-next';
+import { useTemplateRef } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import InputError from '@/components/InputError.vue';
-import { useTranslations } from '@/composables/useTranslations';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -22,9 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Form } from '@inertiajs/vue3';
-import { Trash2 } from 'lucide-vue-next';
-import { useTemplateRef } from 'vue';
+import { useTranslations } from '@/composables/useTranslations';
 
 const passwordInput = useTemplateRef('passwordInput');
 const { t } = useTranslations();

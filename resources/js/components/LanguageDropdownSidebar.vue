@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
+import { Languages } from 'lucide-vue-next';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,8 +13,6 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from '@/components/ui/sidebar';
-import { usePage } from '@inertiajs/vue3';
-import { Languages } from 'lucide-vue-next';
 
 const page = usePage();
 const locale = page.props.locale ?? 'en';

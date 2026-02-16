@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { Form } from '@inertiajs/vue3';
+import { KeyRound } from 'lucide-vue-next';
+import { computed } from 'vue';
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
+import AppHead from '@/components/AppHead.vue';
 import Heading from '@/components/Heading.vue';
-import { useTranslations } from '@/composables/useTranslations';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,14 +16,11 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/user-password';
 import { type BreadcrumbItem } from '@/types';
-import AppHead from '@/components/AppHead.vue';
-import { Form } from '@inertiajs/vue3';
-import { KeyRound } from 'lucide-vue-next';
-import { computed } from 'vue';
 
 const { t } = useTranslations();
 

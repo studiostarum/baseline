@@ -1,4 +1,16 @@
 <script setup lang="ts">
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    ArrowLeft,
+    CreditCard,
+    LayoutDashboard,
+    LayoutGrid,
+    Settings,
+    Shield,
+    Users,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+import { isRef, type Ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -23,18 +35,6 @@ import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as usersIndex } from '@/routes/admin/users';
 import { type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/vue3';
-import {
-    ArrowLeft,
-    CreditCard,
-    LayoutDashboard,
-    LayoutGrid,
-    Settings,
-    Shield,
-    Users,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
-import { isRef, type Ref } from 'vue';
 
 const page = usePage();
 const { isCurrentUrl } = useCurrentUrl();

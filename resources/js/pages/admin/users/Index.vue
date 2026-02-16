@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import ConfirmDialog from '@/components/admin/ConfirmDialog.vue';
 import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
+import AppHead from '@/components/AppHead.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Link, router, usePage } from '@inertiajs/vue3';
-import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
 
 const { t } = useTranslations();
 const canManageUsers = computed(() => usePage().props.auth.can_manage_users);

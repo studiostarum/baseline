@@ -1,22 +1,22 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
+import { Languages } from 'lucide-vue-next';
+import { computed } from 'vue';
+import LanguageDropdownSidebar from '@/components/LanguageDropdownSidebar.vue';
+import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import LanguageDropdownSidebar from '@/components/LanguageDropdownSidebar.vue';
-import { usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { Languages } from 'lucide-vue-next';
 
 type Props = {
     variant?: 'button' | 'sidebar';
     side?: 'top' | 'right' | 'bottom' | 'left';
 };
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     variant: 'button',
     side: 'bottom',
 });

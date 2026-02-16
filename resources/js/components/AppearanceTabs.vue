@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useAppearance } from '@/composables/useAppearance';
-import { useTranslations } from '@/composables/useTranslations';
 import { Monitor, Moon, Sun } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useAppearance } from '@/composables/useAppearance';
+import { useTranslations } from '@/composables/useTranslations';
 
 const { appearance, updateAppearance } = useAppearance();
 const { t } = useTranslations();

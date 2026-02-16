@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useForm, usePage } from '@inertiajs/vue3';
+import { Info, Trash2 } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,10 +22,6 @@ import {
 } from '@/components/ui/tooltip';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
-import AppHead from '@/components/AppHead.vue';
-import { useForm, usePage } from '@inertiajs/vue3';
-import { Info, Trash2 } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
 
 const SOCIAL_PLATFORMS = [
     'facebook',

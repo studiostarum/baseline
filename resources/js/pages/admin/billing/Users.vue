@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { Eye } from 'lucide-vue-next';
+import { computed } from 'vue';
 import DataTable, { type Column } from '@/components/admin/DataTable.vue';
 import Pagination from '@/components/admin/Pagination.vue';
+import AppHead from '@/components/AppHead.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index as billingIndex, show as billingShow } from '@/routes/admin/billing';
-import AppHead from '@/components/AppHead.vue';
-import { Link } from '@inertiajs/vue3';
-import { Eye } from 'lucide-vue-next';
-import { computed } from 'vue';
 
 type Subscription = {
     status: string;

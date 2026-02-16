@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { Languages, PanelLeft, Palette } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
+import AppHead from '@/components/AppHead.vue';
+import Heading from '@/components/Heading.vue';
 import LanguageTabs from '@/components/LanguageTabs.vue';
 import SidebarPreferenceTabs from '@/components/SidebarPreferenceTabs.vue';
-import Heading from '@/components/Heading.vue';
-import { useTranslations } from '@/composables/useTranslations';
 import {
     Card,
     CardContent,
@@ -11,13 +13,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/appearance';
 import { type BreadcrumbItem } from '@/types';
-import AppHead from '@/components/AppHead.vue';
-import { Languages, PanelLeft, Palette } from 'lucide-vue-next';
-import { computed } from 'vue';
 
 const { t } = useTranslations();
 

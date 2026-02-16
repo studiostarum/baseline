@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { isRef, type Ref } from 'vue';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -10,8 +12,6 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useTranslations } from '@/composables/useTranslations';
 import { toUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { isRef, type Ref } from 'vue';
 
 defineProps<{
     items: NavItem[];

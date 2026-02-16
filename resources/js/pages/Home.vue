@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
+import { Link } from '@inertiajs/vue3';
 import HeroMockupDesktop from '@/components/home/HeroMockupDesktop.vue';
 import HeroMockupMobile from '@/components/home/HeroMockupMobile.vue';
 import HomeFaq from '@/components/home/HomeFaq.vue';
 import HomePricing from '@/components/home/HomePricing.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { dashboard, login, register } from '@/routes';
-import { Link } from '@inertiajs/vue3';
 import { useTranslations } from '@/composables/useTranslations';
+import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
+import { dashboard, login, register } from '@/routes';
 
 const { t } = useTranslations();
 

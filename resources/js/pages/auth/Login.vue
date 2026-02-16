@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Form, router, usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import InputError from '@/components/InputError.vue';
 import SocialLoginButton from '@/components/SocialLoginButton.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -8,14 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
-import AuthBase from '@/layouts/AuthLayout.vue';
 import { useTranslations } from '@/composables/useTranslations';
+import AuthBase from '@/layouts/AuthLayout.vue';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import AppHead from '@/components/AppHead.vue';
-import { Form, router, usePage } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
 
 const { t } = useTranslations();
 

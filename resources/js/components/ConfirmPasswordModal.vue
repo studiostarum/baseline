@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { router, usePage } from '@inertiajs/vue3';
+import { Form } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,9 +17,6 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslations } from '@/composables/useTranslations';
 import { store as confirmPasswordStore } from '@/routes/password/confirm';
-import { router, usePage } from '@inertiajs/vue3';
-import { Form } from '@inertiajs/vue3';
-import { computed } from 'vue';
 
 const { t } = useTranslations();
 const page = usePage();

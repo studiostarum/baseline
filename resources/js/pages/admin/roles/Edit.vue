@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { CheckCheck, X } from 'lucide-vue-next';
+import { computed, nextTick, ref, watch } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,10 +18,6 @@ import { Label } from '@/components/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { CheckCheck, X } from 'lucide-vue-next';
-import { computed, nextTick, ref, watch } from 'vue';
 
 const { t } = useTranslations();
 const canManageRoles = computed(() => usePage().props.auth.can_manage_roles);

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Input } from '@/components/ui/input';
 import { router } from '@inertiajs/vue3';
 import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
+import { Input } from '@/components/ui/input';
 
 export type Column<T> = {
     key: keyof T | string;

@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { CreditCard, TrendingUp, Users, XCircle } from 'lucide-vue-next';
+import { computed } from 'vue';
 import StatCard from '@/components/admin/StatCard.vue';
+import AppHead from '@/components/AppHead.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -12,10 +16,6 @@ import {
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Link } from '@inertiajs/vue3';
-import { CreditCard, TrendingUp, Users, XCircle } from 'lucide-vue-next';
-import { computed } from 'vue';
 
 type RecentSubscription = {
     id: number;
@@ -77,10 +77,6 @@ function getStatusVariant(
         default:
             return 'outline';
     }
-}
-
-function formatStatus(status: string): string {
-    return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 function formatDate(dateString: string): string {

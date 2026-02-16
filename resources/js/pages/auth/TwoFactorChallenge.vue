@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Form } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,13 +10,10 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from '@/components/ui/input-otp';
-import AuthLayout from '@/layouts/AuthLayout.vue';
 import { useTranslations } from '@/composables/useTranslations';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/two-factor/login';
 import type { TwoFactorConfigContent } from '@/types';
-import AppHead from '@/components/AppHead.vue';
-import { Form } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
 
 const { t } = useTranslations();
 

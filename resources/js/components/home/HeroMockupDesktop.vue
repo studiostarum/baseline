@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import {
     Bookmark,
     ChevronLeft,
@@ -12,6 +11,7 @@ import {
     X,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
 const props = withDefaults(
     defineProps<{

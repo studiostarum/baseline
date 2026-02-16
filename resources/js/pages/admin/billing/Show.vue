@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import {
+    ArrowLeft,
+    CreditCard,
+    Download,
+    FileText,
+    User as UserIcon,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import CardBrandIcon from '@/components/CardBrandIcon.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -22,16 +32,6 @@ import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { users as billingUsers } from '@/routes/admin/billing';
-import AppHead from '@/components/AppHead.vue';
-import { Link } from '@inertiajs/vue3';
-import {
-    ArrowLeft,
-    CreditCard,
-    Download,
-    FileText,
-    User as UserIcon,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
 
 type Subscription = {
     id: number;

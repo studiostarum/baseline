@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import AppHead from '@/components/AppHead.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import AppHead from '@/components/AppHead.vue';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [

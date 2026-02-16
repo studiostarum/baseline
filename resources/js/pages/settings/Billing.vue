@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppHead from '@/components/AppHead.vue';
 import { usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
@@ -9,6 +8,7 @@ import {
     FileText,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import AppHead from '@/components/AppHead.vue';
 import CardBrandIcon from '@/components/CardBrandIcon.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';

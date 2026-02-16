@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useSidebarPreference } from '@/composables/useSidebarPreference';
-import { useTranslations } from '@/composables/useTranslations';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useSidebarPreference } from '@/composables/useSidebarPreference';
+import { useTranslations } from '@/composables/useTranslations';
 
 const { sidebarOpen, updateSidebarPreference } = useSidebarPreference();
 const { t } = useTranslations();
