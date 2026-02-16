@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import AppHead from '@/components/AppHead.vue';
-import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
+import AppHead from '@/components/shared/AppHead.vue';
+import Heading from '@/components/shared/Heading.vue';
+import { Button } from '@/components/shared/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';

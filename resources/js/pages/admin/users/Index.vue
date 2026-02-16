@@ -2,12 +2,12 @@
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import ConfirmDialog from '@/components/admin/ConfirmDialog.vue';
-import DataTable, { type Column } from '@/components/admin/DataTable.vue';
-import Pagination from '@/components/admin/Pagination.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import ConfirmDialog from '@/components/app/admin/ConfirmDialog.vue';
+import DataTable, { type Column } from '@/components/app/admin/DataTable.vue';
+import Pagination from '@/components/app/admin/Pagination.vue';
+import AppHead from '@/components/shared/AppHead.vue';
+import { Badge } from '@/components/shared/ui/badge';
+import { Button } from '@/components/shared/ui/button';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';

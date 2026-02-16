@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppHead from '@/components/AppHead.vue';
-import WebsiteFooter from '@/components/home/WebsiteFooter.vue';
-import WebsiteNavbar from '@/components/home/WebsiteNavbar.vue';
+import AppHead from '@/components/shared/AppHead.vue';
+import WebsiteFooter from '@/components/website/home/WebsiteFooter.vue';
+import WebsiteNavbar from '@/components/website/home/WebsiteNavbar.vue';
 
 defineProps<{
     title?: string;

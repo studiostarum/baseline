@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import AppHead from '@/components/AppHead.vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
+import AppHead from '@/components/shared/AppHead.vue';
+import InputError from '@/components/shared/InputError.vue';
+import { Button } from '@/components/shared/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/components/shared/ui/card';
+import { Input } from '@/components/shared/ui/input';
+import { Label } from '@/components/shared/ui/label';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';

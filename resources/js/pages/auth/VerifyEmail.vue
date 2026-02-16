@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
-import AppHead from '@/components/AppHead.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+import AppHead from '@/components/shared/AppHead.vue';
+import TextLink from '@/components/shared/TextLink.vue';
+import { Button } from '@/components/shared/ui/button';
+import { Spinner } from '@/components/shared/ui/spinner';
 import { useTranslations } from '@/composables/useTranslations';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';

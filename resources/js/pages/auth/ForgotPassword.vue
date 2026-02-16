@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
-import AppHead from '@/components/AppHead.vue';
-import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
+import AppHead from '@/components/shared/AppHead.vue';
+import InputError from '@/components/shared/InputError.vue';
+import TextLink from '@/components/shared/TextLink.vue';
+import { Button } from '@/components/shared/ui/button';
+import { Input } from '@/components/shared/ui/input';
+import { Label } from '@/components/shared/ui/label';
+import { Spinner } from '@/components/shared/ui/spinner';
 import { useTranslations } from '@/composables/useTranslations';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';

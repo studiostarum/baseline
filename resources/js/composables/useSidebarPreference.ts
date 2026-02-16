@@ -1,9 +1,9 @@
 import type { Ref } from 'vue';
-import { useSidebar } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/shared/ui/sidebar';
 import {
     SIDEBAR_COOKIE_MAX_AGE,
     SIDEBAR_COOKIE_NAME,
-} from '@/components/ui/sidebar/utils';
+} from '@/components/shared/ui/sidebar/utils';
 
 export type UseSidebarPreferenceReturn = {
     sidebarOpen: Ref<boolean>;

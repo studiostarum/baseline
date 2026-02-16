@@ -2,19 +2,19 @@
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { CheckCheck, X } from 'lucide-vue-next';
 import { computed, nextTick, ref, watch } from 'vue';
-import AppHead from '@/components/AppHead.vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
+import AppHead from '@/components/shared/AppHead.vue';
+import InputError from '@/components/shared/InputError.vue';
+import { Button } from '@/components/shared/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/components/shared/ui/card';
+import { Checkbox } from '@/components/shared/ui/checkbox';
+import { Input } from '@/components/shared/ui/input';
+import { Label } from '@/components/shared/ui/label';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';

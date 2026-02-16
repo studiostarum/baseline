@@ -2,17 +2,17 @@
 import { Link } from '@inertiajs/vue3';
 import { CreditCard, TrendingUp, Users, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
-import StatCard from '@/components/admin/StatCard.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import StatCard from '@/components/app/admin/StatCard.vue';
+import AppHead from '@/components/shared/AppHead.vue';
+import { Avatar, AvatarFallback } from '@/components/shared/ui/avatar';
+import { Badge } from '@/components/shared/ui/badge';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/components/shared/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';

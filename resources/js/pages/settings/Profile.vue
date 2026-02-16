@@ -3,22 +3,22 @@ import { Form, Link, router, usePage } from '@inertiajs/vue3';
 import { Link2, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import AppHead from '@/components/AppHead.vue';
-import DeleteUser from '@/components/DeleteUser.vue';
-import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
-import SocialLoginButton from '@/components/SocialLoginButton.vue';
-import SocialProviderIcon from '@/components/SocialProviderIcon.vue';
-import { Button } from '@/components/ui/button';
+import AppHead from '@/components/shared/AppHead.vue';
+import DeleteUser from '@/components/auth/DeleteUser.vue';
+import Heading from '@/components/shared/Heading.vue';
+import InputError from '@/components/shared/InputError.vue';
+import SocialLoginButton from '@/components/auth/SocialLoginButton.vue';
+import SocialProviderIcon from '@/components/auth/SocialProviderIcon.vue';
+import { Button } from '@/components/shared/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/components/shared/ui/card';
+import { Input } from '@/components/shared/ui/input';
+import { Label } from '@/components/shared/ui/label';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';

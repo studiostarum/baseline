@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import HeroMockupDesktop from '@/components/home/HeroMockupDesktop.vue';
-import HeroMockupMobile from '@/components/home/HeroMockupMobile.vue';
-import HomeFaq from '@/components/home/HomeFaq.vue';
-import HomePricing from '@/components/home/HomePricing.vue';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import HeroMockupDesktop from '@/components/website/home/HeroMockupDesktop.vue';
+import HeroMockupMobile from '@/components/website/home/HeroMockupMobile.vue';
+import HomeFaq from '@/components/website/home/HomeFaq.vue';
+import HomePricing from '@/components/website/home/HomePricing.vue';
+import { Badge } from '@/components/shared/ui/badge';
+import { Button } from '@/components/shared/ui/button';
 import { useTranslations } from '@/composables/useTranslations';
 import WebsiteLayout from '@/layouts/WebsiteLayout.vue';
 import { dashboard, login, register } from '@/routes';

@@ -2,11 +2,11 @@
 import { Link } from '@inertiajs/vue3';
 import { Eye } from 'lucide-vue-next';
 import { computed } from 'vue';
-import DataTable, { type Column } from '@/components/admin/DataTable.vue';
-import Pagination from '@/components/admin/Pagination.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import DataTable, { type Column } from '@/components/app/admin/DataTable.vue';
+import Pagination from '@/components/app/admin/Pagination.vue';
+import AppHead from '@/components/shared/AppHead.vue';
+import { Badge } from '@/components/shared/ui/badge';
+import { Button } from '@/components/shared/ui/button';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';

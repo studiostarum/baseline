@@ -2,16 +2,16 @@
 import { Link } from '@inertiajs/vue3';
 import { Key, Shield, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
-import StatCard from '@/components/admin/StatCard.vue';
-import AppHead from '@/components/AppHead.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import StatCard from '@/components/app/admin/StatCard.vue';
+import AppHead from '@/components/shared/AppHead.vue';
+import { Avatar, AvatarFallback } from '@/components/shared/ui/avatar';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/components/shared/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';

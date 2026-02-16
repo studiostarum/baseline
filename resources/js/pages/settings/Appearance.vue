@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { Languages, PanelLeft, Palette } from 'lucide-vue-next';
 import { computed } from 'vue';
-import AppearanceTabs from '@/components/AppearanceTabs.vue';
-import AppHead from '@/components/AppHead.vue';
-import Heading from '@/components/Heading.vue';
-import LanguageTabs from '@/components/LanguageTabs.vue';
-import SidebarPreferenceTabs from '@/components/SidebarPreferenceTabs.vue';
+import AppearanceTabs from '@/components/app/AppearanceTabs.vue';
+import AppHead from '@/components/shared/AppHead.vue';
+import Heading from '@/components/shared/Heading.vue';
+import LanguageTabs from '@/components/app/LanguageTabs.vue';
+import SidebarPreferenceTabs from '@/components/app/SidebarPreferenceTabs.vue';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/components/shared/ui/card';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';

@@ -8,18 +8,18 @@ import {
     User as UserIcon,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
-import AppHead from '@/components/AppHead.vue';
-import CardBrandIcon from '@/components/CardBrandIcon.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import AppHead from '@/components/shared/AppHead.vue';
+import CardBrandIcon from '@/components/app/CardBrandIcon.vue';
+import { Avatar, AvatarFallback } from '@/components/shared/ui/avatar';
+import { Badge } from '@/components/shared/ui/badge';
+import { Button } from '@/components/shared/ui/button';
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
+} from '@/components/shared/ui/card';
 import {
     Table,
     TableBody,
@@ -27,7 +27,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/components/shared/ui/table';
 import { useFormatDate } from '@/composables/useFormatDate';
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';

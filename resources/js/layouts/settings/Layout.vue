@@ -9,9 +9,9 @@ import {
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { isRef, type Ref } from 'vue';
-import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import Heading from '@/components/shared/Heading.vue';
+import { Button } from '@/components/shared/ui/button';
+import { Separator } from '@/components/shared/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useTranslations } from '@/composables/useTranslations';
 import { toUrl } from '@/lib/utils';
