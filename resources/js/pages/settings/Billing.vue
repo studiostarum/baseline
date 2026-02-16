@@ -28,6 +28,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -87,7 +88,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const page = usePage();
-const dateLocale = computed(() => (page.props.locale as string) ?? 'en');
+const { formatLongDate, formatShortDate } = useFormatDate();
 const isLoading = ref(false);
 const billingInterval = ref<BillingInterval>('monthly');
 
@@ -140,17 +141,6 @@ function translatedStatus(status: string): string {
     return translated !== key ? translated : formatStatus(status);
 }
 
-function formatDate(dateString: string | null): string {
-    if (!dateString) {
-        return '';
-    }
-    return new Date(dateString).toLocaleDateString(dateLocale.value, {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
-
 function submitPortalForm(): void {
     if (!props.stripeConfigured) {
         return;
@@ -186,13 +176,6 @@ function formatCurrency(amount: number, currency?: string): string {
     }).format(amount / 100);
 }
 
-function formatShortDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString(dateLocale.value, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
 </script>
 
 <template>
@@ -361,7 +344,7 @@ function formatShortDate(dateString: string): string {
                                 class="text-sm text-muted-foreground"
                             >
                                 {{ t('settings.billing.trial_ends_on') }}
-                                {{ formatDate(subscription.trialEndsAt) }}
+                                {{ formatLongDate(subscription.trialEndsAt) }}
                             </p>
 
                             <p
@@ -369,7 +352,7 @@ function formatShortDate(dateString: string): string {
                                 class="text-sm text-muted-foreground"
                             >
                                 {{ t('settings.billing.access_until') }}
-                                {{ formatDate(subscription.endsAt) }}
+                                {{ formatLongDate(subscription.endsAt) }}
                             </p>
 
                             <p
@@ -380,7 +363,7 @@ function formatShortDate(dateString: string): string {
                                 class="text-sm text-muted-foreground"
                             >
                                 {{ t('settings.billing.canceled_on') }}
-                                {{ formatDate(subscription.canceledAt) }}
+                                {{ formatLongDate(subscription.canceledAt) }}
                             </p>
                         </div>
 

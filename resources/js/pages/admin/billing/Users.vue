@@ -7,6 +7,7 @@ import Pagination from '@/components/admin/Pagination.vue';
 import AppHead from '@/components/AppHead.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index as billingIndex, show as billingShow } from '@/routes/admin/billing';
@@ -41,6 +42,7 @@ type Props = {
 defineProps<Props>();
 
 const { t } = useTranslations();
+const { formatDate } = useFormatDate();
 
 const breadcrumbs = computed(() => [
     { title: t('admin.breadcrumb'), href: '/admin' },
@@ -85,13 +87,6 @@ function formatStatus(status: string): string {
     return key ? t(key) : status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
 </script>
 
 <template>

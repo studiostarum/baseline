@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -38,6 +39,7 @@ type Props = {
 
 const props = defineProps<Props>();
 const { t } = useTranslations();
+const { formatDate } = useFormatDate();
 
 const breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     {
@@ -236,11 +238,7 @@ function handleUnlink(provider: string): void {
                                                 class="text-sm text-muted-foreground"
                                             >
                                                 {{ t('settings.profile.connected') }}
-                                                {{
-                                                    new Date(
-                                                        account.created_at,
-                                                    ).toLocaleDateString()
-                                                }}
+                                                {{ formatDate(account.created_at) }}
                                             </p>
                                         </div>
                                     </div>

@@ -14,6 +14,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 
@@ -42,6 +43,7 @@ type Props = {
 defineProps<Props>();
 
 const { t } = useTranslations();
+const { formatDate } = useFormatDate();
 const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
@@ -79,13 +81,6 @@ function getStatusVariant(
     }
 }
 
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
 </script>
 
 <template>

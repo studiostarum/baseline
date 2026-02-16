@@ -9,10 +9,12 @@ import AppHead from '@/components/AppHead.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 const { t } = useTranslations();
+const { formatDate } = useFormatDate();
 const canManageRoles = computed(() => usePage().props.auth.can_manage_roles);
 const { roleDisplayName } = useRoleDisplayName();
 
@@ -75,14 +77,6 @@ function confirmDelete(): void {
         onFinish: () => {
             isDeleting.value = false;
         },
-    });
-}
-
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
     });
 }
 

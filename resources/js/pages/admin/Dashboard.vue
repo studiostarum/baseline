@@ -13,10 +13,12 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 const { t } = useTranslations();
+const { formatDate } = useFormatDate();
 
 type RecentUser = {
     id: number;
@@ -43,13 +45,6 @@ const breadcrumbs = computed(() => [
     { title: t('admin.navigation.dashboard') },
 ]);
 
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
 </script>
 
 <template>

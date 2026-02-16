@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useRoleDisplayName } from '@/composables/useRoleDisplayName';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -74,18 +75,10 @@ const sortedRoles = computed(() => {
 
 
 const disablingTwoFactor = ref(false);
+const { formatDateTime } = useFormatDate();
 
 function formatDate(dateString: string | null): string {
-    if (!dateString) {
-        return '—';
-    }
-    return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-    });
+    return dateString ? formatDateTime(dateString) : '—';
 }
 
 function disableTwoFactor(): void {

@@ -28,6 +28,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useFormatDate } from '@/composables/useFormatDate';
 import { useInitials } from '@/composables/useInitials';
 import { useTranslations } from '@/composables/useTranslations';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -80,6 +81,7 @@ type Props = {
 defineProps<Props>();
 
 const { t } = useTranslations();
+const { formatDate } = useFormatDate();
 const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
@@ -125,13 +127,6 @@ function formatStatus(status: string): string {
     return key ? t(key) : status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
-function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
 </script>
 
 <template>
