@@ -395,7 +395,7 @@
             "save_settings": "Instellingen opslaan",
             "saved_success": "Succesvol opgeslagen.",
             "social_links": "Sociale links in footer",
-            "social_links_description": "Optioneel. Links worden als iconen in de website-footer getoond. Laat leeg om sociale iconen te verbergen.",
+            "social_links_description": "Worden als iconen in de site-footer getoond. Voeg URL's toe om ze te tonen; laat alles leeg om het blok te verbergen.",
             "social_url": "URL",
             "social_url_placeholder": "https://...",
             "social_add": "Link toevoegen",
