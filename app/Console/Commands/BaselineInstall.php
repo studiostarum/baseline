@@ -32,8 +32,8 @@ class BaselineInstall extends Command
             return self::SUCCESS;
         }
 
-        $user->assignRole('super-admin');
-        $this->info("Assigned super-admin role to [{$email}].");
+        $user->syncRoles(['admin']);
+        $this->info("Assigned admin role to [{$email}].");
 
         return self::SUCCESS;
     }
