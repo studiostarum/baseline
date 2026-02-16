@@ -4,6 +4,7 @@ import DeleteUser from '@/components/DeleteUser.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import SocialLoginButton from '@/components/SocialLoginButton.vue';
+import SocialProviderIcon from '@/components/SocialProviderIcon.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -224,15 +225,9 @@ function handleUnlink(provider: string): void {
                                     class="flex items-center justify-between rounded-lg border p-4"
                                 >
                                     <div class="flex items-center gap-3">
-                                        <div
-                                            class="flex size-10 items-center justify-center rounded-full bg-muted"
-                                        >
-                                            <span
-                                                class="text-sm font-medium uppercase"
-                                            >
-                                                {{ account.provider.charAt(0) }}
-                                            </span>
-                                        </div>
+                                        <SocialProviderIcon
+                                            :provider="account.provider"
+                                        />
                                         <div>
                                             <p class="font-medium capitalize">
                                                 {{ account.provider }}
@@ -266,15 +261,7 @@ function handleUnlink(provider: string): void {
                                 class="flex items-center justify-between rounded-lg border p-4"
                             >
                                 <div class="flex items-center gap-3">
-                                    <div
-                                        class="flex size-10 items-center justify-center rounded-full bg-muted"
-                                    >
-                                        <span
-                                            class="text-sm font-medium uppercase"
-                                        >
-                                            {{ provider.charAt(0) }}
-                                        </span>
-                                    </div>
+                                    <SocialProviderIcon :provider="provider" />
                                     <div>
                                         <p class="font-medium capitalize">
                                             {{ provider }}
