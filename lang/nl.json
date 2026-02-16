@@ -35,6 +35,8 @@
         "log_out": "Uitloggen"
     },
     "auth": {
+        "failed": "Deze inloggegevens komen niet overeen met onze gegevens.",
+        "throttle": "Te veel inlogpogingen. Probeer het over :seconds seconden opnieuw.",
         "back_to_home": "Terug naar homepagina",
         "back_to_settings": "Terug naar instellingen",
         "or_continue_with": "Of doorgaan met",

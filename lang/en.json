@@ -35,6 +35,8 @@
         "log_out": "Log out"
     },
     "auth": {
+        "failed": "These credentials do not match our records.",
+        "throttle": "Too many login attempts. Please try again in :seconds seconds.",
         "back_to_home": "Back to home",
         "back_to_settings": "Back to settings",
         "or_continue_with": "Or continue with",
