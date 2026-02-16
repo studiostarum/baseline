@@ -31,6 +31,7 @@
         "two_factor": "Two-Factor Auth",
         "appearance": "Appearance",
         "billing": "Billing",
+        "billing_dashboard": "Billing Dashboard",
         "log_out": "Log out"
     },
     "auth": {

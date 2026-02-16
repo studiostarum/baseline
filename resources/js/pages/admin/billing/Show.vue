@@ -84,7 +84,7 @@ const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
     { title: t('admin.breadcrumb'), href: '/admin' },
-    { title: t('admin.navigation.billing'), href: '/admin/billing' },
+    { title: t('admin.navigation.billing_dashboard'), href: '/admin/billing' },
     { title: t('admin.billing.users.title'), href: billingUsers.url() },
     { title: t('admin.billing.show.breadcrumb_details') },
 ]);

@@ -99,7 +99,7 @@ const userManagementNavItems = computed<NavItem[]>(() => [
 
 const billingNavItems = computed<NavItem[]>(() => [
     {
-        title: t('admin.navigation.billing'),
+        title: t('admin.navigation.billing_dashboard'),
         href: billingIndex.url(),
         icon: CreditCard,
     },
@@ -156,26 +156,6 @@ const footerNavItems = computed<NavItem[]>(() => [
                     </SidebarMenu>
                 </SidebarGroup>
                 <SidebarGroup class="px-2 py-0">
-                    <SidebarGroupLabel>{{ t('admin.sidebar.settings') }}</SidebarGroupLabel>
-                    <SidebarMenu>
-                        <SidebarMenuItem
-                            v-for="item in settingsNavItems"
-                            :key="item.href"
-                        >
-                            <SidebarMenuButton
-                                as-child
-                                :is-active="isCurrentUrl(item.href)"
-                                :tooltip="getTitle(item.title)"
-                            >
-                                <Link :href="item.href">
-                                    <component :is="item.icon" />
-                                    <span>{{ getTitle(item.title) }}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    </SidebarMenu>
-                </SidebarGroup>
-                <SidebarGroup class="px-2 py-0">
                     <SidebarGroupLabel>{{ t('admin.sidebar.user_management') }}</SidebarGroupLabel>
                     <SidebarMenu>
                         <SidebarMenuItem
@@ -203,6 +183,26 @@ const footerNavItems = computed<NavItem[]>(() => [
                     <SidebarMenu>
                         <SidebarMenuItem
                             v-for="item in billingNavItems"
+                            :key="item.href"
+                        >
+                            <SidebarMenuButton
+                                as-child
+                                :is-active="isCurrentUrl(item.href)"
+                                :tooltip="getTitle(item.title)"
+                            >
+                                <Link :href="item.href">
+                                    <component :is="item.icon" />
+                                    <span>{{ getTitle(item.title) }}</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarGroup>
+                <SidebarGroup class="px-2 py-0">
+                    <SidebarGroupLabel>{{ t('admin.sidebar.settings') }}</SidebarGroupLabel>
+                    <SidebarMenu>
+                        <SidebarMenuItem
+                            v-for="item in settingsNavItems"
                             :key="item.href"
                         >
                             <SidebarMenuButton

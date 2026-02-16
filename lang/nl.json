@@ -31,6 +31,7 @@
         "two_factor": "Twee-factor auth",
         "appearance": "Uiterlijk",
         "billing": "Facturering",
+        "billing_dashboard": "Facturatiedashboard",
         "log_out": "Uitloggen"
     },
     "auth": {

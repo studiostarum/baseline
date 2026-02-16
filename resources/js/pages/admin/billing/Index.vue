@@ -46,7 +46,7 @@ const { getInitials } = useInitials();
 
 const breadcrumbs = computed(() => [
     { title: t('admin.breadcrumb'), href: '/admin' },
-    { title: t('admin.navigation.billing') },
+    { title: t('admin.navigation.billing_dashboard') },
 ]);
 
 const statusKeyMap: Record<string, string> = {

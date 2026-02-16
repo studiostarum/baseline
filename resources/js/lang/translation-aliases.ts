@@ -9,6 +9,7 @@ export const translationAliases: Record<string, string> = {
     'admin.settings.title': 'navigation.settings',
     'settings.billing.title': 'navigation.billing',
     'admin.navigation.billing': 'navigation.billing',
+    'admin.navigation.billing_dashboard': 'navigation.billing_dashboard',
     'admin.billing.title': 'navigation.billing',
     'admin.sidebar.billing': 'navigation.billing',
     'admin.navigation.roles': 'admin.roles.title',
